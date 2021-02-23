@@ -1,0 +1,61 @@
+Prelude-Correlator: The Prelude-Correlator.
+Prelude-Correlator is brought to you by CS GROUP (http://www.csgroup.eu).
+
+
+Prelude-Correlator Overview
+===========================
+
+Prelude-Correlator allows conducting multistream correlations thanks to a powerful programming 
+language for writing correlation rules. With any type of alert able to be correlated, event 
+analysis becomes simpler, quicker and more incisive.
+
+
+
+IRC
+===
+
+If there's something you just can't find out elsewhere, you want to
+give feedback directly to the authors or you're just bored, visit
+#prelude on irc.freenode.net
+
+
+Get Support
+===========
+
+
+Prelude-user forums can be accessed at:
+        https://www.prelude-siem.org/projects/prelude/boards
+
+
+Commercial Support is available through the CS GROUP - France company:
+        https://www.prelude-siem.com, contact.prelude@csgroup.eu
+
+
+
+Help development
+================
+
+1. SUBMITTING PATCHES
+
+The Prelude source is constantly changing. If you want to submit a patch,
+please do so from the most recent GIT source tree, subscribe to the
+prelude-devel forum and post your patch with a description of functionality.
+You can also attach patches to bugs on
+
+        https://www.prelude-siem.org
+
+
+2. BUGS
+
+If you find any bugs, please report them to:
+
+        https://www.prelude-siem.org
+
+Please make sure that what you're reporting is actually a BUG and not
+a problem on your side.
+
+
+3. SUGGESTIONS
+
+Subscribe to prelude-devel and give us your suggestions.
+

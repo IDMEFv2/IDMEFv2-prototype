@@ -1,0 +1,34 @@
+.fieldset_heading legend {
+    border: none;
+}
+
+table.update_log {
+    border-collapse: collapse;
+}
+
+table.update_log tbody {
+    height: 200px;
+    overflow-y: auto;
+    color: #444;
+}
+
+table.update_log td.result {
+    font-weight: bold;
+}
+
+.hiddenRow {
+    padding: 0 !important;
+}
+
+tr.disabled-app {
+    font-style: italic;
+    color: gray;
+}
+
+.popover {
+    z-index: 2;
+}
+
+.popover-content {
+    word-wrap: break-word;
+}

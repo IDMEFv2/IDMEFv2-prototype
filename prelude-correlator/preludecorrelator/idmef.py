@@ -1,0 +1,255 @@
+# Copyright (C) 2009-2020 CS GROUP - France. All Rights Reserved.
+# Author: Yoann Vandoorselaere <yoann.v@prelude-ids.com>
+#
+# This file is part of the Prelude-Correlator program.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIEDi
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from collections import defaultdict
+import re
+import itertools
+import operator
+import prelude
+
+from preludecorrelator import utils
+
+
+_RegexType = type(re.compile(""))
+
+
+class IDMEF(prelude.IDMEF):
+    def __init__(self, ruleid=None):
+        prelude.IDMEF.__init__(self)
+        if ruleid:
+            self.set("alert.additional_data(>>).meaning", "Rule ID")
+            self.set("alert.additional_data(-1).type", "string")
+            self.set("alert.additional_data(-1).data", ruleid)
+
+    def getTime(self):
+        itime = self.get("alert.detect_time")
+        if not itime:
+            itime = self.get("alert.create_time")
+
+        return itime
+
+    def get(self, path, flatten=True, replacement=None):
+        path = prelude.IDMEFPath(path)
+
+        value = path.get(self)
+        if value is None:
+            return replacement
+
+        if flatten and type(value) is tuple:
+            value = utils.flatten(value)
+
+        return value
+
+    def _match(self, path, needle):
+        value = self.get(path)
+
+        if not isinstance(needle, _RegexType):
+            ret = value == needle
+        else:
+            m = needle.search(value or "")
+            if not m:
+                return False
+
+            ret = m.groups()
+
+        return ret
+
+    def match(self, *args):
+        if (len(args) % 2) != 0:
+            raise Exception("Invalid number of arguments.")
+
+        ret = []
+
+        i = 0
+        while i < len(args):
+            r = self._match(args[i], args[i + 1])
+            if r is False:
+                return None
+
+            elif isinstance(r, tuple):
+                ret.extend(r)
+
+            i += 2
+
+        if ret:
+            return ret
+
+        return True
+
+    def alert(self):
+        global prelude_client
+
+        self.set("alert.create_time", prelude.IDMEFTime())
+
+        prelude_client.correlationAlert(self)
+
+    def _getMergeList(self, path, idmef):
+        newset = []
+        sharedset = []
+
+        curvalues = prelude.IDMEF.get(self, path)
+        for newidx, newval in enumerate(prelude.IDMEF.get(idmef, path) or ()):
+            have_match = False
+            for curidx, curval in enumerate(curvalues):
+                if curval == newval:
+                    sharedset.append((curidx, newidx))
+                    have_match = True
+
+            if not have_match:
+                newset.append((newidx, newval))
+
+        unmodified_set = set(range(len(curvalues)))
+        unmodified_set -= set([curidx for curidx, newidx in sharedset])
+
+        return list(unmodified_set), sharedset, newset
+
+    def _mergePort(self, fpath, value):
+        strl = []
+        has_range = False
+        for k, g in itertools.groupby(enumerate(sorted(set(value))), lambda i_x: i_x[0] - i_x[1]):
+            ilist = list(map(operator.itemgetter(1), g))
+            if len(ilist) > 1:
+                has_range = True
+                strl.append('%d-%d' % (ilist[0], ilist[-1]))
+            else:
+                strl.append('%d' % ilist[0])
+
+        if has_range or len(strl) > 1:
+            return "service.portlist", ",".join(strl)
+        else:
+            return "service.port", value[0]
+
+    def _parsePortlist(self, portlist):
+        ranges = (x.split("-") for x in portlist.split(","))
+        plist = [i for r in ranges for i in range(int(r[0].strip()), int(r[-1].strip()) + 1)]
+        return "service.port", plist
+
+    def _defaultMerge(self, fpath, value):
+        return fpath, value[0]
+
+    def _getFilteredValue(self, basepath, fpath, reqval, idmef, preproc_func, filtered):
+        for idx, value in enumerate(prelude.IDMEF.get(idmef, basepath + "." + fpath) or ()):
+            if value:
+                if value == reqval or reqval is None:
+                    prelude.IDMEF.set(idmef, basepath + "(%d)." % idx + fpath, None)
+
+            fpath2 = fpath
+            if value and preproc_func:
+                fpath2, value = preproc_func(value)
+
+            if idx not in filtered:
+                filtered[idx] = {}
+
+            if fpath2 not in filtered[idx]:
+                filtered[idx][fpath2] = []
+
+            if value:
+                filtered[idx][fpath2] += value if isinstance(value, list) else [value]
+
+        return fpath
+
+    def _mergeSet(self, path, idmef, filtered_path=()):
+        filtered_new = {}
+        filtered_cur = {}
+        postproc = {}
+
+        for (fpath, reqval), preproc_func, postproc_func in filtered_path:
+            r1 = self._getFilteredValue(path, fpath, reqval, self, preproc_func, filtered_cur)
+            r2 = self._getFilteredValue(path, fpath, reqval, idmef, preproc_func, filtered_new)
+
+            postproc[r1 or r2] = postproc_func if postproc_func else self._defaultMerge
+
+        unmodified_set, sharedset, newset = self._getMergeList(path, idmef)
+        for idx, value in newset:
+            prelude.IDMEF.set(self, path + "(>>)", value)
+            for fpath, value in filtered_new.get(idx, {}).items():
+                if value and fpath in postproc:
+                    fpath, value = postproc[fpath](fpath, value)
+
+                if value:
+                    prelude.IDMEF.set(self, path + "(-1)." + fpath, value)
+
+        for idx in unmodified_set:
+            for fpath, value in filtered_cur.get(idx, {}).items():
+                if value and fpath in postproc:
+                    fpath, value = postproc[fpath](fpath, value)
+
+                if value:
+                    prelude.IDMEF.set(self, path + "(%d)." % idx + fpath, value)
+
+        for idx, nidx in sharedset:
+            common = defaultdict(list)
+            for a, b in list(filtered_new.get(nidx, {}).items()) + list(filtered_cur.get(idx, {}).items()):
+                common[a] += b
+
+            for fpath, value in common.items():
+                if value and fpath in postproc:
+                    fpath, value = postproc[fpath](fpath, value)
+
+                if value:
+                    prelude.IDMEF.set(self, path + "(%d)." % idx + fpath, value)
+
+        for idx, values in filtered_new.items():
+            for fpath, value in values.items():
+                if value and fpath in postproc:
+                    fpath, value = postproc[fpath](fpath, value)
+
+                if value:
+                    prelude.IDMEF.set(idmef, path + "(%d)." % (idx) + fpath, value)
+
+    def addAlertReference(self, idmef, auto_set_detect_time=True):
+        if auto_set_detect_time is True:
+            intime = idmef.getTime()
+            curtime = self.getTime()
+            if not curtime or intime < curtime:
+                self.set("alert.detect_time", intime)
+
+        st_filters = [(("process.pid", None), None, None),
+                      (("service.name", "unknown"), None, None),
+                      (("service.port", None), None, self._mergePort),
+                      (("service.portlist", None), self._parsePortlist, self._mergePort)]
+
+        self._mergeSet("alert.source", idmef, st_filters)
+        self._mergeSet("alert.target", idmef, st_filters)
+
+        self.set("alert.correlation_alert.alertident(>>).alertident", idmef.get("alert.messageid"))
+
+        for analyzer in reversed(idmef.get("alert.analyzer")):
+            analyzerid = analyzer.get("analyzerid")
+            if analyzerid:
+                self.set("alert.correlation_alert.alertident(-1).analyzerid", analyzerid)
+                break
+
+        path, value = env.prelude_client.get_grouping(idmef)
+        if path:
+            self.set(path, value)
+
+
+def set_prelude_client(client):
+    global prelude_client
+    prelude_client = client

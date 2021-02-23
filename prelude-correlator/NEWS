@@ -1,0 +1,757 @@
+* 2020-09-09, prelude-correlator-5.2.0:
+
+No new changes.
+
+
+
+* 2020-08-18, prelude-correlator-5.2.0rc3:
+
+Author: Antoine Luong
+
+- Take timeout into account for CTI data
+
+
+
+* 2020-08-04, prelude-correlator-5.2.0rc2:
+
+Author: Antoine Luong
+
+- Change company name
+
+
+
+* 2020-07-23, prelude-correlator-5.2.0rc1:
+
+Author: Antoine Luong
+
+- Fix DownloadCache initialization
+
+
+
+* 2020-06-30, prelude-correlator-5.2.0beta2:
+
+Author: Antoine Luong
+
+- Add SELinux rule for service startup
+
+
+
+* 2020-06-19, prelude-correlator-5.2.0beta1:
+
+Author: Camille Gardet
+
+- Add 'CTI' in CTI related alerts
+
+Author: Thomas Andrejak
+
+- Change 300s to 20s for CTI correlation rules
+
+Author: Antoine Luong
+
+- Fix grouping option with listed path
+- Avoid undefined analyzerid when referencing alerts
+
+
+
+* 2019-09-13, prelude-correlator-5.1.0:
+
+Author: Antoine Luong
+
+- Add metadata for rules
+
+
+
+* 2019-09-04, prelude-correlator-5.1.0rc1:
+
+Author: Antoine Luong
+
+- Add a correlation grouping option
+
+Author: Song Tran
+
+- Document the 'filename' option for CTI rules
+- Update default CTI data
+
+Author: Yoann Vandoorselaere
+
+- Do not reset timer on update by default
+
+
+
+* 2019-07-17, prelude-correlator-5.1.0beta1:
+
+No new changes.
+
+
+
+* 2019-03-15, prelude-correlator-5.1.0alpha1:
+
+Author: Antoine Luong
+
+- Fix meta-correlation
+- Fix context constructor signature
+
+Author: Augustin Laville
+
+- Replace optparse with argparse
+
+Author: Yoann Vandoorselaere
+
+- Fix python 3 compatibility
+
+
+
+* 2018-09-07, prelude-correlator-5.0.0:
+
+No new changes.
+
+
+
+* 2018-08-17, prelude-correlator-5.0.0rc1:
+
+Author: Antoine Luong
+
+- Allow local meta-correlation
+- Provide the rule ID in correlation alerts
+- Stop using ez_setup.py
+
+Author: Yoann Vandoorselaere
+
+- Environment should be globally available
+- Implement a plugin state saving method
+
+Author: Thomas Andrejak
+
+- Fix python 3 compatibility
+
+
+
+* 2018-05-04, prelude-correlator-5.0.0beta2:
+* 2018-04-13, prelude-correlator-5.0.0beta1:
+
+No new changes.
+
+
+
+* 2018-02-09, prelude-correlator-4.2.0rc1:
+
+Author: Antoine Luong
+
+- Fix context destruction while iterating
+
+- Add flake8 rules and make the code PEP-8 valid
+
+
+
+* 2017-07-21, prelude-correlator-4.1.0:
+
+Author: Thomas Andrejak
+
+- Add support for key:value out of a config section
+
+Author: Antoine Luong
+
+- Avoid displaying a traceback
+
+
+
+* 2017-07-13, prelude-correlator-4.1.0rc2:
+
+Author: Antoine Luong
+
+- Allow passing prelude-specific options in configuration
+
+
+
+* 2017-06-30, prelude-correlator-4.1.0rc1:
+* 2017-06-23, prelude-correlator-4.1.0beta2:
+* 2017-06-16, prelude-correlator-4.1.0beta1:
+
+No new changes.
+
+
+
+* 2017-02-16, prelude-correlator-4.0.0:
+
+No new changes.
+
+
+
+* 2017-02-12, prelude-correlator-4.0.0rc3:
+
+Author: Thomas Andrejak
+
+- Fix Python 3 compatibility
+
+Author: Camille Gardet
+
+- Fix CIArmy config keyword
+
+
+
+* 2017-02-03, prelude-correlator-4.0.0rc2:
+
+Author: Song Tran
+
+- Add INSTALL file
+
+
+
+* 2017-01-27, prelude-correlator-4.0.0rc1:
+* 2017-01-12, prelude-correlator-4.0.0beta2:
+* 2016-12-23, prelude-correlator-4.0.0beta1:
+
+No new changes.
+
+
+
+* 2016-09-14, prelude-correlator-3.1.0:
+* 2016-09-01, prelude-correlator-3.1.0rc3:
+* 2016-08-19, prelude-correlator-3.1.0rc2:
+
+No new changes.
+
+
+
+* 2016-08-05, prelude-correlator-3.1.0rc1:
+
+Author: Antoine Luong
+
+- Prevent potential import errors when loading contexts
+
+- Rename analyzer model to 'Prelude Correlator'
+
+- Minor fixes in exception handling
+
+Author: Thomas Andrejak
+
+- Make the context able to access plugins
+
+- Disable flatten when getting alert.source(*) in BruteForce
+
+- Missing import in prelude-correlator plugin manager
+
+Author: Abdel Elmili
+
+- Add --profile option to prelude-correlator
+
+    The goal of adding this option is to allow operators to run more than
+    one correlator on the same host. Each correlator will use a different
+    profile.
+
+Author: Sélim Menouar
+
+- Clearly separate File and IDMEFClient inputs
+
+
+
+* 2016-04-22, prelude-correlator-3.0.0:
+
+No new changes.
+
+
+
+* 2016-04-15, prelude-correlator-3.0.0rc4:
+
+Author: François Poirotte
+
+- Re-enable SpamHaus plugin & add warning
+
+
+
+* 2016-04-08, prelude-correlator-1.3.0rc3:
+
+Author: Thomas Andrejak
+
+- Add CIArmy blacklist like DShield or Spamhaus
+
+- Fix download() with text/plain files
+
+
+
+* 2016-04-01, prelude-correlator-1.3.0rc2:
+
+Author: Yoann Vandoorselaere
+
+- Fix incorrect aggregation in some corner case
+
+Author: François Poirotte
+
+- Single alert for hosts with multiple IPs
+
+
+
+* 2016-03-25, prelude-correlator-1.3.0rc1:
+
+Author: Yoann Vandoorselaere
+
+- Pickle compatibility for IDMEF object
+
+Author: Louis-David Gabet
+
+- Comment python_rules section by default
+
+
+
+* 2016-03-18, prelude-correlator-1.3.0beta2:
+
+Author: Louis-David Gabet
+
+- Fix 'python_rules' section error
+
+Author: Thomas Andrejak
+
+- Fix wrong access to entrypoint name
+
+
+
+* 2016-03-01, prelude-correlator-1.3.0beta1:
+
+Author: Song Tran
+
+- Add additional SELinux policies
+
+Author: Thomas Andrejak
+
+- Load plugins from entrypoints and directories
+
+- The README in conf.d was not the right file
+
+- Change prelude-ids.com to prelude-siem.com
+
+
+
+* 2016-01-11, prelude-correlator-1.3.0alpha1:
+
+Author: Louis-David Gabet
+
+- Add include section to configuration file
+  to allow independent configuration files for plugins
+
+Author: Antoine Luong
+
+- Correct download address parameter in conf
+
+Author: Song Tran
+
+- Add SELinux policy for prelude-correlator
+
+
+
+* 2015-07-31, prelude-correlator-1.2.6:
+
+No new changes.
+
+
+
+* 2015-07-27, prelude-correlator-1.2.6rc5:
+
+Author: Antoine Luong
+
+- Disable SpamhausDrop rule by default
+
+- Add the -D shortcut for debug mode, to be consistent with other Prelude modules
+
+- Update dshield.dat and spamhaus_drop.dat
+
+
+
+* 2014-10-27, prelude-correlator-1.2.6rc4:
+
+Author: Yoann Vandoorselaere
+
+- Reset IDMEF CreateTime when sending an alert
+
+- Fix possible exception in case of download failure
+
+- Minor fixes
+
+
+
+* 2014-09-23, prelude-correlator-1.2.6rc2:
+
+Author: Yoann Vandoorselaere
+
+- Rework exception flow
+
+- Verify plugin enable/disable attribute before entrypoint loading
+
+    Allow the user to disable a plugin before the entrypoint is called
+    (useful if the plugin entrypoint triggers, for example, an exception).
+
+- Remove semi broken EGG support for now, improve require API for future use
+
+- Namespace support
+
+- Corrected permissions checking
+
+- Remove uppercase from package name, as specified in PEP8
+
+- Update for latest libprelude bindings API changes
+
+    High level bindings in libprelude are now the standard, and got renamed
+    from "PreludeEasy" to "prelude". Method names were also renamed.
+
+- Python3 compatibility work
+
+
+
+* 2014-09-16, prelude-correlator-1.2.6rc1:
+
+Author: Yoann Vandoorselaere
+
+- Fix problem with --root installation, and --prefix=/
+
+- Syslog logging fallback to UDP localhost if no socket is found
+
+- Various timer fixes
+
+    - Timers added multiple times on reset
+
+    - Timers with negative expiration time not initialized correctly
+
+    - Unnecessary traversal of the timer list on reset
+
+- Introduce a new DownloadCache, used by Dshield and Spamhaus plugin
+
+- Prevent traceback on profile error
+
+
+
+* 2014-07-07, prelude-correlator-1.2.5:
+
+- Improved exception handling
+
+- Support IDMEF Alert merge, to avoid CorrelationAlert listing
+  the same source multiples times
+
+- Allow pluginmanager API to be used with multiples entrypoints
+
+    A Prelude-Correlator plugin may now use the pluginmanager API with
+    their own entrypoint to load their own sub-plugins.
+
+- Allow plugin to specify a list of conflicting plugins
+
+    Using this interface, a plugin can now provide a list of other plugins
+    that conflict with him, and that shouldn't be loaded.
+    Additionally, provide a way for the user to force loading of a plugin
+    that was disabled because of a conflict (using enable = force in the
+    configuration section for the plugin).
+
+- Add autoload attribute to the generic Plugin class
+
+    This attribute controls whether PluginManager() will directly load a given
+    plugin or only references the plugin class for later loading. Default behavior
+    is to load the plugins.
+
+- Various timer improvements
+
+- Add an option to read IDMEF input from file,
+  within the given offset / limit
+
+- Add a stats() function which can be used by a plugin
+  to provide statistics printing
+
+- Implement GetAdditionalDataByMeaning() method
+
+- Always retrieve the current time when no argument is supplied
+
+- Add --disabledl option to setup.py sdist
+  Downloading Spamhaus database need real user-agent, using Mozilla 5
+
+- Logging fixes, using Python logging API
+
+- Add the ability to set debug log level
+
+- Updated dshield.dat, spamhaus_drop.dat
+
+- Removed rhel6 packaging
+
+
+
+* 2013-09-20, prelude-correlator-1.0.2:
+
+- setup.py : Fixed files downloading behind proxies
+
+- RHEL : Added missing dependency to python-setuptools
+
+- RHEL : Fixed #517 : Prelude Correlator not starting (SELinux)
+
+- RHEL : Fixed #494 : Prelude Correlator not stopping
+
+- Added some debug infos
+
+
+* 2012-06-01, prelude-correlator-1.0.1:
+
+- Fixed #494 : Prelude Correlator not stopping
+
+- Changed Copyright
+
+- Added packaging for rhel6
+
+- Ability to specify an input IDMEF criteria
+
+  There is now a [general] configuration section in prelude-correlator.conf
+  allowing to specify a criteria option that use an IDMEF criteria parameter
+  as an argument.
+    
+  Using this option, it is possible to specify an input filter for events
+  to be processed by the correlator.
+    
+  Additionally, always use an IDMEFCriteria to check whether the input
+  event is an alert, in place of manually retrieving alert.create_time.
+
+- Fixed some typo
+
+- Implement Context time merging capability
+    
+  Introduced time merging capability within Prelude-Correlator:
+  as of now, correlation contexts are associated with the time of the
+  triggering IDMEF event.
+    
+  When searching for a matching context, an existing context will only be
+  returned in case the specified search time match the time windows of an
+  existing context.
+    
+  This mean that when receiving a burst of events, the time carried with
+  events is directly taken into account : separate instances exists for
+  the same Context associated with events received at a different time.
+    
+  Additionally, context can be merged if more than one context time windows
+  overlap.
+
+
+* 2010-03-16, prelude-correlator-1.0.0:
+
+- When Prelude-Correlator is started as a daemon, make sure we use
+  syslog for logging.
+
+- Fix an exception when adding an alert with no source or target to the
+  generated Correlation alert, by Frédéric Yhuel
+  <fyhuel@prelude-technologies.com>
+
+- Do not generate Brute Force CorrelationAlert for multiples successful
+  authentication.
+
+- Workaround documentation installation problem.
+
+
+* 2010-03-08, prelude-correlator-1.0.0rc4:
+
+- Fix installation problem (#372).
+
+
+* 2010-03-05, prelude-correlator-1.0.0rc3:
+
+- Prelude-Correlator wasn't properly updating context (and thus, didn't
+  generate correlation events) since context identifiers were escaped
+  twice.
+
+- Prevent exception when Prelude-Correlator attempt to restore contexts
+  from an earlier Prelude-Correlator version, and that the context
+  internal attributes have changed.
+
+- A sample-plugin example has been included in the distribution.
+
+
+* 2010-02-01, prelude-correlator-1.0.0rc2:
+
+- Fix generated tarball name, so that the package might easily be
+  included in various distribution for testing.
+
+
+* 2010-01-29, prelude-correlator-1.0.0rc1:
+
+- [Firewall]: The plugin will now report CorrelationAlert for events /
+  sets of events that appear to have passed through a firewall known to
+  protect the target machine. If no firewall ever emit block concerning
+  a given host, then this host is considered un-protected, and there is
+  no point in reporting CorrelationAlert.
+
+- [OpenSSHAuth]: The plugin has been modified so that it can now
+  generate a single CorrelationAlert for multiples authentication method
+  used in a given time slice.
+
+- [Spamhaus]: The plugin has been modified so that it can now generate a
+  single CorrelationAlert for multiples events received from the same
+  source.
+
+- [BruteForce]: Various improvement, do not limit the number of events
+  the plugin is able to report in a single CorrelationAlert.
+
+- [Scan]: do not limit the number of events the plugin is able to report
+  in a single CorrelationAlert.
+
+- Context initialization now take an optional 'overwrite' argument. This
+  argument, if set to False, mean that the Context() will be returned
+  un-modified if it already exist. If it doesn't, it will be created.
+
+- New Context.update() method, which provide exactly the same
+  functionality as calling Context() with the 'update=True' argument.
+  This is useful since some plugin need to defer an update to another
+  place in the code.
+
+- If the context creation/update function is called with an IDMEF message
+  parameter, then we automatically call addAlertReference on the context
+  CorrelationAlert using the provided message as the parameter.
+
+- Make it possible to change context option on update
+
+- Automatically set CorrelationAlert DetectTime : reported
+  CorrelationAlert DetectTime now match the time of the first event that
+  was detected.
+
+- Make it possible for plugin to specify a function to be called on
+  Timer expiration.
+
+- Disable BusinessHour correlation by default since it is very verbose
+
+- Various bug fixes.
+
+
+* 2009-11-03, prelude-correlator-0.9.0-beta8:
+
+- Include spamhaus_drop.dat in the source distribution. Fix installation
+  issue (closes #364).
+
+
+* 2009-11-02, prelude-correlator-0.9.0-beta7:
+
+- Initial SpamhausDrop plugin implementation, by
+  Wes Young <wes@barely3am.com> (closes #363)
+
+- Do not discard --root parameters if prefix is absolute.
+
+- Python 2.4 backward compatibility fixes.
+
+- Handle plugin loading error gracefully.
+
+- Improve WormPlugin accuracy, and make it carry a reference to the
+  initial event. The plugin used to alert when seeing an alert to a
+  given target, and this same alert going back to the source. This can
+  happen in a number of case (example: Netbios alert triggered by Snort)
+
+  As of now, the plugin will wait for the events to be repeated against
+  at least 5 differents hosts.
+
+- Dshield CorrelationAlert now handle multiples events. Previously, we
+  used to generate a single Dshield CorrelationAlert for each events
+  where the source address would match the Dshield database. The plugin
+  now generate CorrelationAlert for multiples events received from the
+  same source.
+
+
+* 2009-07-09, prelude-correlator-0.9.0-beta6:
+
+- Provide a default configuration file, and fixes the prelude-correlator
+  --config option.
+
+- A rare exception could occur when IDMEF:Set() was called with
+  an empty list/tuple as the value argument.
+
+- Normalize libprelude logging through our own log callback (only
+  enabled if libprelude >= 0.9.24 is installed).
+
+- The DShield plugin didn't report any events since address loaded
+  from the DShield database weren't correctly normalized.
+
+- Automatic download + reloading of the DShield database was fixed.
+
+- DShield generated alerts now include additional details.
+
+- Make it possible to specify your own DShield database file, and to
+  prevent automatic download. This is useful on system with no direct
+  internet access.
+
+- Handle both standard installation, and EGG installation method (in EGG
+  mode, configuration and data files are self contained).
+
+- Introduce a new plugin logging mechanism.
+
+- Add some utility method to the Timer class.
+
+- Make it possible for plugin to define a 'signal' method that will
+  get called when prelude-correlator handle a signal (can be used to
+  perform special handling before exit, statistics or debugging
+  purposes).
+
+
+* 2009-06-18, prelude-correlator-0.9.0-beta5:
+
+- A bug prevented prelude-correlator from starting in daemon mode when
+  using the '--pidfile' option. Fixes #355.
+
+- Prevent prelude-correlator from abording if a plugin fail. Emit
+  a warning explaining why a given plugin couldn't load, and continue
+  processing.
+
+- Implement a timeout for Dshield.org server connection. The default
+  is 10 seconds, and might be modified from the prelude-correlator.conf
+  configuration file. This prevent Dshield host list loading from
+  blocking forever, and fixes #353.
+
+- Make it possible to disable plugin (fixes #354), by adding the following setting
+  in prelude-correlator.conf:
+
+  [PluginClassName]
+  disable = true
+
+- Read plugin configuration from prelude-correlator.conf
+
+- Use the Python logging facility.
+
+- Correct copyright notice, add missing AUTHORS, COPYING, HACKING.README files.
+
+
+
+* 2009-06-17, prelude-correlator-0.9.0-beta4:
+
+- Initial Python Correlator version. Rationale for the switch available here:
+  http://lists.prelude-ids.org/pipermail/prelude-user/2009-April/005163.html
+
+- Support DShield <http://www.dshield.org/> correlation!
+
+
+* 2008-07-11, prelude-correlator-0.9.0-beta3:
+
+- Add missing AUTHORS file.
+
+- Allow setting 'nil' IDMEF value using IDMEF:set() (#297).
+
+- Fix ctx:set() typo in the business-hour.lua rulese (#297).
+
+
+* 2008-07-03, prelude-correlator-0.9.0-beta2:
+
+- Fix issues with the business-hour ruleset, that tried updating a non
+  existing context. This rule does not need a context at all, rather a
+  simple IDMEF object is sufficiant.
+
+- Always return a table when retrieving multiple path (even
+  with empty path). Fix #295.
+
+- Correct multi-path detection (was not working with exactly two IDMEF
+  path).
+
+- Fix invalid installation path under certain conditions, thanks
+  to Steve Grubb <sgrubb@redhat.com> for pointing that out.
+
+
+* 2008-06-27, prelude-correlator-0.9.0-beta1b:
+
+- Fix invalid installation path under certain conditions.
+
+
+* 2008-06-27, prelude-correlator-0.9.0-beta1a:
+
+- Always use $(DESTDIR) when installing files.
+
+- Check for lua.pc as well as lua5.1.pc, since different distribution
+  seems to be using different default.
+
+
+* 2008-06-27, prelude-correlator-0.9.0-beta1:
+
+- First Prelude-Correlator release.
+

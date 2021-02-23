@@ -1,0 +1,2427 @@
+* 2020-12-03, prewikka-5.2.1:
+
+Author: Antoine Luong
+
+- MessageSummary improvements
+- Pass menu parameters in IDMEF details
+- Use POST method for DataSearch details
+- Fix DataSearch CSS rule
+- Fix DataSearch info links with non-string fields
+- Fix possible error in MessageSummary
+- Fix Auth.can_handle_groups()
+
+
+
+* 2020-09-09, prewikka-5.2.0:
+
+Author: Antoine Luong
+
+- Handle NOT in Criterion.flatten()
+
+
+
+* 2020-08-18, prewikka-5.2.0rc3:
+
+Author: Antoine Luong
+
+- Allow periodic deletion of no-severity alerts
+- Improve error handling in filter edition
+- Fix rendering of Alerts expert mode
+- Handle slashes in object names
+- Add icon for DataSearch timeline toggle
+- Raise an error for unsupported ES versions
+- Make sure to copy the path in SQLBuilder
+
+
+
+* 2020-08-04, prewikka-5.2.0rc2:
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Deprecate apps requiring deprecated apps
+    - Change company name
+    - Add HOOK_WIDGET_CATEGORIES and HOOK_PLUGINS_PARTIAL_RELOAD
+    - Add position to HOOK_DATASEARCH_EXTRA_COLUMN
+
+- Bugfixes
+
+    - Fix timezone being ignored in CTE query
+    - Add missing fix for plugin ordering
+    - Fix method name
+    - Fix dataprovider reloading
+    - Fix formatting in source/target column
+
+
+
+* 2020-07-23, prewikka-5.2.0rc1:
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Add a system for reloading failed plugins
+    - Minor improvements of scheduled tasks
+    - Compatibility with Elasticsearch 7
+    - Use Bootstrap popovers for context links
+
+- Bugfixes
+
+    - Set explicit bounds for number inputs
+    - Fix cookie deletion
+    - Reload the DataSearch timeline after deletion
+    - Update database schemas in proper order
+
+Author: Thomas Andrejak
+
+- Alert board: Try to find a value for source and target
+
+
+
+* 2020-06-30, prewikka-5.2.0beta2:
+
+Author: Antoine Luong
+
+- Allow indexed paths in filters
+- Tweak the label handling in statistics
+- Fix completion in prewikka-cli
+- Allow binary file import in prewikka-cli
+- Update INSTALL and MANIFEST
+
+Author: Yoann Vandoorselaere
+
+- Properly handle escaped character in query
+
+
+
+* 2020-06-19, prewikka-5.2.0beta1:
+
+Author: Prelude Team
+
+- Add new plugins
+
+    - Local DB authentication
+    - Dataprovider and view for logs
+    - Statistics pages
+    - Risk overview
+    - External website embedding
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Improve DataSearch aggregation page
+    - Add JSON and text representations in IDMEF details
+    - Support multi-column sorting in DataSearch
+
+- Bugfixes
+
+    - Fix possible error with deprecated plugins
+    - Reduce FOUC effect in control menu
+    - Support non-ASCII characters in YAML menu
+    - Fix multi-step migration process
+    - Make colors more consistent across charts
+    - Fix various issues in DataSearch
+    - Ensure filters are always applied in statistics
+    - Reauthenticate users in case of login mismatch
+    - Fix a scheduling issue after updating apps
+    - Use the correct hook in heartbeat detail
+    - Reload plugins if needed in prewikka-crontab
+
+Author: Yoann Vandoorselaere
+
+- Ability to disable session redirection mechanism
+- CSRF verification fail when prewikka-httpd use https
+- Ability to disable CSRF protection for specific route
+
+
+
+* 2019-09-13, prewikka-5.1.0:
+
+Author: Antoine Luong
+
+- Tweak the 'create' CLI command
+
+
+
+* 2019-09-04, prewikka-5.1.0rc1:
+
+Author: Antoine Luong
+
+- Add an option to format numbers as bits
+- Support file sizes in configuration
+- Fix resetting user properties
+- Add __repr__ method for users/groups
+- Fix auto-reload of the Scheduling page
+- Ignore return value for non-list CLI commands
+
+Author: Camille Gardet
+
+- Negative duration makes notifications persistent
+
+
+
+* 2019-08-16, prewikka-5.1.0beta3:
+
+Author: Antoine Luong
+
+- Handle integer-indexed elements in parameters
+- Rename the 'init' CLI command to 'sync'
+- Separate dataprovider backend and instance
+- Fix DataSearch exporting entries with chevrons
+- Fix mainmenu auto-refresh
+- Implement support for time-spanning data
+- Add past periods to the control menu
+- Add utilities for file inputs
+
+Author: Camille Gardet
+
+- Improve readability of errors
+- Use select2 for user timezone selection
+- Trigger the submit-complete event in Datasearch
+
+
+
+* 2019-07-23, prewikka-5.1.0beta2:
+
+Author: Antoine Luong
+
+- Fix parameters in crontab request
+- Implement an administration command-line tool
+- Use the filter ID in the listing
+- Fix modal autofocus
+
+
+
+* 2019-07-17, prewikka-5.1.0beta1:
+
+Author: Camille Gardet
+
+- Add EventSource pool
+- Support the upload of binary files
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Add an option for reloading grids periodically
+    - Support autofocus fields
+    - Stop passing the whole DataSearch row to ajax_infos
+    - Allow linking charts to user
+    - JS libraries upgrade
+    - Make the 'distinct' parameter a boolean in dataprovider
+
+- Bugfixes
+
+    - Avoid error with wrong help configuration
+    - Hide menus in case of missing permission
+    - Correctly handle dates/bytes in Datasearch details
+    - Restrict the operators for IDMEF byte data
+    - Remove IDMEF_VIEW requirement for filters
+    - Force datatype in aggregation pages
+    - Fix recursion of ResultObject subclasses
+    - Correctly handle timedeltas in criteria
+    - Use YAML safe_load() instead of load()
+
+Author: Francois Poirotte
+
+- YAML menu relative to main config file
+
+Author: Yoann Vandoorselaere
+
+- Implement usergroup.ACTIVE_PERMISSIONS
+
+
+
+* 2019-05-17, prewikka-5.1.0alpha6:
+
+Author: Antoine Luong
+
+- Propagate option classes to select2 items
+
+
+
+* 2019-05-10, prewikka-5.1.0alpha5:
+
+Author: Thomas Andrejak
+
+- Be able to hide options in select2
+
+
+
+* 2019-04-24, prewikka-5.1.0alpha4:
+
+Author: Antoine Luong
+
+- Add a categorization for filters
+- Improve the 'Group by' label in DataSearch
+- Escape backslashes in Lucene search
+- Add localization.format_value()
+- Support the timedelta type in dataprovider
+- Use select2 in prewikka_autocomplete
+- Make the IDMEF substring operator consistent
+
+Author: Yoann Vandoorselaere
+
+- Deprecate the old view render system
+
+
+
+* 2019-03-26, prewikka-5.1.0alpha2:
+
+Author: Antoine Luong
+
+- Fix DataSearch grouping by time fields
+- Add comparison operators for additional data
+
+
+
+* 2019-03-15, prewikka-5.1.0alpha1:
+
+Author: Yoann Vandoorselaere
+
+- Evolutions around paths and criteria
+
+    - Make sure path supports the operator
+    - Proper rewriting of ambiguous path using the (*) notation
+    - Parse path using the (*) notation
+    - Better Lucene coverage
+    - Criteria NOT, fix operator precedence
+    - Criterion now uses an enumeration as the operator storage
+
+- Other
+
+    - Python3 compatibility fixes
+    - Dataprovider get_types() rework
+    - Summary rework
+    - Improve hookmanager API
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Make the Database class generic
+    - Various improvements in the chart API
+    - Remove special case for Enter key in modals
+    - DataSearch improvements
+    - Automatically convert booleans for SQL queries
+    - Allow more complex branch migrations
+
+- Bugfixes
+
+    - Handle clipboard copying with multiple tracebacks
+    - Fix various issues in DataSearch
+    - Fix display of falsy additional data
+    - Fix Edge incompatibility
+    - Handle incomplete log config sections
+    - Fix PostgreSQL database cleanup in tests
+    - Fix cronjob scheduling
+    - Remove double ampersand encoding
+
+Author: Augustin Laville
+
+- Add 'This week' period in control menu
+
+Author: Thomas Andrejak
+
+- Update prelude-siem.com URLs
+- Fix HTTP status texts
+
+Author: Camille Gardet
+
+- Remove the search icon when the view uses a searchbar
+
+
+
+* 2018-09-07, prewikka-5.0.0:
+
+Author: Yoann Vandoorselaere
+
+- Better Lucene coverage
+
+Author: Antoine Luong
+
+- Fix possible error in correlation alert detail
+- Handle only-path criteria in parser
+- Do not use the compile callback with boolean criteria
+- Avoid issues with ID conflicts
+
+
+
+* 2018-08-30, prewikka-5.0.0rc2:
+
+Author: Yoann Vandoorselaere
+
+- Remove useless calls to use_transaction()
+- Implement Lucene and Criteria Lark parsers
+
+Author: Antoine Luong
+
+- Fix dropdown appearance for dark theme
+- Allow plugins to be disabled by default
+- More DataSearch fixes
+- Use a workaround for gevent compatibility with Python 2.7.5
+- Allow absolute URL for view help
+
+Author: Thomas Andrejak
+
+- Update menu organization
+- Import IDMEF Navigator
+- Fix custom_theme with invalid python module
+- Add HOOK_SESSION_DELETE
+
+Author: Augustin Laville
+
+- Addition of unit tests
+
+
+
+* 2018-08-17, prewikka-5.0.0rc1:
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Replace Chosen by Select2
+    - Save and restore the grid limit
+    - Remove globally accessible env.idmef_db
+    - Verify the schema of the YAML menu
+    - Make filter creation accessible from the control menu
+
+- Bugfixes
+
+    - Various DataSearch fixes
+    - Unregister plugin data in case of initialization error
+    - Avoid SQL connection leaks
+    - Destroy active tooltips when reloading grid content
+    - Correctly merge menu sections
+    - Do not open a modal when reloading #main
+    - Interpret cronjobs configuration as local time, not UTC
+
+Author: Francois Poirotte
+
+- Handle DataSearch selections in the browser
+
+Author: Thomas Andrejak
+
+- Keep the url fragment in browser history
+- Fix correlated alerts classification display on alert board
+- Move alerts and heartbeats cronjob to dataprovider
+
+Author: Yoann Vandoorselaere
+
+- IDMEF Criterion parser fixes
+- Use gevent in Crontab
+- Implement origin check and CSRF tokens
+- Python 3 compatibility work
+
+Author: Camille Gardet
+
+- Allow complex criteria in DataSearch cells
+- Give the data type to the formatter instance
+
+
+
+* 2018-06-08, prewikka-5.0.0beta4:
+
+Author: Camille Gardet
+
+- Fix the display of byte-string data in an IDMEF message
+- Fix actions in the datasearch subgrids
+
+Author: Antoine Luong
+
+- Move filter-specific code to the dedicated plugin
+- Keep the search query when using DataSearch aggregation
+- Add missing escaping in Lucene mode
+- Reduce flickering when loading DataSearch pages
+
+Author: Yoann Vandoorselaere
+
+- Improve invalid cronjob exception
+
+
+
+* 2018-05-22, prewikka-5.0.0beta3:
+
+Author: Antoine Luong
+
+- Fix DataSearch highlighting
+- Simplify styling of renderer errors
+- Make tooltip AJAX requests asynchronous
+- Raise a proper exception when view is not found in url_for
+- Stop using ez_setup.py
+
+Author: Camille Gardet
+
+- Fix redirection to the helper pages
+- Add "httponly" options to cookies
+
+
+
+* 2018-05-04, prewikka-5.0.0beta2:
+
+Author: Camille Gardet
+
+- Evolutions
+
+    - New one-click action menu
+
+- Bugfixes
+
+    - Save parameters when updating the datasearch table
+    - Fix IDMEF dataprovider value adjustment
+    - Request for deleting a query should be "POST"
+
+Author: Antoine Luong
+
+- Bugfixes
+
+    - Fix issue when there are no heartbeats in database
+    - Make the dropdown-header-custom CSS declaration global
+    - Add a tooltip for the IDMEF detail in DataSearch
+    - Raise the correct error when the cronjob callback is missing
+    - Keep the order of timeline series
+
+
+
+* 2018-04-13, prewikka-5.0.0beta1:
+
+Author: Yoann Vandoorselaere
+
+- Evolutions
+
+    - Implement a DataSearch framework and new alert/heartbeat views, with:
+        - a zoomable timeline
+        - a search bar
+        - a configurable grid
+
+    - Slower, but failsafe synchronisation of user configuration
+    - Prewikka menu rework
+    - AJAX request will now always be processed through the prewikka framework
+
+- Bugfixes
+
+    - Notifications fixes and reload handling
+    - Prevent duplicate error dialog
+
+Author: Sélim Menouar
+
+- New renderer type: ChartJS
+
+Author: Camille Gardet
+
+- Evolutions
+
+    - Add a Threats view based on the DataSearch framework
+    - Create statistics helpers
+    - Add an "update" method to the renderer
+    - Translate scripts
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Add a Lucene parser
+    - Improve dark theme
+    - Drop the ConfigParserOption class
+    - Add the plugin_after attribute to load plugins in order
+    - Handle the AJAX tooltips globally
+    - Greatly improve the performance of the Agents view
+
+Author: Thomas Andrejak
+
+- Python3 compatibility work
+
+
+
+* 2018-02-09, prewikka-4.2.0rc1:
+
+Author: Yoann Vandoorselaere
+
+- Evolutions
+
+    - Implement a system of plugin dependencies
+    - Javascript resources loading/unloading framework
+    - Finer grained reload mechanism
+
+    - Parameters handling overhaul
+        - Proper jQuery parameters handling
+        - Provide a way to update/save parameters with AJAX
+
+    - MainMenu improvements
+        - Replace timeline_absolute parameter by timeline_mode
+        - Use POST in place of GET
+        - Provide microsecond precision
+
+    - Rework criteria
+    - Rework PrewikkaResponse code
+    - Class can now provide their own JSON deserialization function
+    - Rework user configuration storage
+
+- Bugfixes
+
+    - Redirection fixes
+    - Fix exception with history query containing unicode
+    - Properly add wildcard on not substring operator
+
+Author: Antoine Luong
+
+- Evolutions
+
+    - Port the contextual links to a dedicated plugin
+    - Raise normalization errors when parameters are incorrect
+    - Save and reload grid preferences
+    - Better support for multiple control menus
+    - Add get_int, get_float and get_bool methods to ConfigParserSection
+
+- Bugfixes
+
+    - Fix various Prewikka initialization errors
+    - IE11 and Chrome compatibility work
+    - Automatically add indexes when needed in IDMEF paths
+    - Fix creation of filters with undefined fields
+    - Do not duplicate filter when renaming it
+    - Correctly build criteria for aggregating alerts
+    - Fix SQL migration sequence
+    - Fix Criterion JSON construction
+
+Author: Camille Gardet
+
+- Delete tasks linked to a removed user
+- Fix the SQL mapping of the queries history
+
+
+
+* 2017-07-24, prewikka-4.1.0:
+
+Author: Thomas Andrejak
+
+- Change default max_aggregated_* for better display
+- Update mailing list archives link in README
+- Crontab: Active button is a success button
+
+Author: Yoann Vandoorselaere
+
+- Rework mainmenu start/end time handling
+- Proper datetime truncate function
+- Invalid timeline link generated
+
+Author: Antoine Luong
+
+- Implement a custom JSON conversion
+- Add automatic deletion cron tasks
+- Add a method to get named config sections
+
+
+
+* 2017-07-13, prewikka-4.1.0rc2:
+
+Author: Yoann Vandoorselaere
+
+- Handle deferred errors
+- Spinner option for prewikka_ajax(), disable spinner on tooltip / hostinfos
+- Add type attribute to returned PathInfo object
+- Make IDMEF dataprovider.query() work without path or criterion
+- Dataprovider is now able to pass backend specific options
+- Make sure we escape non HTMLNode element
+- Fix invalid return for sensor with "exiting" status
+- Set default umask, and create temporary directory on initialization
+
+Author: Antoine Luong
+
+- Minor graphical changes
+- Allow empty value in HOOK_MESSAGE_EXTRA_LINK
+- Fix potential IndexError in CorrelationAlert detail
+
+Author: Camille Gardet
+
+- Add query history
+- Fix color rotation when a color map exists
+- Change wrong HTML tag in the alert table header
+- Ajax call does not always return a value
+
+
+
+* 2017-06-30, prewikka-4.1.0rc1:
+
+Author: Antoine Luong
+
+- Fix wrong diagnostic in HeartbeatAnalyze
+- Make mainmenu more customizable in non-inline mode
+- Better handle return key in modals
+- Fix post_load multiple calls
+
+Author: Yoann Vandoorselaere
+
+- Fix rule -> view mapping
+- Fix exception when database object is unavailable
+- Implement HOOK_PLUGINS_RELOAD
+
+
+
+* 2017-06-23, prewikka-4.1.0beta2:
+
+Author: Yoann Vandoorselaere
+
+- Implement Prewikka help framework
+- Fix Prewikka OSS warning
+
+Author: Antoine Luong
+
+- Improve link generation, add datatype argument to @route
+- Fix typo with AlertListing expand link
+
+
+
+* 2017-06-16, prewikka-4.1.0beta1:
+
+Author: Camille Gardet
+
+- Various fixes
+
+    - Resizing fixes in commonlisting.js
+    - Fix FontAwesome link in menu.yml
+    - Add HTML tooltips
+
+Author: Yoann Vandoorselaere
+
+- Core evolutions
+
+    - CommonListing API improvement
+    - Dataprovider API improvement
+    - Route API improvements
+    - Prewikka AJAX framework improvement, new download system
+    - Implement a Crontab system
+    - Implement a generic delayed registration system
+    - Implement resource.HTMLNode helper class
+    - MainMenu is now embeddable in configuration forms
+
+- Bugfixes
+
+    - HTTP reason should be encoded as ISO-8859-1
+    - Updated values in AttrObj() were not available in the generated json
+    - Minor upsert fixes
+    - Properly handle datetime with milliseconds
+    - JSON object serialization fixes
+    - Normalize data before soundex()
+
+Author: Antoine Luong
+
+- Bugfixes
+
+    - Various timezone-related bugfixes
+    - MessageSummary optimization and fixes
+    - Split delete queries in agents
+
+- Other
+
+    - Drop Python 2.6 support
+    - Add DatetimePicker function
+    - Allow communication between multiple modals
+    - Reload grids after deleting rows
+    - Wrap grid content instead of truncating it
+
+Author: Thomas Andrejak
+
+- Bugfixes
+
+    - Fix prewikka_autocomplete and empty input
+    - Fix main_menu using id instead of class
+    - Add "eq" operator for AttrObj
+
+
+
+* 2017-02-16, prewikka-4.0.0:
+
+Author: Antoine Luong
+
+- Fix input order in Heartbeats
+- Fix menu for MyAccount page
+- Refresh the page after saving a filter
+- Format paths for use in QueryResultsRow
+- Menu update
+- Add new methods for dataproviders
+- Normalize None values at link creation
+
+Author: Yoann Vandoorselaere
+
+- Resolve data in dataprovider write operations
+- Fix upsert (CTE version) with empty values rows
+
+Author: Camille Gardet
+
+- @use_transaction uses the name of the original function
+
+Author: Thomas Andrejak
+
+- Add mainmenu to messagesummary
+- Update INSTALL file
+
+
+
+* 2017-02-12, prewikka-4.0.0rc3:
+
+Author: Camille Gardet
+
+- Update favicon
+- Fix MessageListing pagination
+- Fix columns ordering in jqGrid tables
+- Minor display fixes
+
+Author: Antoine Luong
+
+- CSS tweaks in Apps and MessageSummary
+- Use the Bootstrap/FontAwesome theme for free-jqGrid
+- Improve error messages when loading views
+
+Author: Yoann Vandoorselaere
+
+- Correctly escape document.(base_url|href)
+- Prevent soundex() algorithm error with unicode
+
+Author: Thomas Andrejak
+
+- Fix browser title to display section
+
+
+
+* 2017-02-03, prewikka-4.0.0rc2:
+
+Author: Song Tran
+
+- Add INSTALL file to MANIFEST.in
+
+Author: Antoine Luong
+
+- Add the "enum" and "text" types in dataprovider
+- Do not modify the passed criteria in dataprovider
+- Fix JS condition causing the tabs to disappear
+- Fix incorrect dropdown display in filter edition
+- Make it possible to create private views
+
+Author: Yoann Vandoorselaere
+
+- Normalize --root parameter
+- Properly map ConfigParserSection
+- Fix encoding problem with external script
+- Filter out invalid characters in ASCII payload dump
+
+
+
+* 2017-01-27, prewikka-4.0.0rc1:
+
+Author: Yoann Vandoorselaere
+
+- View membership / permissions rework
+
+    UNIX-like permissions for views: a given view can now be owned
+    by a list of users (view_users), or/and a list of groups (view_groups).
+
+- url_for() now has a _default argument
+- Improve widget creation mechanisms
+- Fix upsert with empty generator
+- Fix possible tab activation issue on initial load
+
+Author: Antoine Luong
+
+- Include the control menu in the agent view
+- CSS and theme fixes
+- Fix control menu's unexpected behavior
+- Correctly translate errors
+- Improvements and fixes in filter views
+- Implement copying traceback to clipboard
+- Menu improvements
+- Implement an ajax-reload response type
+
+Author: Thomas Andrejak
+
+- Update messagesummary to Bootstrap
+
+
+* 2017-01-12, prewikka-4.0.0beta2:
+
+Author: Antoine Luong
+
+- Filter view overhaul
+- Add path-related functions to the dataprovider API
+- Menu rework, use a YAML configuration file
+
+Author: Yoann Vandoorselaere
+
+- Route API fixes
+
+    - Use view_id as the view basepoint
+    - Implement HOOK_URL_FOR to workaround viewmanagement
+    - Fix view_extensions with new @route API
+    - Prevent invalid method error in case of authentication failure
+
+- Correctly check in auth whether the method is not the base implementation
+- Initialize dataprovider backend before type
+- Fix upsert with empty data
+
+Author: Thomas Andrejak
+
+- Add error code for user errors
+- Fix mainmenu initialization
+
+Author: Camille Gardet
+
+- Translate error name when it is needed
+
+
+
+* 2016-12-23, prewikka-4.0.0beta1:
+
+Author: Yoann Vandoorselaere
+
+- Core evolutions
+
+    - Implementation of @view.route()
+    - Move dataset, menu and parameters to env.request
+    - Python3 compatibility
+    - Mako templating engine, drop Cheetah
+    - Implement Criterion(), and generalize dataprovider usage
+    - Implement our own JSON layer
+    - Implement generic upsert framework
+    - Unify error handling
+    - Implement generic cache system
+    - Use full module name, plugin loader rework
+
+- Bugfixes
+
+    - Fix WSGI redirect
+    - Do not pass the request to Prewikka core on invalid static files
+    - Do not silently fail when a backend does not support a given operation
+    - Prevent query burst upon start
+    - Handle index create/drop for PostgreSQL/SQLite
+    - use_flock() database loading regression
+
+Author: Thomas Andrejak
+
+- Enable translation for label in URL links
+- Fix prewikka-httpd get_raw_uri and querystring
+- Fix WSGI self.body not filled
+- Fix alertlisting classification alert.type filter
+
+Author: Antoine Luong
+
+- Bugfixes
+
+    - Auth and user fixes
+    - Allow hook registration of an empty object
+    - Fix recursion problem when printing errors
+
+- New prewikka_autocomplete function
+- Add a method for checking user permissions
+- Set the process name to 'prewikka' in logs
+- CommonListing API tweaks
+- Support additional operations in dataproviders
+- Drop IE9 support
+
+Author: Camille Gardet
+
+- Log more actions
+
+Author: Sélim Menouar
+
+- Add HOOK_LINK for messageid and ident in messagelisting
+- Automatically escape different types in SQL query
+
+
+
+* 2016-09-14, prewikka-3.1.0:
+
+Author: Antoine Luong
+
+- Language fix in Babel polyfill
+- Add missing import detected by pylint
+- Fix endless reloading loop in Apps
+- Fix undefined variable for NTEventLog
+
+Author: Yoann Vandoorselaere
+
+- Implement use_lock() decorator, use_transaction() improvement
+
+
+
+* 2016-09-01, prewikka-3.1.0rc3:
+
+Author: Antoine Luong
+
+- Translate error messages in interface, but not in logs
+- Fix a bug with the '%' character in IDMEF criteria
+- Control menu display fixes
+- Fix hook in agents returning None
+- Add a Cheetah filter for JSON
+
+Author: Sélim Menouar
+
+- Avoid double iteration in CachingIterator
+- Use response for ajax host url
+- Display CorrelationAlert children in widget
+
+Author: Yoann Vandoorselaere
+
+- Logout / session expiration fixes
+
+    - logout redirect to Prewikka baseurl or to optional redirect argument
+    - Prevent location.reload() on session expire to avoid POST warning
+
+- Normalize parameters only when using view.respond()
+
+
+
+* 2016-08-19, prewikka-3.1.0rc2:
+
+Author: Thomas Andrejak
+
+- Fix WSGI headers to be a standard dict
+- Fix behavior of get_users_by_properties function
+
+Author: Sélim Menouar
+
+- Add option to disable error traceback
+- Add readfp and read_string methods in ConfigParser
+
+Author: Yoann Vandoorselaere
+
+- PrewikkaResponse() allow empty headers argument
+- Correctly propagate error code in case of HTML error response
+- Support view that does not require authentication
+- Headers can now be specified in PrewikkaResponse
+- sendStream fixes, "close" event is not part of the protocol
+- PrewikkaTemplate now provides  __json__
+
+
+
+* 2016-08-05, prewikka-3.1.0rc1:
+
+Author: Thomas Andrejak
+
+- Fix prewikka.wsgi permissions
+- New authentication : by token
+
+Author: Sélim Menouar
+
+- Add a JSON type in view parameters
+- Prewikka notification handling
+- Add a PrewikkaResponse object
+
+Author: Francois Poirotte
+
+- UPSERT for custom filters
+- Support multiple extra mainmenu entry
+- Allow spaces in sub-section names
+
+Author: Antoine Luong
+
+- Use of free-jqGrid for agent listing
+- Automatic query escaping for Prewikka database
+- Fix the condition for an agent to be considered offline
+
+Author: Abdel Elmili
+
+- QueryResults rework
+- Add return type in dataproviders
+
+Author: Yoann Vandoorselaere
+
+- Configuration handling overhaul
+- Implement a deprecated() decorator
+- Rework hookmanager API
+- Standardize user/request access
+
+
+
+* 2016-04-22, prewikka-3.0.0:
+
+Author: Sélim Menouar
+
+- Prevent button's text in MainMenu to overflow
+- Update buttons state on rows suppression
+- Check dataprovider type before loading dataprovider backend
+
+Author: Francois Poirotte
+
+- Traceback on timelines when start == end
+- Hide irrelevant filters
+- Fix CSS class for node header in sensors
+- Avoid tracebacks in prewikka.utils.misc
+- Fix navigation bar display on IE 9
+
+Author: Antoine Luong
+
+- Fix a parenthesis problem when applying filters
+- Preserve the grid width when adding/removing columns
+- Reinitialize env.threadlocal.menu
+- Correct behavior of severity checkboxes
+- Fix KeyError when no host URL are configured
+
+
+
+* 2016-04-15, prewikka-3.0.0rc4:
+
+Author: Sélim Menouar
+
+- Hook to dynamically add link in alert's popup menu
+
+Author: Antoine Luong
+
+- Rework the loading mechanism of head content
+- Use Cheetah comments in IE conditional comments
+- Global translation work
+- Fix UserSettings template
+
+Author: Yoann Vandoorselaere
+
+- Localize custom mainmenu date format
+
+Author: Francois Poirotte
+
+- Improve the help message about filters
+
+
+
+* 2016-04-08, prewikka-1.3.0rc3:
+
+Author: Yoann Vandoorselaere
+
+- Implement the parse_datetime() method
+
+Author: Antoine Luong
+
+- Handle parameters without filename in multipart
+- Re-add missing fields in AlertListing search
+
+Author: Francois Poirotte
+
+- Skip AJAX request for the logout link
+- Get rid of browser sniffing
+
+Author: Sélim Menouar
+
+- Prevent an empty column from appearing in AlertListing
+- Fix simple filter in AlertListing
+- Gray out the mainmenu's inputs when they are disabled
+
+Author: Camille Gardet
+
+- Fix Chosen select order
+- HTML and JS are now separated in Renderer
+
+Author: Louis-David Gabet
+
+- Control buttons with jqGrid
+
+
+
+* 2016-04-01, prewikka-1.3.0rc2:
+
+Author: Yoann Vandoorselaere
+
+- Navigation fixes, helper method for time argument generation
+
+Author: Antoine Luong
+
+- Fix a jQuery UI / Bootstrap compatibility problem
+- Prevent users from disabling certain plugins
+- Remove enumeration fields from AlertListing basic search
+
+Author: Francois Poirotte
+
+- Return timeline_absolute in get_parameters
+- Prevent filters from being applied twice
+
+- Add support for reverse proxies
+
+    Add the "reverse_path" configuration option in prewikka.conf which can
+    be used to override the base path to prewikka.
+
+Author: Camille Gardet
+
+- Don't save invalid parameters in alert view
+- Fix columns titles in users/groups listing
+
+
+
+* 2016-03-25, prewikka-1.3.0rc1:
+
+Author: Thomas Andrejak
+
+- Hack to change on the fly alert.analyzer(0) to alert.analyzer(-1)
+- Remove completion in alertlisting query
+- Fix error management permission
+
+Author: Sélim Menouar
+
+- AlertListing fixes
+
+    - Don't add column if the HOOK returns None
+    - Add node.name in simple search
+    - Fix time_asc sorting
+
+- Force the mainmenu end date to be greater than the start date
+- Add section to the menumanager when adding a view
+- Check uniqueness of filter name
+- Move the hook declaration to FilterDatabase
+
+Author: Louis-David Gabet
+
+- Fix placeholder on Filter's view
+- Add hasUserName function
+- Fix missing boolean value in configuration file
+
+Author: Camille Gardet
+
+- Fix Update button in Apps view
+- Fix enable_details URLs
+
+Author: Yoann Vandoorselaere
+
+- Correct handling of absolute time
+
+
+
+* 2016-03-18, prewikka-1.3.0beta2:
+
+Author: Yoann Vandoorselaere
+
+- get_criteria() now only return generic criteria (dataprovider compatibility)
+
+- Improve timezone support
+
+    - The sensor_localtime option has been removed since it is not efficient,
+      and have a number of problem.
+    - User can now select the timezone to be used in his profile.
+    - The default is now to format timezone in the user selected timezone, not
+      the frontend timezone.
+
+- in-transaction initialisation for version attribute
+
+- Remove deprecated
+
+Author: Louis-David Gabet
+
+- Fix wrong filter in alert listing
+
+- Show details during plugin updates
+
+- Fix filter's popup behavior
+
+- Increase font size
+
+- Change 'Prewikka' labels to 'Prelude'
+
+Author: Francois Poirotte
+
+- Support generic paths in selection
+
+- Fallback for the default view
+
+Author: Sélim Menouar
+
+- Handle permissions in dataprovider
+
+- Correctly delete events on confirm button
+
+- Add a footer-buttons css class
+
+- Change buttons' colors and icons
+
+Author: Antoine Luong
+
+- Fix wrong computation of number of pages in grid
+
+- Scroll to top when loading a page via AJAX
+
+- Correctly delete rows from jqGrid
+
+- Load views before auth/session modules
+
+
+
+* 2016-03-01, prewikka-1.3.0beta1:
+
+Author: Sélim Menouar
+
+- Look-and-feel:
+
+    - Add tooltip for host and classification
+    - Reponsive element for extra small device (<= 768px)
+    - Ask for confirmation when performing a dangerous action
+    - Always open a popup menu when filtering on alert listing
+    - Change the ajax spinner
+    - Automatically close the filter menu when we click outside
+
+- MainMenu fixes
+
+- Change the permissions' mechanism
+
+- Deprecate "place" option in the configuration file
+
+Author: Camille Gardet
+
+- Pretty output for prewikka-httpd help
+
+- Document the multiprocess option in prewikka-httpd
+
+- Add missing MIME types
+
+- Add index to IDMEF paths of Source/Target port
+
+Author: François Poirotte
+
+- Fix a plugin update failure
+
+- Fix several issues in AddressResolve
+
+- Default view after a successful login
+
+Author: Antoine Luong
+
+- Support for prewikka-updatedb entry point
+
+- Various theme-related tweaks
+
+- Better handling of sections in the menubar
+
+- Bugfixes
+
+    - Filters were not applied when deleting alerts
+    - Prevent empty message when the session cookie expires
+    - Catch errors when database scripts are missing
+    - Fix normalization problems in Agents and Heartbeats views
+    - Avoid MessageSummary NoneType exception
+    - Take timezone into account in message summary
+
+Author: Thomas Andrejak
+
+- Add method in renderer to check if a backend is loaded
+
+Author: Abdel Elmili
+
+- API to query different data sources
+
+Author: Yoann Vandoorselaere
+
+- Fix duplicated parameters exception
+
+- Disable multithreading support since it is known to cause deadlock
+
+
+
+* 2016-01-13, prewikka-1.3.0alpha1:
+
+Author: Sélim Menouar
+
+- Major look-and-feel overhaul
+
+    - Bootstrap migration
+
+    - MainMenu reworking
+
+        - Add jquery-ui-datetimepicker for calendars
+        - Temporarily remove timezone selection
+        - No more "Save" button, the settings are always saved
+        - Add an option for parameters which need to be shared between views
+
+    - Add FontAwesome icons in navbar
+
+    - Change prewikka's logo
+
+    - Change the popup_menu
+
+    - Update filter menu in alert listing
+
+- Allow multiple plugins in the same file
+
+- Add a default mimetype to the WSGI script
+
+- Preserve configuration section ordering on merge
+
+Author: Antoine Luong
+
+- Prewikka dialog adjustments
+
+- Standardize grid library usage with free-jqGrid
+
+- Remove the ToolAlertListing view
+
+- Display hearbeat details in a widget
+
+- Bugfixes
+
+    - Fix issue with jEditable input fields' dimensions
+
+    - Fix possible injection in error dialog
+
+    - Fix inconsistency in the handling of substring operators
+
+    - Operator tooltips were not displayed in AlertListing filters
+
+    - Do not create a topmenu tab for section delimiters
+
+Author: Yoann Vandoorselaere
+
+- prewikka-httpd server now supports multiprocessing
+
+- Add missing path type for criteria to url mapping
+
+- Multiple time navigation fixes
+
+- Fix exception when using sensor localtime mode
+
+Author: Camille Gardet
+
+- Bugfixes
+
+    - Fix order in jquery-chosen-sortable.js
+
+    - Fix renderer-elem height
+
+    - Fix view extra settings
+
+        Remove excessive containers, causing data duplication
+        Add a z-index to prewikka-view-config to display it above
+        graphics present in the page.
+
+- Add parameters to chosen encapsulation
+
+    The new parameters are used to tweak the rendering of the <select>:
+    - max_paths=int, to choose how many parameters are permitted
+    - all_paths=bool, whether to display all the IDMEF paths in the <select> or not
+
+- Update underscore.js to 1.8.3
+
+- Keep the order of "Data paths" in the view settings
+
+Author: Abdel Elmili
+
+- Remove unused parameter in RendererPluginManager
+
+Author: Louis-David Gabet
+
+- Load conf files in alphabetical order
+
+
+
+* 2015-08-06, prewikka-1.2.6:
+
+Author: Yoann Vandoorselaere
+
+- Core evolutions
+
+    - Plugin infrastructure
+      New API for session, auth, and view module, as well as generic plugin.
+
+    - Hookmanager implementation
+      The plugin hookmanager allows different parts of the system to communicate transparently.
+
+    - Tabs are now AJAX loaded
+
+        - Prewikka pages are now accessible through URL path instead of parameters
+        - Avoid updating session on every request (improve Prewikka response time)
+        - Redirects are now supported and used when required
+        - Initial support for prewikka widget
+
+    - [#521,#561] Automatic SQL installation and update for plugins
+
+        - Keep track of each installed plugin schema version
+
+            - for Prewikka main schema: automatic installation at initialisation time
+            - for plugins: disabled until interactive installation
+
+        - Ability for the user to enable / disable a plugin.
+
+        - [#679] Use Python scripts instead of SQL scripts for more flexibility
+
+            - install : responsible for initial schema installation
+            - update : responsible for updating an already installed schema
+            - branch : responsible for migrating from one branch to another
+
+- Improvements
+
+    - Factorize code for control menu
+      Time handling within the menu is now done with the help of dateutil.
+
+    - Standardized date and time formatting
+      Use babel for date/time formatting, character set detection bug fixes
+
+    - [#610,#ext597] Add more fields to classification filtering
+
+    - [#rel697] Pluggable configuration file
+
+- Bugfixes
+
+    - [#477] Fix sensor-localtime
+
+    - AlertListing bug fixes
+
+    - Fix various WSGI issues
+
+    - Translation multithreading fixes
+
+    - [#598] Fix ViewManagement exception on dynamic view access
+
+Author: Antoine Luong
+
+- Improvements
+
+    - Factorize help dialog/button, and make it available to each view
+
+    - [#505] UserSettings template cleanup
+      Define a common plugin_htdocs attribute for plugins, views and renderers.
+
+    - [#697] Support multiple domains for translation
+
+        Each plugin can now define its own localization domain,
+        via the plugin_locale attribute.
+
+    - [#559] Simplify AlertListing view
+
+    - Global translation update
+
+- Bugfixes
+
+    - [#453] Groupby selection problem in alert listing
+
+    - [#445] Sensor node name/location ignored in agent listing
+
+    - Fix wrong display of analyzer heartbeats
+
+    - [#463,#ext572] Fix error displaying summary of Snort alerts
+
+    - [#589] Fix various JavaScript possible injections
+
+    - Fix numerous problems with IE9
+
+Author: Camille Gardet
+
+- [#538] Put view parameters inside the control menu
+
+- Fix bad closure in eventstream
+
+Author: Thomas Andrejak
+
+- Fix sending configuration to auth and session plugins
+
+- IE fixes
+
+
+
+* 2014-10-27, prewikka-1.2.6rc4:
+
+Author: Antoine Luong
+
+- Update to latest libpreludedb changes
+
+- Sort files passed as arguments to xgettext command
+
+
+
+* 2014-09-23, prewikka-1.2.6rc2:
+
+Author: Yoann Vandoorselaere
+
+- Update to fit libprelude(db) bindings API changes
+
+    High level bindings in libprelude(db) are now the standard, so old
+    level bindings got renamed to "preludeold" and "preludedbold".
+    Update to fit the new naming scheme.
+
+
+
+* 2014-09-16, prewikka-1.2.6rc1:
+
+Author: Antoine Luong
+
+- Syslog logging fallback to UDP localhost if no socket is found
+
+
+
+* 2014-07-07, prewikka-1.2.5:
+
+- Better fix for #495 : Request-URI Too Large
+  IDs of linked alerts are no longer sent as parameters when filtering
+
+- Correctly displays database schema error
+
+- Support (un)folding Source and Target, when there is more than one
+
+- Removed rhel6 packaging
+
+- Fix problem of character encoding in field classification.reference(x).name
+
+
+
+* 2013-09-19, prewikka-1.1.0:
+
+- Raise DatabaseSchemaError only if schema version does not match
+
+- More XHTML compliant : 
+  - Fixed some missing closing tags
+  - Fixed & encoding in URL
+  - Fixed empty options in aggregated filters,
+  - Fixed bad forms in users listing
+
+- Added a popup for filtering by analyzer model
+
+- Allowed filtering in sensors listing view
+
+- Added the host_url feature
+
+- Added missing _set_host_commands function
+
+- Added a hideall/showall button in sensor listing
+
+- Fixed non-display of popup menu with Internet Explorer
+
+- SensorListing : fixed a malformed style attribute
+
+- Sensors and Heartbeat listing : Fixed a bug leading to the page top when clicking on a popup menu link
+
+- Fixed a display problem of url-related links : 
+  When the address category is unknown, two values are possible : None or "unknown".
+
+- Fixed prewikka layout : replace fixed positions by floats
+
+- Fixed #468 : Division by zero in stats
+
+- Fixed #495 : Request-URI Too Large
+
+- Set INNODB engine for MySQL
+
+- Fixed no css bug when adding a final slash to url
+
+- Config :
+  - Removed useless path to prewikka.conf
+  - Changed locales encoding to support non-latin characters in the top date
+
+- CGI module : removed useless imports
+
+- ModPythonHandler : Copy HTTP headers in Request.input_headers to share headers between modpython and internal http server
+
+- Packaging :
+  - RHEL6 : Added missing dependency to pycairo
+  - Added Makefile
+
+- Fixed #519 : Deprecation warnings in the apache log
+
+- Updated Free Software Foundation headers- 
+
+
+* 2012-06-04, prewikka-1.0.1:
+
+- Updated french, german and italian translations
+
+- Added missing translations msgid
+
+- The login page uses now the default language defined in prewikka.conf
+
+- Added packaging for rhel6
+
+- Changed copyrights
+
+- Updated About and SensorListing views
+
+- CSS enhancements, texts more readable
+
+- New  parameters (#471) : enable_details, host_details_url, port_details_url, reference_details_url
+
+- Fixed #482 : TypeError in alertlisting view
+
+- Fixed UnicodeDecodeError in prepareError
+
+- Fixed #469 : Heartbeat analyser failed
+
+- Fixed #475 : Filtering on sensors status hides all sensors
+
+- Fixed #381 : exception with CGI authentication
+
+- Python 2.5 is now required
+
+
+* 2010-03-16, prewikka-1.0.0:
+
+- Fix logout link from the Statistics view.
+
+- Fix inline filtering problem for events name with start/ending space.
+
+- Fix possible inline filter null reset button.
+
+- Other, minor fixes.
+
+
+* 2010-02-12, prewikka-1.0.0rc3:
+
+- Make sure we always use a replacement ("n/a") when we get a nil
+  value from the database. Fix exception since the underlying chart
+  backend didn't support nil value (#370).
+
+- If the requested timeline range is lower or equal 1 minute, use
+  a 1 second step. Fix an exception using the Cairoplot backend, and
+  allow to get meaningful by minute statistics (#370).
+
+
+* 2010-02-10, prewikka-1.0.0rc2:
+
+- The link to the logged-in user settings, when accessed through the
+  Statistics subpages, contained an invalid parameters which triggered
+  an exception.
+
+- An exception could be raised in case we were generating a distribution
+  Chart containing empty values. This close #369.
+
+- Upgrade old database fields values to fit latest Prewikka changes. Fix
+  a possible exception in the Events listing.
+
+- Fix possible exception with username/charts name containing unicode.
+
+- Correctly handle the setup.py installation 'root' argument.
+
+
+* 2010-01-21, prewikka-1.0.0rc1:
+
+- OpenSource Graphical Statistics implementation: implement a set of
+  basic statistics for Prewikka, based on the (provided) Cairoplot
+  rendering engine. This initial implementation provides
+  Categorizations, Sources, Targets, Analyzers, and Timeline statistics.
+
+- Only use analyzerid/messageid pair when linking to a set of correlated
+  alerts. This fixes a problem where clicking on the link to expand the
+  CorrelatedAlert list would bring an empty alert view, since previous
+  filters where preserved.
+
+- The link used to expand a list of sources/target was always broken. It
+  now point to the detailed view for CorrelationAlert, or the detailed
+  event for alert.
+
+- Allow filtering empty value, by providing a new "Is Null" operator.
+
+- Improve non aggregated delete, by providing a precise deletion scheme.
+
+- Correctly provide the analyzer_time information.
+
+- Various bug fixes.
+
+
+
+* 2009-09-07, prewikka-0.9.17.1:
+
+- Fix possible encoding error in the message summary view (#360).
+
+
+
+* 2009-07-07, prewikka-0.9.17:
+
+- Do not provide an exhaustive list of unreachable linked alert, rather,
+  tell the user how many linked alert are not reachable any more.
+
+- String encoding fixes, do not mix unicode and bytestring, and more
+  generally, use unicode for internal string storage. This fixes a lot
+  of possible exception with particular specific user input, or with
+  localization enabled.
+
+- Inline filter didn't work as expected when viewing events starting
+  with a specific offset, because the offset keyword wasn't removed
+  from the generated link.
+
+- Error handling improvement (back / retry button weren't always
+  working as expected).
+
+- Fix exception when no protocol was available.
+
+- Improve navigation button link (make the link cover the whole button).
+
+
+
+* 2009-06-30, prewikka-0.9.16:
+
+- Multiples advanced filter within the same column wouldn't display
+  correctly.
+
+- Correctly restore input field when switching between advanced/simple
+  filter mode.
+
+- Fix multiple bug that would results in inconsistant filtered "state"
+  and reset button.
+
+- Using the classification simple filter now also trigger a search on
+  impact.completion.
+
+- Fix multiple alert deletion checkbox, (#357).
+
+- Various bug fixes.
+
+
+* 2009-06-08, prewikka-0.9.15:
+
+- Make it obvious when a column is filtered by replacing the old sober
+  star with a big "[filtered]" red marker. If the column filter is
+  saved, then the marker color will go from red to black.
+
+- Once the user filtered a given field by clicking on it, deny further
+  click so that it is clear that the filter is currently active.
+
+- Re-write the inline filter implementation using Cheetah + Jquery, in
+  place of generating an enormous amount of javascript code. This
+  drastically reduce the size of the events listing HTML page, and will
+  allow for much easier modification of the inline-filters.
+
+- Only propose filter operator relevant to the selected path.
+
+- Inline filter now present a single input field (with no path and
+  operator selection). Using this field, the user can filter on what is
+  seen in the associated column. For example, in the classification
+  column, the filter will trigger a search on classification.text,
+  classification.reference.name and classification.reference.origin.
+
+  There is also an [advanced] button allowing the user to specify both
+  the path and the operator.
+
+- Implement a reset button in each inline filter column, that allow to
+  switch between different version of the filter: last saved filters,
+  default filters, or current filters.
+
+- The user can now click an alert completion to set an inline filter on
+  the completion value.
+
+- Clicking on a port / protocol now trigger a CSS menu allowing to
+  filter on the port and protocol information, or to get information
+  concerning this port / protocol.
+
+- Clicking on a classification reference now trigger a CSS menu which
+  allow to filter on the reference, or to get more information
+  concerning it.
+
+- Clicking on classification now add a filter on the selected
+  classification (previously, it would have unfolded aggregated alerts
+  for the selected entry, which is now done clicking the alert count).
+
+- Until now, the default user that was automatically created by Prewikka
+  if there was no administrative user was "admin". As of now you can
+  define the initial administrative username and password from the
+  configuration file. (fix #289).
+
+- Fix escaping for reference details URI parameters.
+
+- Fix ModPython content-type handling.
+
+- Invalid variable name, fix #339.
+
+- Update to JQuery 1.3.2, and fit small JQuery API change.
+
+- If the installed libprelude or libpreludedb version is too old,
+  Prewikka will require the user to upgrade. Currently, Prewikka depend
+  on libpreludedb 0.9.12, and libprelude 0.9.23.
+
+- Fix IDMEFDatabase exception on empty criteria string (fixes #346).
+
+- Analyzer retrieval fixes and speedup (fixes #350).
+
+
+
+* 2008-03-27, prewikka-0.9.14:
+
+- Let the user choose the type of sorting (default to time descending,
+  available: time asc/desc, count asc/desc).
+
+- Implement Prewikka Asynchronous DNS resolution in alert view
+  as well as message summary (require twisted.names and twisted.internet),
+  see the additional dns_max_delay settings parameters in prewikka.conf.
+
+- In the alert summary view, handle portlist and ip_version service fields,
+  and show alert messageid.
+
+- Fix exception when rendering ToolAlert.
+
+- Fix double classification escaping (could result in non working link
+  for alert with classification containing escaped character).
+
+- Improvement to heartbeat retrieval (heartbeat view speedup).
+
+- Correct typo (fix #275), thanks Scott Olihovki <skippylou@gmail.com>
+  for pointing this out.
+
+- Polish translation, by Konrad Kosmowski <konrad@kosmosik.net>.
+
+- Update to pt_BR translation, by Edelberto Franco Silva <edeunix@edeunix.com>
+
+- Various bug fixes and cleanup.
+
+
+
+* 2007-10-18, prewikka-0.9.13:
+
+- Only perform additional database request when using Sensor localtime:
+  this bring a performance improvement of about 36% on aggregated query,
+  when using either frontend localtime (the default), or UTC time.
+
+- JQuery support: Port most of the javascript code to make use of JQuery.
+  Add show/hide effect to CSS popup. More filtering functionality in the
+  SensorListing view.
+
+- Cleanup the Authentication class, so that uper Prewikka layer can act
+  depending whether the backend support user creation / deletion. Anonymous
+  authentication is nowa plugin.
+
+- Better integration of CGI authentication allowing user listing and deletion.
+
+- Report template exception directly to the user.
+
+- Fix exception if an alert analyzer name is empty.
+
+- Fix problem when adding new Prewikka users (#262).
+
+- Fix exception when user has no permission set.
+
+- When changing password, we didn't try to match an empty 'current password'
+  (which is a minor issue since the user is already authenticated). Thanks
+  to Helmut Azbest <helmut.azbest@gmail.com> for the fix.
+
+- Fix a typo making mod_python use the parent method (patch from
+  Helmut Azbest <helmut.azbest@gmail.com>).
+
+- In the configuration file, recognize section even if there are whitespace
+  at the beginning of the line.
+
+- Localization fixes, by Sebastien Tricaud <toady@gscore.org>, and
+  Bjoern Weiland.
+
+
+
+* 2007-08-02, prewikka-0.9.12.1:
+
+- Fix a template compilation problem with certain version of Cheetah
+  (Giandomenico De Tullio <ghisha at email.it>)
+
+
+* 2007-08-01, prewikka-0.9.12:
+
+- Implement an Auto-Refresh system (fix #231).  (including code from
+  Paul Robert Marino <prmarino1@gmail.com>).
+
+- Ability to filter on missing/offline/online/unknown agents. Make more easier
+  to read each agent status in collapsed mode.
+
+- Fix filter load/save/delete issue with translation.
+
+- New 'My account' tabs, under the Settings section (fix #241).
+
+- New messageid and analyzerid parameters, allowing link to a Prewikka alert
+  from an external tool (previously required a database query in order to
+  retrieve the database event id).
+
+- Don't redirect to user listing once an user preference are recorded. Fix
+  changing of another user language by an user with PERM_USER_MANAGEMENT.
+  Display target user language rather than current user language.
+
+- Improve the timeline control table layout.
+
+- Fix translation of string possibly using plural.
+
+
+* 2007-06-11, prewikka-0.9.11.4:
+
+        - Fix PostgreSQL user deletion error.
+
+
+* 2007-05-29, prewikka-0.9.11.3:
+
+        - Fix database schema version.
+
+
+* 2007-05-26, prewikka-0.9.11.2:
+
+        - In case a database schema upgrade is required, or the Prewikka
+          database does not exist, make the error available from the Prewikka
+          console, rather than exiting badly (which previously required the
+          user to parse its web server log in order to find out the problem).
+
+
+* 2007-05-25, prewikka-0.9.11.1:
+
+        - Fix Apache CGI authentication. (Robin Gruyters)
+
+        - Fix incorrect locale switch when accessing certain pages.
+
+
+* 2007-05-21, prewikka-0.9.11:
+
+        - Prewikka has been internationalized: user might choose the language
+          used in their settings tabs. Additionally, you might specify
+          a default locale using the "default_locale" configuration keyword.
+
+        - Brazilian Portuguese translation, by Edelberto Franco Silva<edeunix@edeunix.com>.
+        - French translation, by Sebastien Tricaud <sebastien@gscore.org>.
+        - German translation, by Bjoern Weiland <mail@bjou.de>.
+        - Russian translation, by Valentin Bogdanov <bogdanov.valentin@gmail.com>.
+        - Spanish translation, by Carlo G. Añez M. <carlo.anez@gmail.com>.
+
+        - New powerfull and scalable agent view, grouping agent together by
+          Location and Node.
+
+        - In the Alert/Heartbeat summary view, number analyzers backward so that
+          it reflect the ordering in the analyzer list.
+
+        - Improved support for resizing menu.
+
+        - Fix a konqueror rendering bug with the inline filter.
+
+        - Various bug fixes.
+
+
+* 2007-04-05, prewikka-0.9.10:
+
+        - Don't show all source and target when they reach a predefined limit, instead
+          provide an expansion link.
+
+        - Add two new view in the Events section: CorrelationAlert and ToolAlert.
+
+        - Ability to filter and aggregate on all IDMEF path. If the filtered path is
+          an enumeration, automatically provide the list of possible value.
+
+        - Add a combo box for the user to choose which criteria operator to use.
+
+        - Provide an enumeration filter for the type of alert (Alert, CorrelationAlert,
+          ToolAlert, OverflowAlert).
+
+        - Prewikka can now aggregate by analyzer.
+
+        - When a session expire and the user login, the user is redirected to the page
+          he attempted to access when the session expired.
+
+        - When an error occur, the default Prewikka layout is now preserved.
+
+        - Correct handling of empty value for hash key generation. Fix #204.
+
+        - Use new libpreludedb function that return the results as well as the number
+          of results. This avoid using COUNT() in some places (namely, this speedup
+          non aggregated view by ~50%).
+
+        - Avoid iterating the list of database result more than needed.
+
+        - Support IDMEF Action, SNMPService, and WebService class.
+
+        - Improved support for small screen resolution.
+
+
+
+* 2007-02-06, prewikka-0.9.9:
+
+        - Improve database performance by reducing the number of query. (Paul Robert Marino)
+
+        - Activate CleanOutput filtering (lot of escaping fixes).
+
+        - More action logging.
+
+        - Bug fixes with the error pages Back/Retry buttons.
+
+        - Fix error on group by user (#191).
+
+        - Fix template compilation error with Cheetah version 2 (#184).
+
+
+* 2006-11-23, prewikka-0.9.8:
+
+        - Save/load user configuration when using CGI authentication mode (#181).
+
+        - Show Prewikka version in the About page (#177).
+
+        - Use Python logging facility (available backend: stderr, file, smtp, syslog),
+          multiple simultaneous handler supported (#113).
+
+        - Fix anonymous authentication.
+
+        - Fix external process going into zombie state (#178).
+
+        - Fix sqlite schema (#180).
+
+        - Display correct alertident for invalid CorrelationAlert analyzerid/messageid pair.
+
+        - prewikka-httpd should now log the source address.
+
+        - Thread safety fixes.
+
+
+* 2006-08-18, prewikka-0.9.7.1:
+
+        - Fix filter interface bug introduced in 0.9.7.
+
+        - Improved error reporting on filter creation.
+
+        - Rename command configuration section to host_commands.
+
+
+* 2006-08-16, prewikka-0.9.7:
+
+        - Use preludedb_delete_(alert|heartbeat)_from_list(). Require
+          libpreludedb 0.9.9. Provide a deletion performance improvement
+          of around 3000%.
+
+        - Handle multiple listed source/target properly. Separate
+          source/target in the message listing.
+
+        - Make host command/Information link available from the Sensor
+          listing.
+
+        - Always take care of the "external_link_new_window" configuration
+          parameter.
+
+        - Make external command handling more generic. Allow to specify
+          command line arguments.
+
+        - Allow to define unlimited number of external commands rather than
+          only a defined subset (fix #134).
+
+        - Avoid toggling several popup at once in the HeartbeatListing.
+
+        - Only provide lookup capability for known network address type (fix #76).
+
+        - New address and node name lookup provided through prelude-ids.com service.
+
+        - Link to new prelude-ids.com port lookup instead of broken portsdb
+          database (fix #162).
+
+        - Various bug fixes.
+
+
+* 2006-07-27, prewikka-0.9.6:
+
+        - CGI authentication module, from Tilman Baumann <tilman.baumann@collax.com>.
+
+        - Correct libpreludedb runtime version check.
+
+        - Show multiple source/target in message listing/summary.
+
+        - Fix invalid use of socket.inet_ntoa() to read ICMP Gateway Address,
+          which is stored as string (#156).
+
+        - Fix aggregation on IDMEF-Path that are not string.
+
+        - Fix setup.py --root option (#166).
+
+
+
+* 2006-05-04, prewikka-0.9.5:
+
+        - Fix 'Filter on Target' link (fix #148).
+
+        - Fix alert summary exception with alert including file permission (fix #149).
+
+        - Fix creation of an empty __init__.py file in lib/site-packages (#147).
+
+        - Print currently installed version on libpreludedb requirement error.
+
+        - Make sure /usr/bin/env is expanded.
+
+
+
+* 2006-04-13, prewikka-0.9.4:
+
+        - Intelligent display for CorrelationAlert. Include correlated
+          alert information in the alert listing.
+
+        - Intelligent printing of Network centric information.
+
+        - Fix Cheetah compilation for the heartbeat page.
+
+        - Correct handling of AdditionalData containing an integer 0.
+
+        - Handle ignore_atomic_event AdditionalData key (used by CorrelationAlert to
+          hide linked-in alert).
+
+        - Fix aggregation when done simultaneously on multiple fields.
+
+        - Aggregation on fields other than "address" was not working well.
+
+
+
+* 2005-01-10, prewikka-0.9.3:
+
+        - Distribute SQLite schema.
+
+        - Fix exception in the heartbeat analysis view when the heartbeat_count
+          or heartbeat_error_margin settings are explicitly set (#124).
+
+        - Fix Cheetah 1.0 heartbeat listing exception (#119).
+
+        - Open external link in new windows by default. Add a configuration option
+          to disable opening external link in new window (#61).
+
+        - Provide the ability to specify the configuration file that Prewikka
+          use (#117).
+
+        - Sanitize the limit parameter in case the input value is not correct
+          instead of triggering an exception (#118).
+
+        - Handle the preludeDB "file" setting (for use with SQLite like database).
+
+        - Fix filter saving issue in the heartbeat listing.
+
+        - Fix unlimited timeline option in heartbeat listing.
+
+        - Various bug fixes.
+
+
+
+* 2005-12-07, prewikka-0.9.2:
+
+        - Correct Analyzer path when unwiding aggregated alert.
+
+        - Add an "Unlimited" timeline option.
+
+        - Fix classification escaping problem that could lead to empty
+          listing when unwiding alert with classification text containing backslash.
+
+        - Don't print un-necessary separator when the protocol field is
+          empty in the alert listing.
+
+        - Improve Correlation Alert display. Allow focus both on the Correlation Alert
+          summary and on the correlated alert listing.
+
+        - Don't propagate the "save" parameter, so that the user don't end up saving
+          settings without knowing about it.
+
+
+* 2005-11-30, prewikka-0.9.1:
+
+        - Resolve the protocol number from the message summary view.
+
+        - Separate port and protocol value, so that we don't end up
+          linking the protocol to portdb if there is no port.
+
+        - Ability to setup IDMEF filter using iana_protocol_name and iana_protocol_number.
+
+        - Sanitize timeline years value on system which does not support time
+          exceeding 2^31-1. Fix #104.
+
+        - Mark CorrelationAlert explicitly in the AlertListing.
+
+        - Make inline filter mark more visible.
+
+        - Ability for the user to save settings for the current view.
+
+        - New --address and --port option to prewikka-httpd.
+
+        - Fix a bug where clicking the IP address popup would cause
+          Firefox to go back to the top of the page. Fix #112.
+
+        - Don't hardcode path to /usr/bin/python, but resort to
+          /usr/bin/env to find it.
+
+
+* 2005-09-20, prewikka-0.9.0:
+
+        - 0.9.0 final.
+
+        - Minor rendering fix.
+
+        - Handle service.iana_protocol_name / service.iana_protocol_number
+          as well as service.protocol.
+
+
+* 2005-09-05, prewikka-0.9.0-rc12:
+
+        - Correct Konqueror rendering.
+
+        - Minor bugfix with timeline selection.
+
+        - Minor UI tweak.
+
+
+* 2005-08-25, prewikka-0.9.0-rc11:
+
+        - The Summary view now support showing CorrelationAlert.
+
+        - Avoid mangling URL query string on form input.
+
+        - Handle possibly null AdditionalData properly.
+
+        - Don't default to 'low' severity.
+
+        - Allow the user to set analyzerID inline filter.
+
+        - Make sure we keep aggregation in per analyzer view.
+
+        - Keep inline filter object sorted, and merge them if there are duplicate.
+
+        - When the same object is specified more than once, OR both.
+
+        - Various cleanup, bugfix.
+
+
+* 2005-08-17, prewikka-0.9.0-rc10:
+
+        - Allow configuration entry without space after the ':' separator.
+
+        - More operator (case insensitive operator, regex operator).
+
+        - Show target file in the message listing.
+
+        - Much more information in the alert summary view.
+          Especially useful for users of integrity checker.
+
+
+* 2005-08-02, prewikka-0.9.0-rc9:
+
+        - New experimental mod_python handler.
+
+        - Use the same template for user creation as for user modification.
+          The interface is much cleaner, and more consistant.
+
+        - Fix Invalid parameters exception on 'delete all'.
+
+        - Print all analyzer, whether they have an analyzerID or not. This provide
+          more analyzer information.
+
+        - Show Analyzer Node location, Classification Ident, and Process path in the
+          MessageSummary view.
+
+        - Correct SNMP/Web Service, and some other Process/File filter path.
+
+        - Allow for correct '\' escaping when creating filters.
+
+        - Internet Explorer rendering tweak.
+
+        - Various bugfix.
+
+
+
+* 2005-06-17, prewikka-0.9.0-rc8:
+
+        - Use relative path everywhere.
+
+        - Some escaping fixes.
+
+        - Fix Filter formula check.
+
+        - Ability to filter on alert.classification.ident.
+
+        - Fix aggregated classification link in expanded list entry.
+
+        - Various bugfix, English typo.
+
+
+
+* 2005-06-16, prewikka-0.9.0-rc7:
+
+        - Prewikka now work and render perfectly with IE 6.0.
+
+        - XHTML conformance in most of the code.
+
+        - Fix possible exception with filtered classification text.
+
+        - Allow filtering on heartbeat.analyzer.name.
+
+
+
+* 2005-06-01, prewikka-0.9.0-rc6:
+
+        - Implement alert/heartbeat select all for deletion.
+
+        - Fix handling of alert without classification.
+
+        - Fix HTML code problem. Try to make the W3C validator happy.
+          Fix Javascript warnings. Correct URL escaping. Make it work
+          better in Apple's Safari browser.
+
+        - More error checking when saving custom filter. Error out in case a
+          filter reference non existing criteria. Add the substr operator.
+
+        - Fix bug in the whole alert/heartbeat navigation system, simplify
+          and cleanup the code, always report the current filtered field 'action' to
+          the user.
+
+        - Make the mouse pointer behave like it does for javascript links on Alert
+          listing table head.
+
+        - Fix alert mixup when expanding an aggregated classification with different
+          severity.
+
+        - Fix low/mid/high/none severity filtering.
+
+        - Fix a bug where agents with multiple address would disappear.
+
+        - Avoid Authentication Failed message when the user didn't try to authenticate
+          (the session does not exist).
+
+        - UI tweak for the detailed alert/heartbeat view.
+
+        - Link source and destination port to portdb.
+
+        - Add an heartbeat_error_margin configuration keyword.
+
+        - Saving modification to an existing filter now work.
+
+        - Make prewikka.cgi catch exceptions that are raised during the prewikka
+          initialization step and display an error screen to the user instead of
+          a server internal error.
+
+        - Don't display message checkbox and delete button if the user don't
+          have the PERM_IDMEF_ALTER permission
+
+        - Fix module importation on MacOSX.
+
+        - Various bugfix.
+
+
+* 2005-04-17, prewikka-0.9.0-rc5:
+
+        - Fix classification filters in the alert listing.
+
+        - Let the user provide the path to external command (whois, traceroute).
+
+        - Fix prewikka exception on 'info' severity.
+
+        - Fix broken installation permission.
+
+        - Fix bad template variable initialization resulting in an exception
+          with Cheetah 0.9.16.
+
+        - Fix alert deletion in un-agreggated mode.
+
+        - Fix GMT offset calculation.
+
+        - Fix a problem when appending more filters in the alert list view.
+
+        - Update Auth cookie expiration time.
+
+        - Fix escaping issue.
+
+
+* 2005-04-05, prewikka-0.9.0-rc4:
+
+        - Minor UI tweak.
+
+        - Fix a problem when changing password.
+
+        - Remove trailling space from config entry.
+
+        - Display all analyzer address in agent listing.
+
+        - Fix some bug in the authentication system, that would refuse
+          login for no appearent reasons.
+
+        - Set default session expiration time to 60 minutes.
+
+
+* 2005-03-31, prewikka-0.9.0-rc3:
+
+        - Installation cleanup / bugfix.
+
+        - Fix database authentication failure.
+
+        - Fix error page.
+
+
+* 2005-03-31, prewikka-0.9.0-rc2
+
+        - Fix a loading problem when the database is not created.
+
+
+* 2005-03-29, prewikka-0.9.0-rc1:
+
+        - Initial release

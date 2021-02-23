@@ -1,0 +1,1144 @@
+/*
+ * global
+ */
+html {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin-left: 0px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: @active-text;
+    background-color: @active-background;
+}
+
+a {
+    color: @link;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+img {
+    border: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+table {
+    border-spacing: 2px 2px;
+    background-color: @table-background;
+    border-radius: 5px;
+}
+
+textarea, input, select {
+    font-size: 9pt;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #333;  /* needed for plain inputs because Bootstrap uses
+                     color: inherit without changing background-color */
+}
+
+textarea {
+    overflow: auto;
+
+    &.vresize {
+        resize: vertical;
+    }
+
+    &.hresize {
+        resize: horizontal;
+    }
+
+    &.noresize {
+        resize: none;
+    }
+}
+
+
+input[type="checkbox"] {
+    border: none;
+    vertical-align: sub;
+}
+
+input[type="file"] {
+    height: 0;
+    width: 0;
+    opacity: 0;
+}
+
+form {
+    display: inline;
+}
+
+thead {
+    font-weight: bold;
+    background-color: @table-header;
+}
+
+fieldset {
+    background: @fieldset-background;
+    padding: 1em 0.5em 1em 0.5em;
+    border-radius: 5px;
+}
+
+legend {
+    position: relative;
+    _top: -1em;
+    padding: 0.4em;
+    color: @active-text;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+.fixed {
+    font-family: Courier, monospace;
+    font-size: 9pt;
+}
+
+
+/*
+ * Padding in prewikka is globally defined in #main
+ */
+.container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
+
+    [class*="col-"] {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .row {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+}
+
+
+
+/*
+ * top menu
+ */
+#topmenu {
+    z-index: 3;
+    position: fixed;
+    top: 46px;
+    background: @active-background;
+    width: 100%;
+    .topmenu_nav {
+        .topmenu_nav_container {
+          background-color: @primary-background-color;
+          opacity: 0.15;
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 50px;
+          width: 100%;
+        }
+        a {
+          color: #686868;
+        }
+        float: left;
+        padding-top: 9px;
+        font-size: 10pt;
+        font-weight: bold;
+        .nav-tabs {
+            border: none;
+            .active a {
+                background: @fieldset-background;
+            }
+        }
+    }
+}
+
+#topmenu_right {
+    float: right;
+    margin-right: 4px;
+    margin-top: 13px;
+}
+
+.main_menu_form_submit, .prewikka-config-button, .prewikka-help-button {
+    position: relative;  /* make sure buttons are clickable */
+    padding: 5px;
+}
+
+
+/*
+ * menu
+ */
+#main_menu_ng {
+    position: fixed;
+    top: 57px;
+    right: 73px;
+    z-index: 4;
+    max-width: 60%;
+
+    .main_menu_navbar {
+        margin-bottom: 0px;
+        padding: 2px 4px 3px;
+        color: @active-text;
+    }
+
+    .collapsed {
+        .form-group {
+            max-width: 100px;
+        }
+
+    }
+
+    .form-group {
+        max-width: 160px;
+        input {
+            width: 100%;
+        }
+        button {
+            min-width: 70px;
+            max-width: 100%;
+            text-align: left;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            padding-right: 20px;
+
+            .caret {
+                position: absolute;
+                right: 10px;
+                top: e("calc(50% - 1px)");
+            }
+        }
+    }
+    .form-group-date {
+        max-width: 140px;
+        input {
+          cursor: pointer;
+          text-align: center;
+          &.disabled {
+            background-color: #EEE;
+            opacity: 1;
+          }
+        }
+    }
+    .btn-submit {
+        &.disabled {
+          cursor: initial;
+        }
+    }
+    .form-control {
+        width: 100%;
+    }
+
+    label {
+        display: none;
+    }
+
+    /* Ease the transition between default select and select2 */
+    select {
+        padding-left: 6px;
+        padding-right: 18px;
+        line-height: 1.5;
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+
+        option, optgroup {
+            width: 0;
+        }
+    }
+}
+
+.dropdown-header-custom {
+    font-weight: bold;
+    padding: 3px 10px;
+}
+
+.label-xs {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: -4px;
+    margin-top: -6px;
+    font-size: 62.5%;
+}
+
+label.required:after {
+  content: "*";
+  color: red;
+}
+
+
+.popup_select_field, .popup_input_field {
+    width: 150px;
+    max-width: 150px;
+}
+
+/* menu message nav */
+#message_list_nav {
+    //height: 43px;
+    //width: 198px;
+    border: none;
+    background-color: transparent;
+
+    a:visited, a:link, a:hover {
+        color: black;
+        text-decoration: none;
+        width: 100%;
+        display: block;
+    }
+
+    td {
+        text-align: center;
+        font-size: 9pt;
+        width: 25%;
+        /*font-weight: bold;*/
+    }
+}
+
+
+.message_list_nav_infos {
+    background: @table-background;
+    border: @border;
+}
+
+.message_list_nav_button {
+    height: 15px;
+    background: #E2EBF5;
+    border: 1px solid @border;
+}
+
+/*
+ * main screen
+ */
+@media (max-width: 768px) {
+  #top_view {
+    #top_view_navbar {
+      position: static;
+      #nav_top_view_header.nav {
+        position: static;
+      }
+      .navbar-toggle {
+        padding-bottom: 3px;
+      }
+      .dropdown-menu {
+        background-color: #fff;
+      }
+    }
+    #topmenu {
+      position: static;
+      .topmenu_nav_container {
+        display: none;
+      }
+    }
+    #_main {
+      position: static;
+      .prewikka-view-config {
+        position: static;
+      }
+    }
+    #main_menu_ng {
+      position: absolute;
+      top: 55px;
+      z-index: -1;
+      max-width: 100%;
+      .form-group {
+        display: inline-block;
+        margin-bottom: 0px;
+        vertical-align: middle;
+      }
+    }
+    #config-button {
+      position: absolute;
+    }
+  }
+}
+
+#top_view {
+    &.detach {
+        #top_view_navbar {
+            position: static;
+        }
+        #topmenu {
+            position: static;
+        }
+        #main_menu_ng {
+            position: absolute;
+            top: -80px;
+        }
+    }
+    &.fullscreen {
+        #top_view_navbar {
+            display: none;
+        }
+        #topmenu {
+            display: none;
+        }
+        #main_menu_ng {
+            display: none;
+        }
+        #_main {
+            top: 0;
+        }
+        #_main_viewport {
+            top: 0;
+        }
+    }
+
+    #top_view_navbar {
+        z-index: 30;
+        margin-bottom: 0;
+        .navbar-brand {
+            padding: 7px;
+            color: white;
+            line-height: 36px; /* navbar height(50) - (7 * 2) = 36 */
+            img {
+                max-height: 40px;
+            }
+        }
+        #top_view_navbar_menu {
+          position: relative;
+          z-index: 1;
+        }
+        #nav_top_view_header {
+            right: 20px;
+            position: absolute;
+            z-index: 0;
+            .btn {
+                padding: 6px 6px;
+            }
+        }
+        .navbar-nav > li > a {
+            font-size: 13pt;
+        }
+    }
+}
+
+#_main_viewport {
+    position: fixed;
+    z-index: -1;
+    top: 100px;
+    bottom: 0px;
+    width: 100%;
+}
+
+#_main {
+    top: 100px;
+    bottom: 0px;
+    width: 100%;
+    position: absolute;
+}
+
+#main {
+    padding: 5px;
+    height: 100%;
+}
+
+
+/*
+ * random class
+ */
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+    background-color: @table-row-even;
+}
+
+.table-striped > tbody > tr:nth-of-type(2n) {
+    background-color: @table-row-odd;
+}
+
+table.table.table-borderless > tbody > tr > td {
+    border: none;
+}
+
+table.table.table-borderless > tbody > tr > th {
+    border: none;
+}
+
+.impact_severity_high, .impact_completion_succeeded {
+    text-decoration: none;
+    font-weight: bold;
+    color: #d02a2a;
+}
+
+.impact_severity_medium {
+    text-decoration: none;
+    color: #ff8e33;
+}
+
+.impact_severity_low, .impact_completion_failed {
+    text-decoration: none;
+    color: #418c3d;
+}
+
+.impact_severity_info {
+    text-decoration: none;
+    color: blue;
+}
+
+div.footer-buttons {
+    position: absolute;
+    margin-top: 5px;
+    bottom: 5px;
+    right: 5px;
+}
+
+div.footer-left-buttons {
+    position: absolute;
+    margin-top: 5px;
+    bottom: 5px;
+    left: 5px;
+}
+
+
+/*
+ * popup
+ */
+.popup-menu {
+    background-color: @active-background;
+    a {
+      display: block;
+      padding: 10px 15px;
+      border-bottom: 2px solid #DDD;
+      color: @active-text;
+    }
+    a:last-child {
+      border-bottom: none;
+    }
+    a:hover {
+      background-color: #f5f5f5;
+      color: #555;
+      text-decoration: none;
+    }
+}
+
+.table tbody tr td {
+    line-height: 2;
+}
+
+
+/*
+ * misc
+ */
+
+.fieldset_heading {
+    legend {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-bottom: 0;
+    }
+}
+
+.shadow {
+    box-shadow: 3px 3px 6px 0 #A9A9A9;
+}
+
+div.prewikka-view-config {
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: @fieldset-background;
+    position: fixed;
+    right: 0;
+    z-index: 3;
+}
+
+
+.ajax-spinner {
+    position: relative;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    i.fa-spin {
+        color: gray;
+    }
+
+    &.main-spinner {
+        position: fixed;
+        z-index: 1234;
+    }
+}
+
+.text-center-vh {
+    position: relative;
+    text-align: center;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.widget-only {
+    display: none;
+}
+
+
+.label-checkbox {
+  cursor: pointer;
+}
+
+.checkbox-label {
+  display: none;
+  &:checked + .label-checkbox > span {
+    background-color: #5CB85C;
+    &:after {
+      content: "\2714";
+    }
+  }
+  + .label-checkbox > span {
+    margin-left: 5px;
+    margin-bottom: 2px;
+    background-color: #D9534F;
+    &:empty {
+      display:inherit;
+    }
+    &:after {
+      content: "\2717";
+    }
+  }
+
+}
+
+/*
+ * Prewikka renderer
+ */
+.renderer-elem {
+    background-color: @chart-background;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+svg text {
+    fill: @active-text;
+}
+
+
+/*
+ * Customize Bootstrap
+ */
+
+.list-group-item {
+    background: @fieldset-background;
+}
+
+.navbar-primary {
+  background-color: @primary-background-color;
+  border-color: darken(@primary-background-color, 5%);
+  .navbar-nav {
+    > li > a {
+      color: @primary-color;
+      &:hover,
+      &:focus {
+        color: darken(@primary-color, 10%);
+        background-color: @primary-background-color;
+      }
+    }
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: @primary-color;
+        background-color: darken(@primary-background-color, 5%);
+      }
+    }
+  }
+  .nav > .open > a, .nav > .open > a:focus, .nav > .open > a:hover {
+    background-color: darken(@primary-background-color, 5%)
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1300px) {
+    .modal-xl {
+        width: 900px;  /* same as modal-lg here */
+    }
+}
+
+@media (min-width: 1300px) {
+    .modal-xl {
+        width: 1200px;
+    }
+}
+
+.modal-dialog .modal-content {
+    background: @active-background;
+}
+
+.modal-dialog .modal-body {
+    max-height: e("calc(100vh - 200px)");
+    overflow: auto;
+}
+
+
+/* Submenu */
+
+.dropdown-submenu {
+  position: relative;
+  &>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px 6px;
+    border-radius: 0 6px 6px 6px;
+  }
+  &:hover>.dropdown-menu {
+    display:block;
+    &>a:after {
+      border-left-color: #ffffff;
+    }
+  }
+  &>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #cccccc;
+    margin-top: 5px;
+    margin-right: -10px;
+  }
+  &.pull-left {
+    float: none;
+    &>.dropdown-menu {
+      left: inherit;
+      right: 100%;
+      -webkit-border-radius: 6px 0 6px 6px;
+      -moz-border-radius: 6px 0 6px 6px;
+      border-radius: 6px 0 6px 6px;
+    }
+  }
+}
+
+.dropdown-menu-theme {
+    background-color: @active-background;
+
+    > li > a {
+        color: @active-text;
+    }
+}
+
+/* Panels */
+
+.panel {
+    background-color: @fieldset-background;
+}
+
+.panel-default {
+    border-color: #B0B0B0;
+}
+
+.panel-theme {
+    border-color: @primary-background-color;
+}
+
+.panel-theme>.panel-heading{
+    background-color: @primary-background-color;
+    border-color: @primary-background-color;
+    color: #fff;
+}
+
+.panel-theme>.panel-heading+.panel-collapse>.panel-body{
+    border-top-color: @primary-background-color;
+}
+
+.panel-theme>.panel-heading .badge{
+    color: @primary-background-color;
+    background-color: #fff;
+}
+
+/* Buttons */
+
+.button-variant (@color-variant, @background-variant, @border-variant) {
+  color: @color-variant;
+  background-color: @background-variant;
+  border-color: @border-variant;
+
+  &:focus,
+  &.focus {
+    color: @color-variant;
+    background-color: darken(@background-variant, 10%);
+        border-color: darken(@border-variant, 25%);
+  }
+  &:hover {
+    color: @color-variant;
+    background-color: darken(@background-variant, 10%);
+        border-color: darken(@border-variant, 12%);
+  }
+  &:active,
+  &.active,
+  .open > .dropdown-toggle& {
+    color: @color-variant;
+    background-color: darken(@background-variant, 10%);
+        border-color: darken(@border-variant, 12%);
+
+    &:hover,
+    &:focus,
+    &.focus {
+      color: @color-variant;
+      background-color: darken(@background-variant, 17%);
+          border-color: darken(@border-variant, 25%);
+    }
+  }
+  &:active,
+  &.active,
+  .open > .dropdown-toggle& {
+    background-image: none;
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &,
+    &:hover,
+    &:focus,
+    &.focus,
+    &:active,
+    &.active {
+      background-color: @background-variant;
+          border-color: @border-variant;
+    }
+  }
+
+  .badge {
+    color: @background-variant;
+    background-color: @color-variant;
+  }
+}
+
+.btn-custom {
+    .button-variant(@primary-color, @primary-background-color, darken(@primary-background-color, 5%));
+}
+
+/*
+ * It looks like a button
+ * It tastes like a button
+ * But it is not a button
+ */
+.btn-static {
+    background-color: white;
+    border: 1px solid lightgrey;
+    cursor: default;
+}
+
+.btn-static:active {
+    -moz-box-shadow: inset 0 0 0px white;
+    -webkit-box-shadow: inset 0 0 0px white;
+    box-shadow: inset 0 0 0px white;
+}
+
+.tooltip-inner {
+    color: @tooltip-text;
+    background-color: @tooltip-background;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: @tooltip-background;
+}
+
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: @tooltip-background;
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right-color: @tooltip-background;
+}
+
+.tooltip.left .tooltip-arrow {
+    border-left-color: @tooltip-background;
+}
+
+.popover {
+    background-color: @active-background;
+
+    .popover-title {
+        color: #333;
+    }
+
+    &.popover-menu {
+        z-index: 1;
+        .popover-content {
+            padding: 0;
+        }
+    }
+
+    &.top .arrow::after {
+        border-top-color: @active-background;
+    }
+
+    &.bottom .arrow::after {
+        border-bottom-color: @active-background;
+    }
+
+    &.right .arrow::after {
+        border-right-color: @active-background;
+    }
+
+    &.left .arrow::after {
+        border-left-color: @active-background;
+    }
+}
+
+div.ui-jqgrid-titlebar {
+    color: #222;
+}
+
+.ui-jqgrid tr.jqgrow > td {
+    white-space: normal;
+}
+
+#prewikka-notification {
+    display: none;
+}
+
+#prewikka-notifications-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 50;
+    width: 620px;
+    .alert {
+      margin-top: 30px;
+      margin-right: 20px;
+    }
+}
+
+.modal-dialog .traceback > div {
+    max-height: 300px;
+}
+
+.widget .modal-header {
+    display: none;
+}
+
+.widget .modal-dialog .modal-header {
+    display: block;
+}
+
+.top-right-buttons {
+    position: fixed;
+    right: 80px;
+    top: 59px;
+    z-index: 5;
+}
+
+.modal-dialog .top-right-buttons {
+    top: 10px;
+}
+
+@media (max-width: 768px) {
+    .top-right-buttons {
+        position: static;
+    }
+
+    .modal-dialog .top-right-buttons {
+        position: fixed;
+    }
+}
+
+.widget .modal-dialog .widget-only {
+    display: initial;
+}
+
+.panel-background {
+    background-color: @fieldset-background;
+}
+
+.default-background {
+    background-color: @active-background;
+}
+
+/*
+ * Bootstrap labels and inputs
+ */
+
+label.disabled a {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.list-bootstrap-label {
+    cursor: pointer;
+    font-weight: inherit;
+}
+
+.list-bootstrap-label:hover {
+    cursor: pointer;
+    font-weight: inherit;
+    color: @active-text;
+    background-color: @active-background;
+}
+
+.list-bootstrap-label-all {
+    float: right;
+    width: 20em;
+}
+
+.checkbox-inputgroup {
+    display: none;
+}
+
+.checkbox-inputgroup:checked + .list-bootstrap-label > span > a:after {
+    content: "\2714";
+}
+
+.checkbox-inputgroup:checked + .list-bootstrap-label > span {
+    background-color: #5CB85C;
+}
+
+.checkbox-inputgroup + .list-bootstrap-label > span > a:after {
+    content: "\2717";
+}
+
+.checkbox-inputgroup + .list-bootstrap-label > span {
+    background-color: #D9534F;
+}
+
+.list-bootstrap-label > span > a:after {
+    color: @primary-color;
+}
+
+.btn-default2 {
+    background-color: #777;
+}
+
+.btn-default2:hover {
+    background-color: darken(#777, 10%);
+}
+
+@label_critical_bg: #b03030;
+@table_critical_bg: #f2c0c0;
+
+.label-critical, .btn-critical {
+    background-color: @label_critical_bg;
+}
+
+.label-critical[href]:focus, .label-critical[href]:hover, .btn-critical:hover {
+    background-color: darken(@label_critical_bg, 5%);
+}
+
+.table > thead > tr, .table > tbody > tr, .table > tfoot > tr {
+    > td.critical, > th.critical, &.critical > td, &.critical > th {
+        background-color: @table_critical_bg;
+    }
+}
+
+.table-hover > tbody > tr {
+    > td.critical:hover, > th.critical:hover, &.critical:hover > td, &:hover > .critical, &.critical:hover > th {
+        background-color: darken(@table_critical_bg, 5%);
+    }
+}
+
+@label_panic_bg: #800000;
+@table_panic_bg: #f2a0a0;
+
+.label-panic, .btn-panic {
+    background-color: @label_panic_bg;
+}
+
+.label-panic[href]:focus, .label-panic[href]:hover, .btn-panic:hover {
+    background-color: darken(@label_panic_bg, 5%);
+}
+
+.table > thead > tr, .table > tbody > tr, .table > tfoot > tr {
+    > td.panic, > th.panic, &.panic > td, &.panic > th {
+        background-color: @table_panic_bg;
+    }
+}
+
+.table-hover > tbody > tr {
+    > td.panic:hover, > th.panic:hover, &.panic:hover > td, &:hover > .panic, &.panic:hover > th {
+        background-color: darken(@table_panic_bg, 5%);
+    }
+}
+
+.table > thead > tr, .table > tbody > tr, .table > tfoot > tr {
+    > td.active, > th.active, &.active > td, &.active > th,
+    > td.info, > th.info, &.info > td, &.info > th,
+    > td.success, > th.success, &.success > td, &.success > th,
+    > td.warning, > th.warning, &.warning > td, &.warning > th,
+    > td.danger, > th.danger, &.danger > td, &.danger > th,
+    > td.critical, > th.critical, &.critical > td, &.critical > th,
+    > td.panic, > th.panic, &.panic > td, &.panic > th {
+        color: #444;
+    }
+}
+
+.btn-default2, .btn-critical, .btn-panic {
+    color: white;
+}
+
+
+.commonlisting .nocheck input {
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+
+#main_menu_ng_block .form-group-date {
+  padding: 0;
+}
+
+#main_menu_ng_block .form-group-date + .form-group-date {
+  padding-left: 10px;
+}
+
+.panel .instance {
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px 1px 1px 5px;
+    border-color: #eee;
+    border-left-color: #1b809e;
+    margin: 20px 0 5px 0;
+    padding: 5px 20px;
+}
+
+.panel .instance:first-child {
+    margin: 5px 0;
+}
+
+/*
+ * Customize Select2 dropdown appearance
+ */
+.select2-results {
+    font-size: 13px;
+    color: #333;
+
+    .select2-results__option {
+        overflow-x: hidden;
+
+        .select2-results__option {
+            padding: 3px 20px;
+            overflow-wrap: break-word;
+        }
+    }
+}
+
+#main_menu_ng .main_menu_navbar {
+    .select2-container {
+        width: 100%;
+    }
+
+    .select2-selection__rendered {
+        color: #333;
+    }
+
+    .select2-selection__arrow b {
+        border-color: #333 transparent transparent;
+    }
+
+    .select2-container--open .select2-selection__arrow b {
+        border-color: transparent transparent #333;
+    }
+}
