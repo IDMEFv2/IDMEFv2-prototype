@@ -268,7 +268,7 @@ function _url_update(xhr, settings)
 
         if ( tab.length > 0 ) {
                 $("#topmenu ul.topmenu_section").hide();
-                $(tab).parent().parent().show();
+                $(tab).closest("ul.topmenu_section").show();
                 $("#topmenu .active").toggleClass("active", false);
                 $(tab).parent().toggleClass("active", true);
                 _update_browser_title($("#topmenu .active").closest("ul").data("section-title"));

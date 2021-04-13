@@ -115,12 +115,19 @@ $(function() {
         $(document).on("click", ":input[type=submit]", function(e) {
                 $(this.form).data("clicked", $(e.target));
         });
+
+        $(document).on("click", "a.topmenu_scroll", function() {
+            var ul = $(this).siblings(".topmenu_content").find("ul:visible");
+            var delta = tab_scroll_delta($(this).hasClass("scroll-left") ? "left" : "right");
+            ul.animate({ scrollLeft: ul.scrollLeft() + delta }, tab_scroll_update);
+        });
 });
 </script>
 
 <div id="topmenu">
   <div class="topmenu_nav">
     <div class="topmenu_nav_container"></div>
+    <a class="topmenu_scroll scroll-left"><i class="fa fa-caret-left"></i></a>
     <div class="topmenu_content">
 
     <%
@@ -142,6 +149,7 @@ $(function() {
         </ul>
     % endfor
     </div>
+    <a class="topmenu_scroll scroll-right"><i class="fa fa-caret-right"></i></a>
   </div>
 
   <div id="topmenu_right">

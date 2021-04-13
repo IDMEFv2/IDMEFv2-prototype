@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2015-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -179,6 +179,11 @@ class WSGIRequest(request.Request):
             self._headers[key[5:].replace("_", "-").lower()] = value
 
         return self._headers
+
+    def add_cookie(self, param, value, expires=None, path="/", httponly=False):
+        request.Request.add_cookie(self, param, value, expires, path, httponly)
+        if self._environ.get("wsgi.url_scheme") == 'https':
+            self._output_cookie[param]["Secure"] = True
 
 
 def application(environ, start_response):

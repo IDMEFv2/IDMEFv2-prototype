@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2016-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -148,13 +148,13 @@ class ConfigSection(collections.Mapping):
         if value is None:
             return default
 
-        match = re.match(r'(\d+(?:\.\d+)?)([kMGT]?)B', value)
+        match = re.match(r'(\d+(?:\.\d+)?)([kKMGT]?)B', value)
         if not match:
             raise ConfigValueError(value, name)
 
-        prefixes = ["", "k", "M", "G", "T"]
+        prefixes = ["", "K", "M", "G", "T"]
 
-        return int(float(match.group(1)) * 1024 ** prefixes.index(match.group(2)))
+        return int(float(match.group(1)) * 1024 ** prefixes.index(match.group(2).upper()))
 
     def keys(self):
         return self._od.keys()

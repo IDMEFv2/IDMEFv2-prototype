@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2018-2021 CS GROUP - France. All Rights Reserved.
 #
 # This file is part of the Prewikka program.
 #
@@ -31,6 +31,8 @@ Tests for `prewikka.dataprovider.plugins.idmef`.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import calendar
+
 from datetime import datetime
 
 from prelude import IDMEFTime
@@ -46,4 +48,6 @@ def test_idmef_result_object():
 
     assert res.preprocess_value(12) == 12
     assert res.preprocess_value('12') == '12'
-    assert res.preprocess_value(IDMEFTime(12)).replace(tzinfo=None) == datetime(1970, 1, 1, 1, 0, 12)
+
+    dt = res.preprocess_value(IDMEFTime(12))
+    assert isinstance(dt, datetime) and calendar.timegm(dt.utctimetuple()) == 12

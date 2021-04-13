@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2016-2021 CS GROUP - France. All Rights Reserved.
 # Author: Antoine Luong <antoine.luong@c-s.fr>
 #
 # Inspired by the tw2.core package of ToscaWidgets2 which is Copyright (c)
@@ -133,15 +133,15 @@ class HTMLNode(json.JSONObject):
         return HTMLSource("<%s%s>%s</%s>" % (self.tag, attr_s, childs, self.tag))
 
     def join(self, l):
-        ret = HTMLNode("")
+        children = []
 
         for i, elem in enumerate(l):
             if i > 0:
-                ret += self
+                children.append(self)
 
-            ret += elem
+            children.append(elem)
 
-        return ret
+        return HTMLNode(None, *children)
 
     def format(self, *args, **kwargs):
         return self.to_string().format(*args, **kwargs)
@@ -159,7 +159,15 @@ class HTMLNode(json.JSONObject):
         return self.to_string() % other
 
     def __add__(self, other):
-        return HTMLNode(None, self, other)
+        children = []
+
+        for obj in (self, other):
+            if obj.tag:
+                children.append(obj)
+            else:
+                children += obj.childs
+
+        return HTMLNode(None, *children)
 
     def __eq__(self, other):
         return (self._sortkey, self.childs) == (other._sortkey, other.childs)

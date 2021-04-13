@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2018-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -30,7 +30,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 
 GRAMMAR = r"""
-    ?input: WS* criteria WS*
+    ?input: WS* input2
+    ?input2: criteria WS*
     ?criteria: operator_
         | criteria WS+ operator_ -> or_
         | criteria BOOL_OR operator_ -> or_

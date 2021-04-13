@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2016-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -30,6 +30,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import collections
 import functools
+import time
 
 _CacheInfo = collections.namedtuple("CacheInfo", ["hits", "misses", "size"])
 
@@ -37,20 +38,23 @@ _CacheInfo = collections.namedtuple("CacheInfo", ["hits", "misses", "size"])
 class _Cache(object):
     _missing = object()
 
-    def __init__(self, func):
+    def __init__(self, func, duration=None):
         self._cache = {}
         self._cached_func = func
         self._hits = self._misses = 0
+        self._duration = duration
+        self._times = {}
 
     def _set(self, key, value):
         self._cache[key] = value
+        self._times[key] = time.time()
         return value
 
     def _get(self, *args, **kwargs):
         key = (args, tuple(kwargs.items()))
         try:
             value = self._cache.get(key, self._missing)
-            if value is not self._missing:
+            if value is not self._missing and (not self._duration or self._times[key] + self._duration > time.time()):
                 self._hits = self._hits + 1
                 return value
 
@@ -71,9 +75,10 @@ class _Cache(object):
 
 
 class _memoize(object):
-    def __init__(self, func, name):
+    def __init__(self, func, name, duration=None):
         self.func = func
         self.cache_objname = name
+        self.duration = duration
 
     def __call__(self, obj, *args, **kwargs):
         return self._setup_cache(obj)._get(obj, *args, **kwargs)
@@ -81,7 +86,7 @@ class _memoize(object):
     def _setup_cache(self, obj):
         cache = getattr(obj, self.cache_objname, None)
         if not cache:
-            cache = _Cache(self.func)
+            cache = _Cache(self.func, duration=self.duration)
             setattr(obj, self.cache_objname, cache)
 
         return cache
@@ -91,9 +96,9 @@ class _memoize(object):
 
 
 class _memoize_property(_memoize):
-    def __init__(self, func, name):
+    def __init__(self, func, name, duration=None):
         self._set_func = None
-        _memoize.__init__(self, func, name)
+        _memoize.__init__(self, func, name, duration)
 
     def setter(self, func):
         self._set_func = func
@@ -141,11 +146,12 @@ class memoize(object):
           self.expensive_cache.clear()
     """
 
-    def __init__(self, name):
+    def __init__(self, name, duration=None):
         self.name = name
+        self.duration = duration
 
     def __call__(self, func):
-        return _memoize(func, self.name)
+        return _memoize(func, self.name, duration=self.duration)
 
 
 class memoize_property(object):
@@ -166,11 +172,12 @@ class memoize_property(object):
         - Clearing the cache:
           self.my_property_cache.clear()
     """
-    def __init__(self, name):
+    def __init__(self, name, duration=None):
         self.name = name
+        self.duration = duration
 
     def __call__(self, func):
-        return _memoize_property(func, self.name)
+        return _memoize_property(func, self.name, duration=self.duration)
 
 
 class request_memoize(object):

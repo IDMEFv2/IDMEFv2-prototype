@@ -98,6 +98,7 @@ CREATE TABLE Prewikka_Crontab (
     ext_id INTEGER NULL,
     base DATETIME NOT NULL,
     enabled TINYINT DEFAULT 1,
+    status ENUM("running", "cancelled") NULL,
     runcnt  INTEGER DEFAULT 0,
     error TEXT NULL,
     FOREIGN KEY (userid) REFERENCES Prewikka_User(userid) ON DELETE CASCADE

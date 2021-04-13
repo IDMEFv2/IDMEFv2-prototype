@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2017-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -55,6 +55,11 @@ class CrontabView(view.View):
         crontab.update(env.request.parameters.getlist("id", type=int), enabled=True)
         return response.PrewikkaResponse({"type": "reload", "target": "view"})
 
+    @view.route("/settings/scheduler/stop", methods=["POST"])
+    def stop(self):
+        crontab.update(env.request.parameters.getlist("id", type=int), status="cancelled")
+        return response.PrewikkaResponse({"type": "reload", "target": "view"})
+
     @view.route("/settings/scheduler/<int:id>/save", methods=["POST"])
     def save(self, id=None):
         crontab.update_from_parameters(id)
@@ -91,6 +96,10 @@ class CrontabView(view.View):
         for i in sorted(crontab.list(), key=sort_key, reverse=(sort_order == "desc")):
             if not i.enabled:
                 next = _("Disabled")
+            elif i.status == "running":
+                next = _("Running")
+            elif i.status == "cancelled":
+                next = _("Cancelling")
             else:
                 next = i.next_schedule - now
                 if next.total_seconds() < 0:

@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2015-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -52,6 +52,8 @@ class Widget(dict):
         if not raw:
             limit = self["query"][0].get("limit", env.request.parameters["limit"])
             self["title"] = _(self["title"]).replace("{limit}", text_type(limit) if limit > 0 else "")  # we don't use .format() to avoid potential errors
+            if "description" in self:
+                self["description"] = _(self["description"])
 
     def _normalize_query(self):
         # Compatibility with the old API
@@ -119,6 +121,7 @@ class GenericStats(view.View):
         chart.options.setdefault("renderer", chart.options.get("renderer", env.request.parameters.get("%s_renderer" % chart.chart_type, None)))
         return {
             "title": title,
+            "description": _(chart.options["description"]) if chart.options.get("description") else None,
             "rendering": chart.render(),
             "data": chart.data
         }
@@ -173,6 +176,8 @@ class StaticStats(GenericStats):
         charts = []
         for chart in self.chart_infos:
             widget = self._set_default_attributes(chart)
+            if "description" in widget:
+                widget["description"] = _(widget["description"])
             charts.append(widget)
 
         dataset["options"] = {

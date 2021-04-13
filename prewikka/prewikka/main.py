@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2004-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -298,7 +298,7 @@ class Core(object):
 
         resolve.process(env.dns_max_delay)
         ret = view_object.respond()
-        if env.request.user:
+        if env.request.user and env.request.web.method in view.HTTP_SAVE_METHODS:
             env.request.user.sync_properties()
 
         return ret

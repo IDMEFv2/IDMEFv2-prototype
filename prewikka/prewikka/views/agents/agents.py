@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2004-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -36,7 +36,6 @@ from prewikka.utils.viewhelpers import GridParameters
 
 
 class Agents(view.View):
-    view_datatype = "heartbeat"
     plugin_htdocs = (("agents", pkg_resources.resource_filename(__name__, 'htdocs')),)
 
     @hookmanager.register("HOOK_RISKOVERVIEW_DATA", _order=0)
@@ -99,8 +98,16 @@ class Agents(view.View):
         for create_time, analyzerid in results:
             c |= Criterion("heartbeat.create_time", "==", create_time) & Criterion("heartbeat.analyzer(-1).analyzerid", "==", analyzerid)
 
+        ids = set()
         for heartbeat in env.dataprovider.get(c):
             heartbeat = heartbeat["heartbeat"]
+            analyzerid = heartbeat["analyzer(-1).analyzerid"]
+
+            if analyzerid in ids:
+                continue
+
+            ids.add(analyzerid)
+
             status, status_text = utils.get_analyzer_status_from_latest_heartbeat(
                 heartbeat, self._heartbeat_error_margin
             )
@@ -110,7 +117,6 @@ class Agents(view.View):
 
             delta = heartbeat.get("create_time") - utils.timeutil.now()
 
-            analyzerid = heartbeat["analyzer(-1).analyzerid"]
             heartbeat_listing = url_for("HeartbeatDataSearch.forensic", criteria=Criterion("heartbeat.analyzer(-1).analyzerid", "==", analyzerid), _default=None)
             alert_listing = url_for("AlertDataSearch.forensic", criteria=Criterion("alert.analyzer.analyzerid", "==", analyzerid), _default=None)
             heartbeat_analyze = url_for(".analyze", analyzerid=analyzerid)
@@ -139,7 +145,8 @@ class Agents(view.View):
                 ]
             }
 
-    @view.route("/agents/agents", methods=["GET", "POST"], permissions=[N_("IDMEF_VIEW")], help="#agents", menu=(N_("Monitoring"), N_("Agents")), parameters=GridParameters("agents"))
+    @view.route("/agents/agents", methods=["GET", "POST"], permissions=[N_("IDMEF_VIEW")], help="#agents",
+                menu=(N_("Monitoring"), N_("Agents")), parameters=GridParameters("agents"), datatype="heartbeat")
     def agents(self):
 
         analyzer_data = list(self._get_analyzers(env.request.parameters.getlist("status")))

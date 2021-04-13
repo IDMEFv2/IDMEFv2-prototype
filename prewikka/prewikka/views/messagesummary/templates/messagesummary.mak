@@ -1,11 +1,4 @@
-<%!
-import json
-
-from datetime import datetime
-from prewikka.localization import format_datetime
-
-entry_value_classes = ("section_alert_entry_value_normal", "section_alert_entry_value_emphasis")
-%>
+<%! import json %>
 
 <%def name="display_table(section, depth)">
     % for table in section["tables"]:
@@ -43,25 +36,6 @@ entry_value_classes = ("section_alert_entry_value_normal", "section_alert_entry_
             </div>
             <div class="panel-body" style="display: ${section["display"]}; width: 100%;">
             ${ display_table(section, 0) }
-
-            % if section["entries"]:
-                <table class="section_alert_entries">
-                % for entry in section["entries"]:
-                    <tr class="section_alert_entry">
-                    % if entry["name"]:
-                        <th style="text-align: left; width:150px;">${entry["name"]}</th>
-                    % endif
-
-                    <%
-                        if isinstance(entry.value, datetime):
-                            entry.value = format_datetime(entry.value)
-                    %>
-
-                        <td class="${entry_value_classes[entry["emphase"]]}">${entry["value"]}</td>
-                    </tr>
-                % endfor
-                </table>
-            % endif
 
         % if section["sections"]:
             ${ display_node(section["sections"]) }

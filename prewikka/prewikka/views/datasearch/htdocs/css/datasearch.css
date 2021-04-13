@@ -12,6 +12,10 @@
     font-size: 13px;
 }
 
+#datasearch #timeline .ajax-spinner {
+    position: absolute;
+}
+
 #datasearch #timeline_results {
     display: inline-block;
     height: 200px;

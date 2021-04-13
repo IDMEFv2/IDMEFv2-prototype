@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2005-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2005-2021 CS GROUP - France. All Rights Reserved.
 # Author: Nicolas Delon <nicolas.delon@prelude-ids.com>
 #
 # This file is part of the Prewikka program.
@@ -48,7 +48,7 @@ LIBPRELUDE_REQUIRED_VERSION = "5.2.0"
 LIBPRELUDEDB_REQUIRED_VERSION = "5.2.0"
 
 
-def init_siteconfig(conf_prefix, data_prefix):
+def init_siteconfig(conf_prefix, data_prefix, path=""):
     """
     Initialize configuration file (prewikka/siteconfig.py).
 
@@ -63,7 +63,7 @@ def init_siteconfig(conf_prefix, data_prefix):
         ('libpreludedb_required_version', LIBPRELUDEDB_REQUIRED_VERSION),
     )
 
-    with open('prewikka/siteconfig.py', 'w') as config_file:
+    with open(os.path.join(path, 'prewikka', 'siteconfig.py'), 'w') as config_file:
         for option, value in configuration:
             config_file.write("%s = '%s'\n" % (option, value))
 
@@ -121,8 +121,9 @@ class my_install(install):
         self.install_conf()
         self.install_wsgi()
         self.create_datadir()
-        init_siteconfig(self.conf_prefix, self.data_prefix)
+
         install.run(self)
+        init_siteconfig(self.conf_prefix, self.data_prefix, path=self.install_lib)
 
         os.chmod((self.root or "") + self.conf_prefix, 0o755)
 
@@ -226,7 +227,7 @@ class PrewikkaCoverage(Command):
 
 setup(
     name="prewikka",
-    version="5.2.1",
+    version="5.2.0",
     maintainer="Prelude Team",
     maintainer_email="support.prelude@csgroup.eu",
     url="https://www.prelude-siem.com",
@@ -303,7 +304,6 @@ setup(
             "htdocs/js/locales/*/*.js",
             "htdocs/js/*.map",
             "htdocs/js/locales/*.map",
-            "locale/*.pot",
             "locale/*/LC_MESSAGES/*.mo",
             "sql/*.py",
             "templates/*.mak"

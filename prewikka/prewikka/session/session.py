@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2004-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -51,7 +51,10 @@ class SessionInvalid(_SessionError):
 
 class SessionExpired(_SessionError):
     name = N_("Session expired")
-    message = N_("Your session has expired: please sign in again to continue using Prelude")
+
+    def __init__(self, login=None, **kwargs):
+        _SessionError.__init__(self, login=login, **kwargs)
+        self.message = N_("Your session has expired: please sign in again to continue using %s", env.config.interface.get("browser_title", "Prelude"))
 
 
 class SessionUserInfo(object):

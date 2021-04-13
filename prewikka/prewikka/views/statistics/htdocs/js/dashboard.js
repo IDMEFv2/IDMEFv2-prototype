@@ -347,7 +347,7 @@ var Dashboard = function(options) {
                         success: function(data) {
                             $('.pbody-' + winfos.id).html("<div class=\"scrollable\">" + data.content + "</div>");
                             $('.pbody-' + winfos.id + ' .prewikka-view-config').remove();
-                            $('.title-' + winfos.id).text(winfos.title);
+                            $('.title-' + winfos.id).text(winfos.title).attr("data-original-title", json.description);
                         },
                         error: _on_error($('.pbody-' + winfos.id))
                     });
@@ -355,7 +355,7 @@ var Dashboard = function(options) {
                     var div = $('<div/>', { class: 'widget-img' });
                     $('<img/>', { src: winfos.url }).appendTo(div);
                     $('.pbody-' + winfos.id).html(div);
-                    $('.title-' + winfos.id).text(winfos.title);
+                    $('.title-' + winfos.id).text(winfos.title).attr("data-original-title", json.description);
                 } else {
                     $('.pbody-' + winfos.id).html(json.html);
                     var pscript = $("<script>", {
@@ -363,7 +363,7 @@ var Dashboard = function(options) {
                         'text': json.script
                     });
                     $('.pscript-' + winfos.id).html(pscript);
-                    $('.title-' + winfos.id).text(json.title);
+                    $('.title-' + winfos.id).text(json.title).attr("data-original-title", json.description);
 
                     widget.find('.period-display').toggle("period_display" in json);
                     if ( "period_display" in json ) {
@@ -392,7 +392,7 @@ var Dashboard = function(options) {
         var widget = $($.parseHTML(widget_html)[0]);
 
         widget.attr('id', options.id);
-        widget.find('.panel-title').addClass('title-' + options.id).text(options.title);
+        widget.find('.panel-title').addClass('title-' + options.id).text(options.title).attr("title", options.description);
         widget.find('.edit, .delete').attr('data-id', options.id);
         widget.find('.panel-body').addClass('pbody-' + options.id);
         widget.find('.panel-script').addClass('pscript-' + options.id);

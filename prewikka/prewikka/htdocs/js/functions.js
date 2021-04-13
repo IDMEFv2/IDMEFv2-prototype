@@ -270,38 +270,92 @@ function abbreviate_number(number, precision, unit) {
 function prewikka_resizeTopMenu() {
     var mainmenu = $('#main_menu_ng .main_menu_navbar');
 
-    if ( mainmenu.length == 0 ) return;
-
     var topmenu = $("#topmenu .topmenu_nav");
     var topright = $("#topmenu_right");
     var main = $("#main");
     var window_width = $(window).width();
 
-    mainmenu.removeClass('collapsed'); // set standard view
-    main.css("margin-top", "");
-    mainmenu.css("margin-top", "");
-    topmenu.css("height", "").css("width", "");
+    if ( mainmenu.length == 0 ) {
+        topmenu.css("width", window_width - topright.innerWidth() - 10);
+    }
 
-    if ( window_width > 768 ) {
-        topmenu.css("width", window_width - mainmenu.innerWidth() - topright.innerWidth());
-
-        if ( Math.max(mainmenu.innerHeight(), topmenu.innerHeight()) > 60 ) { // check if the topmenu or mainmenu is split across two lines
-            mainmenu.addClass('collapsed');
-
+    else {
+        mainmenu.removeClass('collapsed'); // set standard view
+        main.css("margin-top", "");
+        mainmenu.css("margin-top", "");
+        if ( window.innerWidth > 768 ) { // use innerWidth to match the media queries
             topmenu.css("width", window_width - mainmenu.innerWidth() - topright.innerWidth());
 
-            var height = Math.max(mainmenu.innerHeight(), topmenu.innerHeight());
-
-            if ( height > 60 ) { // check if we've still got 2 lines or more
-                main.css("margin-top", height - 40);
-                topmenu.css("height", height);
+            if ( mainmenu.innerHeight() > 60 ) { // check if the mainmenu is split across two lines
+                mainmenu.addClass('collapsed');
+                topmenu.css("width", window_width - mainmenu.innerWidth() - topright.innerWidth());
             }
         }
+        else {
+            topmenu.css("width", "");
+            mainmenu.css("margin-top", topmenu.innerHeight());
+            main.css("margin-top", Math.max(topmenu.innerHeight(), $("#main_menu_ng").innerHeight()));
+        }
+    }
+
+    tab_scroll_init();
+}
+
+function tab_scroll_init() {
+    /* Initalize the scroll position in the tab bar
+     * so that the current tab will be visible */
+    var topmenu = $("#topmenu .topmenu_nav");
+    var section = topmenu.find("ul.topmenu_section:visible");
+    var tab = section.children("li.active");
+    var left = tab.offset().left - section.offset().left;
+    if ( left < 0 || left + tab.width() > $(".topmenu_content").width() ) {
+        section.scrollLeft(0);
+        while ( tab.offset().left - section.offset().left + tab.width() > $(".topmenu_content").width() ) {
+            left = tab.offset().left;
+            section.scrollLeft(section.scrollLeft() + tab_scroll_delta("right"))
+            if ( left == tab.offset().left )
+                break;
+        }
+    }
+    topmenu.find("a.topmenu_scroll").toggle(section[0].scrollWidth > section[0].clientWidth);
+    tab_scroll_update();
+}
+
+
+function tab_scroll_delta(direction) {
+    /* Compute the width to be scrolled in the tab bar
+     * so that the first non-fully visible tab will appear */
+    var delta = 0;
+    var topmenu = $("#topmenu .topmenu_nav");
+    var section = topmenu.find("ul.topmenu_section:visible");
+    if ( direction == "left" ) {
+        $(section.children().get().reverse()).each(function() {
+            var left = $(this).offset().left - section.offset().left;
+            if ( left < 0 ) {
+                delta = left;
+                return false;
+            }
+        });
     }
     else {
-        mainmenu.css("margin-top", topmenu.innerHeight());
-        main.css("margin-top", Math.max(topmenu.innerHeight(), $("#main_menu_ng").innerHeight()));
+        section.children().each(function() {
+            var left = $(this).offset().left - section.offset().left;
+            if ( left + $(this).width() > $(".topmenu_content").width() ) {
+                delta = left - $(".topmenu_content").width() + $(this).width();
+                return false;
+            }
+        });
     }
+    return delta >= 0 ? Math.ceil(delta) : Math.ceil(delta) - 1;
+}
+
+
+function tab_scroll_update() {
+    /* Enable or disable the scroll buttons in the tab bar */
+    var topmenu = $("#topmenu .topmenu_nav");
+    var section = topmenu.find("ul.topmenu_section:visible");
+    topmenu.find("a.scroll-left").toggleClass("disabled", section.scrollLeft() == 0);
+    topmenu.find("a.scroll-right").toggleClass("disabled", section.scrollLeft() == section[0].scrollWidth - section[0].clientWidth);
 }
 
 
@@ -463,7 +517,8 @@ function prewikka_grid(table, settings) {
         shrinkToFit: true,
         guiStyle: "bootstrap",
         iconSet: "fontAwesome",
-        prmNames: {sort: "sort_index", order: "sort_order", search: null, nd: null}
+        prmNames: {sort: "sort_index", order: "sort_order", search: null, nd: null},
+        ajaxGridOptions: {prewikka: {spinner: false}},
     }, settings);
 
     return $(table).jqGrid(conf);

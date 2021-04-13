@@ -148,6 +148,36 @@ p {
           height: 50px;
           width: 100%;
         }
+        .topmenu_content {
+          float: left;
+          width: e("calc(100% - 30px)");
+          .topmenu_section {
+            display: flex;
+            overflow: hidden;
+            .topmenu_item {
+              white-space: nowrap;
+              a {
+                max-width: 200px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+        }
+        .topmenu_scroll {
+          display: none;
+          float: left;
+          position: relative;
+          padding-top: 10px;
+          padding-left: 5px;
+          &.scroll-left {
+            padding-right: 5px;
+          }
+          &.disabled {
+            color: @inactive-text;
+            cursor: default;
+          }
+        }
         a {
           color: #686868;
         }

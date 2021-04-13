@@ -196,6 +196,9 @@ $LAB.script("datasearch/js/datasearch.js").wait(function() {
         <div id="timeline" class="panel-collapse collapse ${'in' if timeline else ''}">
           <div>
             <input type="hidden" name="timeline" value="${ timeline }"/>
+            <div class="ajax-spinner">
+              <i class="fa fa-circle-o-notch fa-3x fa-spin"></i>
+            </div>
             <div id="timeline_results" class="prewikka-resources-container"></div>
           </div>
         </div>

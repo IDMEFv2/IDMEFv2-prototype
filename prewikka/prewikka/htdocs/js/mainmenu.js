@@ -89,6 +89,9 @@ function MainMenuInit(inline, start, end, date_format, url) {
         }
     });
 
+    if ( inline )
+        root.on("select2:close", prewikka_resizeTopMenu);
+
     return that;
 }
 

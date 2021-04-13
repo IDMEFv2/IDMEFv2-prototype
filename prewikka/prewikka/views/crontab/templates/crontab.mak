@@ -56,6 +56,10 @@ from prewikka.utils import html
         grid.ajax({ url: "${ url_for('.disable') }" });
     });
 
+    $(".cronjob-stop").click(function(e) {
+        grid.ajax({ url: "${ url_for('.stop') }" });
+    });
+
     $("#cronjobs").on("click", ".cronjob-error", function(e) {
         $(".cronjob-error-dialog-" + $(".cronjob-error").index(this)).modal('show');
     });
@@ -66,6 +70,7 @@ from prewikka.utils import html
 <table id="cronjobs"></table>
 
 <div class="footer-buttons form-inline">
+    <button type="button" class="btn btn-danger needone cronjob-stop"><i class="fa fa-ban"></i> ${ _("Stop") }</button>
     <button type="button" class="btn btn-danger needone cronjob-disable"><i class="fa fa-times"></i> ${ _("Disable") }</button>
     <button type="button" class="btn btn-success needone cronjob-enable"><i class="fa fa-check"></i> ${ _("Enable") }</button>
 </div>

@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2017-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -65,7 +65,7 @@ class CronJob(object):
     def __eq__(self, other):
         return self.id == other.id
 
-    def __init__(self, id, name, schedule, func, base, runcnt, ext_type=None, ext_id=None, user=None, error=None, enabled=True):
+    def __init__(self, id, name, schedule, func, base, runcnt, ext_type=None, ext_id=None, user=None, error=None, enabled=True, status=None):
         self.id = id
         self.name = name
         self.user = user
@@ -74,9 +74,10 @@ class CronJob(object):
         self.ext_type = ext_type
         self.ext_id = ext_id
         self.enabled = enabled
+        self.status = status
         self.base = base
         self.runcnt = runcnt
-        self._running = False
+        self._greenlet = None
 
         self.set_schedule(schedule)
 
@@ -97,12 +98,14 @@ class CronJob(object):
     def update(self, job):
         # Update the current job data (following a modified schedule or a plugin reinitialization)
         self.callback = job.callback
+        self.status = job.status
         self.error = job.error
         if job.schedule != self.schedule:
             self.set_schedule(job.schedule)
 
     def _run(self):
-        self._running = True
+        self.status = "running"
+        env.db.query("UPDATE Prewikka_Crontab SET status=%s WHERE id=%d", self.status, self.id)
 
         # setup the environment
         env.request.init(None)
@@ -121,18 +124,31 @@ class CronJob(object):
             logger.exception("[%d/%s]: cronjob failed: %s", self.id, self.name, err)
             err = utils.json.dumps(error.PrewikkaError(err, N_("Scheduled job execution failed")))
 
+        self._finalize(err)
+
+    def _cancel(self):
+        if self._greenlet:
+            gevent.kill(self._greenlet)
+
+        self._finalize()
+
+    def _finalize(self, err=None):
         self.runcnt += 1
-        self._running = False
+        self.status = None
         self.base = timeutil.utcnow()
         self.next_schedule = self._cron.get_next(datetime.datetime)
-        env.db.query("UPDATE Prewikka_Crontab SET base=%s, runcnt=runcnt+1, error=%s WHERE id=%d", self.base, err, self.id)
+        env.db.query("UPDATE Prewikka_Crontab SET base=%s, status=%s, runcnt=runcnt+1, error=%s WHERE id=%d",
+                     self.base, self.status, err, self.id)
 
     def run(self, now):
-        if now < self.next_schedule or self._running:
+        if self.status == "cancelled":
+            self._cancel()
+            return
+        elif now < self.next_schedule or self.status == "running":
             return
 
         env.log.info("[%d/%s]: RUNNING JOB schedule=%s callback=%s" % (self.id, self.name, self.schedule, self.callback))
-        gevent.spawn(self._run)
+        self._greenlet = gevent.spawn(self._run)
 
 
 class Crontab(object):
@@ -148,7 +164,7 @@ class Crontab(object):
         hookmanager.register("HOOK_PLUGINS_RELOAD", self._reinit)
 
     def _make_job(self, res):
-        id, name, userid, schedule, ext_type, ext_id, base, runcnt, enabled, error_s = res
+        id, name, userid, schedule, ext_type, ext_id, base, runcnt, enabled, status, error_s = res
 
         func = self._plugin_callback.get(ext_type)
         if not func:
@@ -168,7 +184,8 @@ class Crontab(object):
         if userid:
             user = usergroup.User(userid=userid)
 
-        return CronJob(int(id), name, schedule, func, base, int(runcnt), ext_type=ext_type, ext_id=ext_id, user=user, error=err, enabled=bool(int(enabled)))
+        return CronJob(int(id), name, schedule, func, base, int(runcnt), ext_type=ext_type, ext_id=ext_id,
+                       user=user, error=err, enabled=bool(int(enabled)), status=status)
 
     @database.use_lock("Prewikka_Crontab")
     def _init_system_job(self, ext_type, name, schedule, enabled, method):
@@ -207,6 +224,8 @@ class Crontab(object):
         return (self._REFRESH - (now - first)).total_seconds()
 
     def run(self, core):
+        env.db.query("UPDATE Prewikka_Crontab SET status = NULL WHERE status = 'running'")
+
         while True:
             next = self._run_jobs()
             if next > 0:
@@ -216,11 +235,13 @@ class Crontab(object):
 
     def list(self, **kwargs):
         qs = env.db.kwargs2query(kwargs, prefix=" WHERE ")
-        for res in env.db.query("SELECT id, name, userid, schedule, ext_type, ext_id, base, runcnt, enabled, error FROM Prewikka_Crontab%s" % qs):
+        for res in env.db.query("SELECT id, name, userid, schedule, ext_type, ext_id, base, runcnt, enabled, status, error "
+                                "FROM Prewikka_Crontab%s" % qs):
             yield self._make_job(res)
 
     def get(self, id):
-        res = env.db.query("SELECT id, name, userid, schedule, ext_type, ext_id, base, runcnt, enabled, error FROM Prewikka_Crontab WHERE id=%d", id)
+        res = env.db.query("SELECT id, name, userid, schedule, ext_type, ext_id, base, runcnt, enabled, status, error "
+                           "FROM Prewikka_Crontab WHERE id=%d", id)
         if not res:
             raise error.PrewikkaError(N_('Invalid CronJob'), N_('CronJob with id=%d cannot be found in database', id))
 

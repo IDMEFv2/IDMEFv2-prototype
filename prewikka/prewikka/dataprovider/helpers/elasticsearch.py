@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2015-2021 CS GROUP - France. All Rights Reserved.
 # Author: Sélim Menouar <selim.menouar@c-s.fr>
 #
 # This file is part of the Prewikka program.
@@ -132,7 +132,8 @@ class ElasticsearchInstance(dataprovider.DataProviderInstance):
 class ElasticsearchClient(object):
     def __init__(self, name, conf):
         self._type = conf.es_type
-        self._host = conf.es_url.rstrip("/")
+        self._url = conf.es_url.rstrip("/")
+        self._host = self._url.rsplit("/", 1)[0]
         self._user = conf.get("es_user")
         self._password = conf.get("es_pass", "")
         self._cert = conf.get("es_cert")
@@ -142,7 +143,7 @@ class ElasticsearchClient(object):
         self._session.headers["content-type"] = "application/json"
 
         # Check if Elasticsearch instance is available
-        req = self._request(self._host.rsplit("/", 1)[0], method="GET").json()
+        req = self._request(self._host, method="GET").json()
         self._version = tuple(int(i) for i in req["version"]["number"].split("."))
         if self._version < (5,):
             raise error.PrewikkaUserError(N_("Invalid configuration"),
@@ -150,9 +151,9 @@ class ElasticsearchClient(object):
 
         self._mapping = ElasticsearchMap(self._type, conf, self.get_mapping())
 
-    def request(self, path, data="", method="POST", **kwargs):
+    def request(self, path, data="", method="POST", with_index=True, **kwargs):
         """ Make a request and return the result """
-        return self._request(self._host + path, data, method, **kwargs)
+        return self._request((self._url if with_index else self._host) + path, data, method, **kwargs)
 
     def _request(self, url, data="", method="POST", **kwargs):
         try:
@@ -220,7 +221,7 @@ class ElasticsearchClient(object):
         raise error.PrewikkaUserError(N_("Request error"), err)
 
     def query(self, path, criteria, limit=50, offset=0, highlight=None):
-        search = ElasticsearchQuery(self._type, self._mapping, path, criteria, limit, offset, highlight)
+        search = ElasticsearchQuery(self._type, self._version, self._mapping, path, criteria, limit, offset, highlight)
         results = self.request("/_search", search.get_json_query())
 
         return ElasticsearchResult(self._mapping, results.json(), search, limit)
@@ -273,8 +274,9 @@ class ElasticsearchQuery(object):
         CriterionOperator.NOT_REGEX_NOCASE: ("must_not", "regexp"),
     }
 
-    def __init__(self, type, mapping, path, criteria, limit=50, offset=0, highlight=None):
+    def __init__(self, type, version, mapping, path, criteria, limit=50, offset=0, highlight=None):
         self._type = type
+        self._version = version
         self._mapping = mapping
         self.path = path
         self.criteria = criteria
@@ -471,11 +473,12 @@ class ElasticsearchQuery(object):
                 raise error.PrewikkaUserError(N_("Elasticsearch database operator error"),
                                               N_("The operator '%s' that you try to use is not supported by Prelude for the field '%s'." % (criteria.operator, field)))
 
-            right = criteria.right.lower() if criteria.operator.case_insensitive else criteria.right
+            ci = criteria.operator.case_insensitive
+            right = criteria.right.lower() if ci and self._version < (7, 10) else criteria.right
             if right is None:
                 op = ("must" if criteria.operator.negated else "must_not", "exists")
 
-            query["bool"][op[0]].append(getattr(self, "_%s_filter" % op[1])(field, right))
+            query["bool"][op[0]].append(getattr(self, "_%s_filter" % op[1])(field, right, ci=ci))
 
             return query
 
@@ -535,7 +538,7 @@ class ElasticsearchQuery(object):
         else:
             return [query, index]
 
-    def _range_filter(self, field, operator, value):
+    def _range_filter(self, field, operator, value, ci=False):
         return {
             "range": {
                 self._mapping.to_es(field): {
@@ -544,29 +547,37 @@ class ElasticsearchQuery(object):
             }
         }
 
-    def _match_filter(self, field, value):
+    def _match_filter(self, field, value, ci=False):
         return {
             "match": {self._mapping.to_es(field): value}
         }
 
-    def _exists_filter(self, field, value=None):
+    def _exists_filter(self, field, value=None, ci=False):
         return {
             "exists": {"field": self._mapping.to_es(field)}
         }
 
-    def _term_filter(self, field, value):
+    def _term_filter(self, field, value, ci=False):
         return {
             "term": {self._mapping.to_es_keyword(field): value}
         }
 
-    def _contains_filter(self, field, value):
+    def _contains_filter(self, field, value, ci=False):
+        crit = {"value": "*%s*" % value}
+        if ci and self._version >= (7, 10):
+            crit["case_insensitive"] = True
+
         return {
-            "wildcard": {self._mapping.to_es_keyword(field): "*%s*" % value}
+            "wildcard": {self._mapping.to_es_keyword(field): crit}
         }
 
-    def _regexp_filter(self, field, value):
+    def _regexp_filter(self, field, value, ci=False):
+        crit = {"value": value}
+        if ci and self._version >= (7, 10):
+            crit["case_insensitive"] = True
+
         return {
-            "regexp": {self._mapping.to_es_keyword(field): value}
+            "regexp": {self._mapping.to_es_keyword(field): crit}
         }
 
     def _aggs_terms(self, field, order):
@@ -860,20 +871,6 @@ class ElasticsearchMap(object):
         text_type: ("keyword", "text"),
     }
     _REVERSED_TYPES = {value: key for key, values in _TYPES.items() for value in values}
-    _DEFAULT_CONF = {
-        "log": OrderedDict([
-            ("timestamp", "timestamp"),
-            ("message", "message"),
-            ("raw_message", "raw_message")
-        ]),
-        "netflow": OrderedDict([
-            ("timestamp", "@timestamp")
-        ]),
-        "iodef": OrderedDict([
-            ("timestamp", "@timestamp"),
-            ("message", "_source")
-        ])
-    }
 
     def __init__(self, name, conf, fields):
         self.name = name
@@ -886,10 +883,10 @@ class ElasticsearchMap(object):
                 raise error.PrewikkaUserError(N_("Invalid configuration"), err)
 
         self._mapping, self._group_mapping = self._get_mapping(conf)
-        self._reverse_mapping = dict((v, k) for k, v in self._mapping.items())
+        paths = env.dataprovider.get_paths(name)
 
         for field, es_field in self._mapping.items():
-            if field in self._DEFAULT_CONF[name] or field == "default_field":
+            if field in paths or field == "default_field":
                 continue
 
             es_type = fields[es_field].type if es_field in fields else None
@@ -906,7 +903,7 @@ class ElasticsearchMap(object):
         return dt.strftime(self.time_format)
 
     def _get_mapping(self, conf):
-        mapping = self._DEFAULT_CONF[self.name].copy()
+        mapping = {}
         group_mapping = {}
         key_regex = re.compile(r'\w[\w\-]*')
         for key, value in conf.items():
@@ -916,7 +913,7 @@ class ElasticsearchMap(object):
 
             key = key.lower()
 
-            if key in ["es_url", "es_user", "es_pass", "es_type", "es_timeformat"]:
+            if key.startswith('es_'):
                 continue
 
             value = value.split(", ", 1)
@@ -935,9 +932,6 @@ class ElasticsearchMap(object):
 
     def to_es_keyword(self, field):
         return self._group_mapping.get(field, self.to_es(field))
-
-    def to_archive(self, field):
-        return self._reverse_mapping.get(field, field)
 
     def to_operator(self, field):
         return self._OPERATOR.get(field, field)

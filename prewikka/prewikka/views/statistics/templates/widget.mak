@@ -1,7 +1,7 @@
 <div class="prewikka-resources-container">
-  <div class="panel panel-default grid-stack-item-content">
+  <div class="panel panel-theme grid-stack-item-content">
     <div class="panel-heading clearfix">
-      <h3 class="panel-title pull-left"></h3>
+      <h3 class="panel-title pull-left" data-toggle="tooltip" data-trigger="hover" data-container="#main"></h3>
       <div class="btn-group pull-right">
         <a class="btn btn-static btn-xs filter" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-container="#main">
           <span class="fa fa-filter"></span>

@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2004-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
 # This file is part of the Prewikka program.
@@ -74,7 +74,6 @@ class Table(object):
     def beginSection(self, title, display="block"):
         _current_section = {}
         _current_section["title"] = title
-        _current_section["entries"] = []
         _current_section["tables"] = []
         _current_section["display"] = display
         _current_section["sections"] = []
@@ -86,8 +85,7 @@ class Table(object):
         parent = self._current_section["parent"]
 
         if len(self._current_section["tables"]) == 0 and   \
-           len(self._current_section["sections"]) == 0 and \
-           len(self._current_section["entries"]) == 0:
+           len(self._current_section["sections"]) == 0:
             self._current_section = parent
             return
 
@@ -98,18 +96,9 @@ class Table(object):
             parent["sections"].append(self._current_section)
             self._current_section = parent
 
-    def newSectionEntry(self, name, value, emphase=False):
-        if value is None or value == "":
-            return
-
-        self._current_section["entries"].append({"name": name,
-                                                 "value": value,
-                                                 "emphase": emphase})
-
-    def beginTable(self, cl="table-striped table-bordered", style="", odd_even=False):
+    def beginTable(self, cl="table-striped table-bordered", style=""):
         table = {}
         table["rows"] = []
-        table["odd_even"] = odd_even
         table["class"] = "table " + cl
         table["style"] = style
         table["parent"] = self._current_table or self._current_section
@@ -130,7 +119,7 @@ class Table(object):
             self._current_table = None
         else:
             if "rows" in parent:
-                col = {"name": None, "header": None, "colspan": 1, "emphase": None, "tables": [self._current_table]}
+                col = {"name": None, "header": None, "colspan": 1, "tables": [self._current_table]}
                 if len(parent["rows"]):
                     parent["rows"][-1].append(col)
                 else:
@@ -146,8 +135,8 @@ class Table(object):
 
         return len(self._current_table["rows"])
 
-    def newTableCol(self, row_index, name, cl="", header=False, emphase=None, colspan=1):
-        col = {"name": name, "header": header, "class": cl, "colspan": colspan, "tables": [], "emphase": None}
+    def newTableCol(self, row_index, name, cl="", header=False, colspan=1):
+        col = {"name": name, "header": header, "class": cl, "colspan": colspan, "tables": []}
 
         if row_index == -1:
             self._current_table["rows"].append(TableRow(col))
@@ -158,12 +147,12 @@ class Table(object):
         else:
             self._current_table["rows"][row_index].append(col)
 
-    def newTableEntry(self, name, value, cl="", emphase=False):
+    def newTableEntry(self, name, value, cl=""):
         if value is None:
             return
 
         self.newTableCol(0, name, cl=cl, header=True)
-        self.newTableCol(1, value, cl=cl, header=False, emphase=emphase)
+        self.newTableCol(1, value, cl=cl)
 
 
 class HeaderTable(Table):
@@ -395,7 +384,7 @@ class MessageSummary(Table, view.View):
         self.newTableEntry(_("Create time"), self.getTime(msg["create_time"]))
 
         try:
-            self.newTableEntry(_("Detect time"), self.getTime(msg["detect_time"]), cl="section_alert_entry_value_emphasis")
+            self.newTableEntry(_("Detect time"), self.getTime(msg["detect_time"]))
         except:
             pass
 
@@ -444,8 +433,8 @@ class MessageSummary(Table, view.View):
         self.beginTable(cl="table-borderless")
 
         self.beginTable()
-        self.newTableEntry(_("Model"), analyzer["model"], cl="section_alert_entry_value_emphasis")
-        self.newTableEntry(_("Name"), analyzer["name"], cl="section_alert_entry_value_emphasis")
+        self.newTableEntry(_("Model"), analyzer["model"])
+        self.newTableEntry(_("Name"), analyzer["name"])
         self.newTableEntry(_("Analyzerid"), analyzer["analyzerid"])
         self.newTableEntry(_("Version"), analyzer["version"])
         self.newTableEntry(_("Class"), analyzer["class"])
@@ -736,8 +725,7 @@ class AlertSummary(TcpIpOptions, MessageSummary):
         if not alert["classification.text"]:
             return
 
-        self.newTableEntry(_("Text"), alert["classification.text"],
-                           cl="section_alert_entry_value_emphasis impact_severity_%s" % alert["assessment.impact.severity"])
+        self.newTableEntry(_("Text"), alert["classification.text"])
         self.newTableEntry(_("Ident"), alert["classification.ident"])
 
     def buildReference(self, alert):

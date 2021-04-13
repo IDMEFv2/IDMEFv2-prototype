@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2018-2021 CS GROUP - France. All Rights Reserved.
 #
 # This file is part of the Prewikka program.
 #
@@ -42,14 +42,35 @@ from prewikka.log import Log
 from tests.utils.vars import TEST_DOWNLOAD_DIR
 
 
-def test_log():
+_LOG_FILE = os.path.join(TEST_DOWNLOAD_DIR, 'prewikka.logs')
+
+
+@pytest.fixture(scope='function')
+def log_fixtures(request):
+    """
+    Fixtures for tests of `prewikka.log`.
+    """
+    typ, options = request.param
+    conf = ConfigSection(typ)
+    for k, v in options.items():
+        conf[k] = v
+
+    log = Log([conf])
+
+    def tear_down():
+        log._logger.handlers = []
+
+    request.addfinalizer(tear_down)
+
+    return log
+
+
+@pytest.mark.parametrize("log_fixtures", [("syslog", {"level": "debug"})], indirect=True)
+def test_log(log_fixtures):
     """
     Test `prewikka.log.Log` class.
     """
-    conf = ConfigSection("syslog")
-    conf.level = "debug"
-
-    log = Log([conf])
+    log = log_fixtures
     log.log(10, 'foo bar')
     log.log(20, 'foo bar')
     log.log(30, 'foo bar')
@@ -62,27 +83,13 @@ def test_log():
     # with exception
     log.log(10, TypeError())
 
-    # levels
-    if env.config.log:
-        for level in ('debug', 'all', 'warning', 'error', 'critical', 'invalid'):
-            c = ConfigSection("syslog")
-            c.level = level
-            log = Log([c])
-            log.log(10, 'foo bar')
-            log.log(20, 'foo bar')
-            log.log(30, 'foo bar')
-            log.log(40, 'foo bar')
-            log.log(50, 'foo bar')
-
     # request.web
     backup_web = copy.copy(env.request.web)
     env.request.web.is_xhr = True
-    log = Log([conf])
     log.log(10, 'foo bar')
     env.request.web.is_xhr = False
 
     env.request.web.is_stream = True
-    log = Log([conf])
     log.log(10, 'foo bar')
     env.request.web.is_stream = False
 
@@ -92,43 +99,38 @@ def test_log():
     env.request.web = backup_web
 
 
-def test_log_syslog():
+@pytest.mark.parametrize("log_fixtures", [("syslog", {"level": "debug"})], indirect=True)
+def test_log_syslog(log_fixtures):
     """
     Test `prewikka.log.Log` class.
 
     With syslog option.
     """
-    # syslog is by default
-    # this test should be improved
-    conf = ConfigSection("syslog")
-    conf.level = "debug"
-
-    log = Log([conf])
+    log = log_fixtures
     log.log(10, 'foo bar')
 
 
-def test_log_file():
+@pytest.mark.parametrize("log_fixtures", [("file", {"level": "debug", "file": _LOG_FILE})], indirect=True)
+def test_log_file(log_fixtures):
     """
     Test `prewikka.log.Log` class.
 
     With file option.
     """
-    conf = ConfigSection("file")
-    conf.level = "debug"
-    conf.file = os.path.join(TEST_DOWNLOAD_DIR, 'prewikka.logs')
+    log = log_fixtures
     try:
-        output_file_size = os.stat(conf.file).st_size
+        output_file_size = os.stat(_LOG_FILE).st_size
     except OSError:
         output_file_size = 0
 
-    log = Log([conf])
     log.log(10, 'foo bar')
 
-    assert output_file_size != os.stat(conf.file).st_size
+    assert output_file_size != os.stat(_LOG_FILE).st_size
 
 
 @pytest.mark.xfail(reason='pytest upgrade required (3.0+)')
-def test_log_stderr():
+@pytest.mark.parametrize("log_fixtures", [("debug", {"level": "debug"})], indirect=True)
+def test_log_stderr(log_fixtures):
     """
     Test `prewikka.log.Log` class.
 
@@ -137,43 +139,32 @@ def test_log_stderr():
     FIXME: with pytest 3+, a solution exists to disable std* captured by pytest.
     https://docs.pytest.org/en/3.0.0/capture.html#accessing-captured-output-from-a-test-function
     """
-    conf = ConfigSection("debug")
-    conf.level = "debug"
+    log = log_fixtures
     initial_stderr = sys.stderr
-
-    log = Log([conf])
     log.log(10, 'foo bar')
 
     assert initial_stderr != sys.stderr
 
 
-def test_log_smtp():
+@pytest.mark.parametrize("log_fixtures", [("smtp", {"level": "debug", "host": "localhost", "from": "user@localhost", "to": "root@localhost", "subject": "Prewikka Test"})], indirect=True)
+def test_log_smtp(log_fixtures):
     """
     Test `prewikka.log.Log` class.
 
     With smtp option.
     """
-    conf = ConfigSection("smtp")
-    conf.level = "debug"
-    conf.host = "localhost"
-    conf["from"] = "user@localhost"
-    conf.to = "root@localhost"
-    conf.subject = "Prewikka Test !"
-
-    log = Log([conf])
+    log = log_fixtures
     log.log(10, 'foo bar')
 
 
-def test_log_nteventlog():
+@pytest.mark.parametrize("log_fixtures", [("nteventlog", {"level": "debug"})], indirect=True)
+def test_log_nteventlog(log_fixtures):
     """
     Test `prewikka.log.Log` class.
 
     With nteventlog option.
     """
-    conf = ConfigSection("nteventlog")
-    conf.level = "debug"
-
-    log = Log([conf])
+    log = log_fixtures
     log.log(10, 'foo bar')
 
 

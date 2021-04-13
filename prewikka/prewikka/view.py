@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2004-2021 CS GROUP - France. All Rights Reserved.
 # Author: Nicolas Delon <nicolas.delon@prelude-ids.com>
 # Author: Yoann Vandoorselaere <yoannv@gmail.com>
 #
@@ -47,6 +47,8 @@ _SENTINEL = object()
 _URL_ADAPTER_CACHE = {}
 _ROUTE_OVERRIDE_TYPE = ("make_url", "make_parameters", "check_permissions")
 logger = log.get_logger(__name__)
+
+HTTP_SAVE_METHODS = ("PATCH", "POST", "PUT")
 
 
 def check_permissions(user, users=([], []), groups=([], []), others=[]):
@@ -198,7 +200,7 @@ class Parameters(dict):
 
     def normalize(self):
         do_update = self._save and env.request.web.method == "PATCH"
-        do_save = self._save and env.request.web.method in ("POST", "PUT", "PATCH")
+        do_save = self._save and env.request.web.method in HTTP_SAVE_METHODS
 
         for name, value in self.items():
             param = self._parameters.get(name)

@@ -4,6 +4,7 @@ function DataSearchPage(backend, criterion_config, criterion_config_default, sep
 {
     var page = {};
     var escapeRegex = $.ui.autocomplete.escapeRegex;
+    var timeline_loading = false;
 
     /* Check if a word needs quotes */
     function lucene_need_quotes(value)
@@ -173,18 +174,27 @@ function DataSearchPage(backend, criterion_config, criterion_config_default, sep
     function render_timeline(force) {
         var shown = $("#timeline").hasClass("collapse in");
 
-        if ( ! shown )
+        if ( ! shown || timeline_loading )
             return;
 
         if ( $("#timeline_results").children().length > 0 && !force )
             return;
 
+        $("#timeline .ajax-spinner").show();
         prewikka_resource_destroy($('#timeline_results'))
 
         $.ajax({
             url: timeline_url,
-            data: $("#form_search").serializeArray()
+            data: $("#form_search").serializeArray(),
+            prewikka: {spinner: false},
+            beforeSend: function() {
+                timeline_loading = true;
+            },
+            complete: function() {
+                timeline_loading = false;
+            },
         }).done(function(data, textStatus, xhr) {
+            $("#timeline .ajax-spinner").hide();
             $("#timeline_results").html(data);
         });
     }
@@ -198,7 +208,7 @@ function DataSearchPage(backend, criterion_config, criterion_config_default, sep
     {
         set_postdata("#datasearch_table", false);
 
-        $("#datasearch_table").trigger("reloadGrid");
+        $("#datasearch_table").trigger("reloadGrid", [{page: 1}]);
         render_timeline(true);
     }
 
@@ -360,6 +370,7 @@ function DataSearchPage(backend, criterion_config, criterion_config_default, sep
                 return html;
             });
         });
+        $("#datasearch_table").find("[data-toggle=tooltip]").tooltip("enable");
     }
 
     function prepare_popover(e) {
@@ -391,6 +402,7 @@ function DataSearchPage(backend, criterion_config, criterion_config_default, sep
         if ( ! $("#PopoverOption").is(':visible') ) {
             display_popover(div, selected_value);
             selection.removeAllRanges();
+            $("#datasearch_table").find("[data-toggle=tooltip]").tooltip("hide").tooltip("disable");
         }
     }
 

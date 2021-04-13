@@ -1,17 +1,3 @@
-* 2020-12-03, prewikka-5.2.1:
-
-Author: Antoine Luong
-
-- MessageSummary improvements
-- Pass menu parameters in IDMEF details
-- Use POST method for DataSearch details
-- Fix DataSearch CSS rule
-- Fix DataSearch info links with non-string fields
-- Fix possible error in MessageSummary
-- Fix Auth.can_handle_groups()
-
-
-
 * 2020-09-09, prewikka-5.2.0:
 
 Author: Antoine Luong

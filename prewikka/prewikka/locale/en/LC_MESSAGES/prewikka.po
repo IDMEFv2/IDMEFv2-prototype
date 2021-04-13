@@ -1,10 +1,10 @@
 # English Translation for Prewikka
-# Copyright (C) 2012-2020 CS GROUP - France
+# Copyright (C) 2012-2021 CS GROUP - France
 # This file is distributed under the same license as the prewikka package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Prewikka 5.2.1\n"
+"Project-Id-Version: Prewikka 5.2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-09 12:22+0200\n"
 "PO-Revision-Date: 2018-02-09 12:07+0100\n"

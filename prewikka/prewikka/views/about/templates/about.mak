@@ -57,7 +57,7 @@ from prewikka import version
            <p><a href="https://www.vigilo-nms.org">www.vigilo-nms.org</a></p>
         </div>
 
-        <p class="copyright">Copyright &copy; 2004-2020 CS GROUP - France. All rights reserved.</p>
+        <p class="copyright">Copyright &copy; 2004-2021 CS GROUP - France. All rights reserved.</p>
       </div>
     </div>
 
