@@ -108,7 +108,7 @@ class _Path(_SelectionObject):
 
     def set_path(self, path):
         self.path = path
-        self.klass, self.name = path.rsplit(".", 1)
+        self.klass, self.name = PathParser.unindex_path(path).rsplit(".", 1)
         return True
 
 

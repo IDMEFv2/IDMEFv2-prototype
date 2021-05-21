@@ -1,7 +1,8 @@
-# Copyright (C) 2018-2021 CS GROUP - France. All Rights Reserved.
+# -*- coding: utf-8 -*-
+# Copyright (C) 2021 CS GROUP - France. All Rights Reserved.
 # Author: Antoine Luong <antoine.luong@c-s.fr>
 #
-# This file is part of the Prelude-Correlator program.
+# This file is part of the Prewikka program.
 #
 # SPDX-License-Identifier: BSD-2-Clause
 #
@@ -26,19 +27,30 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-class AbstractRule(object):
-    depends = []
+import datetime
 
-    def _can_correlate(self, idmef):
-        """
-        Return a boolean indicating if a rule is allowed to correlate an alert.
-        """
-        if idmef.get("alert.Analyzer.Name") != "Correlator":
-            return True
+from prewikka.dataprovider.pathparser import PathParser
 
-        for ref in idmef.get("alert.Ref") or ():
-            if ref.startswith("urn:correl:"):
-                return ref[11:] in self.depends
+from prewikka import version
 
-        return False
+
+_IDMEFv2_PATHS = {
+    "idmefv2": {
+        "create_time": datetime.datetime,
+    }
+}
+
+
+class IDMEFv2API(PathParser):
+    plugin_name = "IDMEFv2 API"
+    plugin_version = version.__version__
+    plugin_author = version.__author__
+    plugin_license = version.__license__
+    plugin_copyright = version.__copyright__
+    plugin_description = N_("Provides an API to fetch IDMEFv2")
+    dataprovider_label = N_("Incidents")
+
+    def __init__(self):
+        PathParser.__init__(self, _IDMEFv2_PATHS, "create_time")

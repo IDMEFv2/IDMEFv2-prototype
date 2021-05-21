@@ -2,7 +2,7 @@
 # AUTHOR: Prelude Team <support.prelude@csgroup.eu>
 # DESCRIPTION: Triggered by a single host being the source of many similar actions on multiple targets
 # Copyright (C) 2006 G Ramon Gomez <gene at gomezbrothers dot com>
-# Copyright (C) 2009-2020 CS GROUP - France <support.prelude@csgroup.eu>
+# Copyright (C) 2009-2021 CS GROUP - France <support.prelude@csgroup.eu>
 #
 # This file is part of the Prelude-Correlator program.
 #

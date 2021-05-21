@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2009-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoann.v@prelude-ids.com>
 #
 # This file is part of the Prelude-Correlator program.
@@ -27,43 +27,95 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from collections import defaultdict
+import datetime
 import re
 import itertools
 import operator
-import prelude
+import pkg_resources
+import uuid
 
 from preludecorrelator import utils
 
 
+VERSION = pkg_resources.get_distribution('prelude-correlator').version
 _RegexType = type(re.compile(""))
 
 
-class IDMEF(prelude.IDMEF):
-    def __init__(self, ruleid=None):
-        prelude.IDMEF.__init__(self)
+class IDMEF(object):
+    def __init__(self, obj=None, ruleid=None):
+        self.obj = obj or {}
+
         if ruleid:
-            self.set("alert.additional_data(>>).meaning", "Rule ID")
-            self.set("alert.additional_data(-1).type", "string")
-            self.set("alert.additional_data(-1).data", ruleid)
+            self.set("alert.Ref(>>)", "urn:correl:%s" % ruleid)
 
-    def getTime(self):
-        itime = self.get("alert.detect_time")
-        if not itime:
-            itime = self.get("alert.create_time")
+    def __str__(self):
+        return str(self.obj)
 
-        return itime
+    def __setstate__(self, dict):
+        self.__dict__.update(dict)
+
+    def _get(self, elem, index, depth):
+        if depth == 0:
+            return elem[index]
+        else:
+            return [self._get(i, index, depth - 1) for i in elem]
 
     def get(self, path, flatten=True, replacement=None):
-        path = prelude.IDMEFPath(path)
+        ret = self.obj
+        depth = 0
+        try:
+            for elem in path.split("."):
+                if "(" in elem:
+                    elem, index = elem[:-1].split("(")
+                    if index == "*":
+                        ret = self._get(ret, elem, depth)
+                        depth += 1
+                    else:
+                        ret = self._get(ret, elem, depth)[int(index)]
+                else:
+                    ret = self._get(ret, elem, depth)
+        except (KeyError, TypeError):
+            ret = [] if depth else None
 
-        value = path.get(self)
-        if value is None:
+        if ret is None:
             return replacement
 
-        if flatten and type(value) is tuple:
-            value = utils.flatten(value)
+        if flatten and depth:
+            return utils.flatten(ret)
 
-        return value
+        return ret
+
+    def set(self, path, value):
+        obj = self.obj
+        for elem in path.split(".")[:-1]:
+            if "(" in elem:
+                elem, index = elem[:-1].split("(")
+                obj = obj.setdefault(elem, [])
+                if index == ">>" or int(index) == len(obj):
+                    obj.append({})
+                    obj = obj[-1]
+                else:
+                    obj = obj[int(index)]
+            else:
+                obj = obj.setdefault(elem, {})
+
+        elem = path.split(".")[-1]
+        if "(" in elem:
+            elem, index = elem[:-1].split("(")
+            obj = obj.setdefault(elem, [])
+            if index == ">>" or int(index) == len(obj):
+                obj.append(value)
+            else:
+                obj[int(index)] = value
+        else:
+            obj[elem] = value
+
+    def getTime(self):
+        itime = self.get("alert.StartTime")
+        if not itime:
+            itime = self.get("alert.CreateTime")
+
+        return itime
 
     def _match(self, path, needle):
         value = self.get(path)
@@ -104,7 +156,11 @@ class IDMEF(prelude.IDMEF):
     def alert(self):
         global prelude_client
 
-        self.set("alert.create_time", prelude.IDMEFTime())
+        self.set("alert.ID", str(uuid.uuid4()))
+        self.set("alert.CreateTime", str(datetime.datetime.now()).replace(" ", "T"))
+        self.set("alert.Analyzer.Name", "Correlator")
+        self.set("alert.Analyzer.Type", "Combined")
+        self.set("alert.Analyzer.Model", "prelude-correlator %s" % VERSION)
 
         prelude_client.correlationAlert(self)
 
@@ -112,8 +168,8 @@ class IDMEF(prelude.IDMEF):
         newset = []
         sharedset = []
 
-        curvalues = prelude.IDMEF.get(self, path)
-        for newidx, newval in enumerate(prelude.IDMEF.get(idmef, path) or ()):
+        curvalues = self.get(path) or ()
+        for newidx, newval in enumerate(idmef.get(path) or ()):
             have_match = False
             for curidx, curval in enumerate(curvalues):
                 if curval == newval:
@@ -153,10 +209,10 @@ class IDMEF(prelude.IDMEF):
         return fpath, value[0]
 
     def _getFilteredValue(self, basepath, fpath, reqval, idmef, preproc_func, filtered):
-        for idx, value in enumerate(prelude.IDMEF.get(idmef, basepath + "." + fpath) or ()):
+        for idx, value in enumerate(idmef.get(basepath + "." + fpath) or ()):
             if value:
                 if value == reqval or reqval is None:
-                    prelude.IDMEF.set(idmef, basepath + "(%d)." % idx + fpath, None)
+                    idmef.set(basepath + "(%d)." % idx + fpath, None)
 
             fpath2 = fpath
             if value and preproc_func:
@@ -186,13 +242,13 @@ class IDMEF(prelude.IDMEF):
 
         unmodified_set, sharedset, newset = self._getMergeList(path, idmef)
         for idx, value in newset:
-            prelude.IDMEF.set(self, path + "(>>)", value)
+            self.set(path + "(>>)", value)
             for fpath, value in filtered_new.get(idx, {}).items():
                 if value and fpath in postproc:
                     fpath, value = postproc[fpath](fpath, value)
 
                 if value:
-                    prelude.IDMEF.set(self, path + "(-1)." + fpath, value)
+                    self.set(path + "(-1)." + fpath, value)
 
         for idx in unmodified_set:
             for fpath, value in filtered_cur.get(idx, {}).items():
@@ -200,7 +256,7 @@ class IDMEF(prelude.IDMEF):
                     fpath, value = postproc[fpath](fpath, value)
 
                 if value:
-                    prelude.IDMEF.set(self, path + "(%d)." % idx + fpath, value)
+                    self.set(path + "(%d)." % idx + fpath, value)
 
         for idx, nidx in sharedset:
             common = defaultdict(list)
@@ -212,7 +268,7 @@ class IDMEF(prelude.IDMEF):
                     fpath, value = postproc[fpath](fpath, value)
 
                 if value:
-                    prelude.IDMEF.set(self, path + "(%d)." % idx + fpath, value)
+                    self.set(path + "(%d)." % idx + fpath, value)
 
         for idx, values in filtered_new.items():
             for fpath, value in values.items():
@@ -220,30 +276,19 @@ class IDMEF(prelude.IDMEF):
                     fpath, value = postproc[fpath](fpath, value)
 
                 if value:
-                    prelude.IDMEF.set(idmef, path + "(%d)." % (idx) + fpath, value)
+                    self.set(path + "(%d)." % (idx) + fpath, value)
 
     def addAlertReference(self, idmef, auto_set_detect_time=True):
         if auto_set_detect_time is True:
             intime = idmef.getTime()
             curtime = self.getTime()
             if not curtime or intime < curtime:
-                self.set("alert.detect_time", intime)
+                self.set("alert.StartTime", intime)
 
-        st_filters = [(("process.pid", None), None, None),
-                      (("service.name", "unknown"), None, None),
-                      (("service.port", None), None, self._mergePort),
-                      (("service.portlist", None), self._parsePortlist, self._mergePort)]
+        self._mergeSet("alert.Source", idmef)
+        self._mergeSet("alert.Target", idmef)
 
-        self._mergeSet("alert.source", idmef, st_filters)
-        self._mergeSet("alert.target", idmef, st_filters)
-
-        self.set("alert.correlation_alert.alertident(>>).alertident", idmef.get("alert.messageid"))
-
-        for analyzer in reversed(idmef.get("alert.analyzer")):
-            analyzerid = analyzer.get("analyzerid")
-            if analyzerid:
-                self.set("alert.correlation_alert.alertident(-1).analyzerid", analyzerid)
-                break
+        self.set("alert.CorrelID(>>)", idmef.get("alert.ID"))
 
         path, value = env.prelude_client.get_grouping(idmef)
         if path:

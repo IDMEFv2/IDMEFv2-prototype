@@ -2,7 +2,7 @@
 # AUTHOR: Prelude Team <support.prelude@csgroup.eu>
 # DESCRIPTION: Triggered by a host becoming the source of many alerts after having been the target of similar alerts
 # Copyright (C) 2006 G Ramon Gomez <gene at gomezbrothers dot com>
-# Copyright (C) 2009-2020 CS GROUP - France <support.prelude@csgroup.eu>
+# Copyright (C) 2009-2021 CS GROUP - France <support.prelude@csgroup.eu>
 # All Rights Reserved.
 #
 # This file is part of the Prelude-Correlator program.

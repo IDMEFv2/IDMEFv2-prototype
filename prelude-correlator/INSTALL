@@ -20,6 +20,7 @@ Build requires:
 Run requires:
 
 - python >= 2.6 (not python 3.x)
+- python-dateutil
 - python-netaddr
 - python-setuptools
 - libprelude with python bindings

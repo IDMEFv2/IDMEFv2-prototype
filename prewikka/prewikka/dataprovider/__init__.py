@@ -153,6 +153,9 @@ class QueryResultsRow(CachingIterator):
     def _cast(self, value):
         type = self._get_current_path_type()
         try:
+            if isinstance(value, list):
+                return [self._cast(v) for v in value]
+
             if type is datetime:
                 return to_datetime(value)
 

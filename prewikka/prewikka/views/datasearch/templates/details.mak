@@ -19,11 +19,15 @@ from prewikka import view
           icon_type = "clock-o"
       elif isinstance(value, bytes):
           value = "\\x" + value.encode("hex")
+
+      label = field
+      if transform:
+          field = transform(field)
     %>
     <tr>
       <td class="field" data-field="${ field }">
         <i class="fa fa-${ icon_type }"></i>
-        <a data-container="#main" data-toggle="tooltip" title="${ _("Group by %s") % field }" href="${ url_for('.forensic', groupby=[field]) }">${ field }</a>
+        <a data-container="#main" data-toggle="tooltip" title="${ _("Group by %s") % field }" href="${ url_for('.forensic', groupby=[field]) }">${ label }</a>
       </td>
       <td class="filter">
         <span>

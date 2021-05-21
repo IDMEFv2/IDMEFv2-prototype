@@ -2,7 +2,7 @@
 # AUTHOR: Prelude Team <support.prelude@csgroup.eu>
 # DESCRIPTION: Triggered when the source IP is present in the CIArmy reputation database
 # CATEGORY: CTI
-# Copyright (C) 2015-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2015-2021 CS GROUP - France. All Rights Reserved.
 # Author: Thomas Andrejak <thomas.andrejak@c-s.fr>
 #
 # This file is part of the Prelude-Correlator program.
@@ -58,7 +58,7 @@ class CIArmyDownloader(download.HTTPDownloadCache):
 
 class CIArmyPlugin(Plugin):
     CIARMY_RELOAD = 7 * 24 * 60 * 60
-    CIARMY_URI = "http://cinsscore.com/list/ci-badguys.txt"
+    CIARMY_URI = "https://cinsscore.com/list/ci-badguys.txt"
     CIARMY_TIMEOUT = 10
 
     def __init__(self, env):

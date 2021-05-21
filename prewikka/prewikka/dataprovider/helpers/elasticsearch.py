@@ -284,6 +284,7 @@ class ElasticsearchQuery(object):
         self.offset = offset
         self._final_order = []
         self.highlight = highlight
+        self._time_field = env.dataprovider.format_path("{time_field}", type=type)
         default_field = self._mapping.to_es("default_field")
 
         if default_field == 'default_field':
@@ -333,7 +334,7 @@ class ElasticsearchQuery(object):
         group_by = []
         for idx, p in enumerate(paths):
             path = p.get_path()
-            field = AttrObj(field=path.name if path else None, order=None)
+            field = AttrObj(field=path.path.split(".", 1)[-1] if path else None, order=None)
 
             if path and self.highlight and "fields" not in self.highlight:
                 self._query['highlight'].setdefault('fields', {})[self._mapping.to_es(path.name)] = {}
@@ -361,13 +362,13 @@ class ElasticsearchQuery(object):
             if final_order:  # cmd : groupby
                 self._final_order.append(AttrObj(idx=final_order[0], index=final_order[1], order=field.order))
 
-            if field.field and field.order and (field.field not in _TIME_GROUPBY or field.field == 'timestamp'):
+            if field.field and field.order and (field.field not in _TIME_GROUPBY or field.field == self._time_field):
                 self._add_order(field)
 
         return group_by
 
     def _set_paths_func(self, paths, group_by):
-        query, index = self._get_aggs_last_index()
+        query, index, nested = self._get_aggs_last_index()
         initial_index = index
         typ_last_agg = next(iter(query.keys()))
 
@@ -396,19 +397,14 @@ class ElasticsearchQuery(object):
                 self._final_order.append(AttrObj(idx=idx, index=-1, order=order))
                 continue
 
-            else:
-                ex = self._exists_filter(field)
-                if ex not in self._query["query"]['bool']['must']:
-                    self._query["query"]['bool']['must'].append(ex)
-
             if getattr(p.object.args[0], "name", None) == "distinct":
                 name = "count_distinct"
             else:
                 name = p.object.name
 
-            aggs = self._format_aggregate(field, name, index)
+            aggs = self._format_aggregate(field, name, index, nested=nested)
 
-            item = list(filter(lambda x: x[1] == aggs["internal_%d" % index], query.setdefault("aggs", {}).items()))
+            item = list(filter(lambda x: x[1] == aggs["internal_%d" % index]["aggs"], query.setdefault("aggs", {}).items()))
             if item:
                 self._final_order.append(AttrObj(idx=idx, index=int(item[0][0][9:]) - 1, order=order))
                 continue
@@ -460,11 +456,11 @@ class ElasticsearchQuery(object):
         if criteria.operator == CriterionOperator.OR:
             return self._set_criteria_op("should", criteria, query)
 
-        field = criteria.left.rsplit(".", 1)[-1]
+        field = criteria.left.split(".", 1)[-1]
         if field == "_raw_query":
             self._add_raw_query(criteria.right)
 
-        elif field == "timestamp":
+        elif field == self._time_field:
             self._add_time_to_query(criteria.right, criteria.operator)
 
         else:
@@ -479,8 +475,25 @@ class ElasticsearchQuery(object):
                 op = ("must" if criteria.operator.negated else "must_not", "exists")
 
             query["bool"][op[0]].append(getattr(self, "_%s_filter" % op[1])(field, right, ci=ci))
+            nested_query = self._add_nested(field)
 
-            return query
+            if not nested_query:
+                return query
+
+            nested_query["nested"]["query"] = query
+            return nested_query
+
+    def _add_nested(self, field):
+        es_field_name = self._mapping.to_es(field, nested=True)
+        l = es_field_name.split("(*).")
+        if len(l) == 1:
+            return {}
+
+        return {
+            "nested": {
+                "path": ".".join(l[:-1]),
+            }
+        }
 
     def _add_raw_query(self, query):
         if self._query_string["query_string"]["query"]:
@@ -502,17 +515,18 @@ class ElasticsearchQuery(object):
 
         utc_time = self._mapping.format_datetime(date.astimezone(dateutil.tz.tzutc()))
         operator = self._mapping.to_operator(operator.name)
-        self._query["query"]["bool"]["filter"].append(self._range_filter("timestamp", operator, utc_time))
+        self._query["query"]["bool"]["filter"].append(self._range_filter(self._time_field, operator, utc_time))
 
     def _add_order(self, field):
         if self._mapping.to_es_keyword(field.field) and field.field != 'raw_message':
-            order_filter = {self._mapping.to_es_keyword(field.field): field.order}
+            order_filter = {"order": field.order}
+            order_filter.update(self._add_nested(field.field))
             if order_filter not in self._query["sort"]:
-                self._query["sort"].append(order_filter)
+                self._query["sort"].append({self._mapping.to_es_keyword(field.field): order_filter})
 
     def _add_aggregate(self, field):
-        query, index = self._get_aggs_last_index(None, 1)
-        query["aggs"] = self._format_aggregate(field.field, "terms", index, field.order)
+        query, index, nested = self._get_aggs_last_index()
+        query["aggs"] = self._format_aggregate(field.field, "terms", index, field.order, nested)
 
     def _add_offset(self):
         self._query["aggs"]["internal_1"]["aggs"]["bucket_truncate"] = {
@@ -522,21 +536,37 @@ class ElasticsearchQuery(object):
             }
         }
 
-    def _format_aggregate(self, field, func, index=1, order=None):
+    def _format_aggregate(self, field, func, index=1, order=None, nested=None):
         if field in _TIME_GROUPBY:
             func = "time"
 
-        return {"internal_%d" % index: getattr(self, "_aggs_%s" % func)(field, order)}
+        # FIXME: we should handle nesting in nesting
+        if not nested:
+            nested_agg = self._add_nested(field)
+            if nested_agg:
+                ret = {"internal_%d" % index: {"aggs": {"internal_nested_%d" % index: getattr(self, "_aggs_%s" % func)(field, order)}}}
+            else:
+                ret = {"internal_%d" % index: getattr(self, "_aggs_%s" % func)(field, order)}
 
-    def _get_aggs_last_index(self, query=None, index=1):
+            ret["internal_%d" % index].update(nested_agg)
+        else:
+            ret = {"internal_%d" % index: getattr(self, "_aggs_%s" % func)(field, order)}
+
+        return ret
+
+    def _get_aggs_last_index(self, query=None, index=1, nested=None):
         if not query:
             query = self._query
 
         aggs_k = query.get("aggs", {}).keys()
         if aggs_k:
-            return self._get_aggs_last_index(query["aggs"][next(iter(aggs_k))], index + 1)
+            q = query["aggs"][next(iter(aggs_k))]
+            if "nested" in query:
+                return self._get_aggs_last_index(q, index, query["nested"]["path"])
+            else:
+                return self._get_aggs_last_index(q, index + 1, nested)
         else:
-            return [query, index]
+            return [query, index, nested]
 
     def _range_filter(self, field, operator, value, ci=False):
         return {
@@ -592,7 +622,7 @@ class ElasticsearchQuery(object):
         }
 
     def _aggs_time(self, field, order):
-        if field == "timestamp":
+        if field == self._time_field:
             field = "1s"
 
         m = {
@@ -605,7 +635,7 @@ class ElasticsearchQuery(object):
             '1s': 'yyyy-MM-dd HH:mm:ss'
         }
 
-        return self._aggs_histogram(self._mapping.to_es("timestamp"), field, m[field], order)
+        return self._aggs_histogram(self._mapping.to_es(self._time_field), field, m[field], order)
 
     def _aggs_histogram(self, field, interval, form, order):
         return {
@@ -754,8 +784,11 @@ class ElasticsearchResult(object):
         if aggs is None:
             aggs = self._result["aggregations"]
 
+        if "buckets" in aggs.get("internal_%d" % index, {}).get("internal_nested_%d" % index, {}):
+            return self._manage_aggregations_buckets(aggs["internal_%d" % index]["internal_nested_%d" % index]["buckets"], index + 1)
+
         if "buckets" in aggs.get("internal_%d" % index, {}):
-            return self._manage_aggregations_buckets(aggs, index)
+            return self._manage_aggregations_buckets(aggs["internal_%d" % index]["buckets"], index + 1)
 
         if aggs.get("internal_%d" % (index+1)) is None:
             return aggs["internal_%d" % index]["value"]
@@ -773,13 +806,13 @@ class ElasticsearchResult(object):
 
         return result or None
 
-    def _manage_aggregations_buckets(self, aggs, index):
+    def _manage_aggregations_buckets(self, buckets, index):
         result = OrderedDict()
-        for bucket in aggs.get("internal_%d" % index, {}).get("buckets", []):
+        for bucket in buckets:
             key = bucket.get("key_as_string") or bucket.get("key", "")
-            next_agg_idx = "internal_%d" % (index + 1)
+            next_agg_idx = "internal_%d" % index
             if bucket.get(next_agg_idx):
-                result[key] = self._manage_aggregations(bucket, index + 1)
+                result[key] = self._manage_aggregations(bucket, index)
             else:
                 result[key] = result.get(key, 0) + bucket.get("doc_count", 0)
 
@@ -803,10 +836,21 @@ class ElasticsearchResult(object):
         # key1.key2.key3
 
         res = result
-        for path in fullpath.split('.'):
-            res = res.get(path)
-            if res is None:
+        for i, path in enumerate(fullpath.split('.')):
+            if not path:
+                break
+
+            # FIXME: handle all possible indices
+            value = res.get(path.replace('(*)', '').replace('(0)', ''))
+
+            if path.endswith('(0)') and isinstance(value, list):
+                res = value[0]
+            elif isinstance(value, list):
+                return [self._get_subfield_value('.'.join(fullpath.split('.')[i+1:]), r) for r in value]
+            elif value is None:
                 return result.get(fullpath)
+            else:
+                res = value
 
         return res
 
@@ -814,7 +858,7 @@ class ElasticsearchResult(object):
         if selection.object.is_function and selection.object.name == "count":
             return result["count"]
 
-        field_name = selection.object.name
+        field_name = selection.object.path.split(".", 1)[-1]
         if field_name not in _TIME_GROUPBY:
             es_field_name = self._mapping.to_es(field_name)
             ret = self._get_subfield_value(es_field_name, result)
@@ -924,14 +968,16 @@ class ElasticsearchMap(object):
 
         return mapping, group_mapping
 
-    def to_es(self, field):
+    def to_es(self, field, nested=False):
         if field.endswith(".exact"):
-            return self.to_es_keyword(field[:-6])
+            return self.to_es_keyword(field[:-6], nested=nested)
 
-        return self._mapping.get(field, field)
+        ret = self._mapping.get(field, field)
+        return ret if nested else ret.replace("(*)", "")
 
-    def to_es_keyword(self, field):
-        return self._group_mapping.get(field, self.to_es(field))
+    def to_es_keyword(self, field, nested=False):
+        ret = self._group_mapping.get(field, self.to_es(field))
+        return ret if nested else ret.replace("(*)", "")
 
     def to_operator(self, field):
         return self._OPERATOR.get(field, field)

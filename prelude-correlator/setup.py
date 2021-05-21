@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2009-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2009-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoann.v@prelude-ids.com>
 #
 # This file is part of the Prelude-Correlator program.
@@ -68,9 +68,9 @@ class my_sdist(sdist):
             print("Automatic downloading of databases is disabled.")
             print("As a result, they won't be included in the generated source distribution.")
         else:
-            self._downloadDatabase("DShield", "http://www.dshield.org/ipsascii.html?limit=10000", "rules/dshield.dat")
-            self._downloadDatabase("Spamhaus", "http://www.spamhaus.org/drop/drop.lasso", "rules/spamhaus_drop.dat")
-            self._downloadDatabase("CIArmy", "http://cinsscore.com/list/ci-badguys.txt", "rules/ciarmy.dat")
+            self._downloadDatabase("DShield", "https://www.dshield.org/ipsascii.html?limit=10000", "rules/dshield.dat")
+            self._downloadDatabase("Spamhaus", "https://www.spamhaus.org/drop/drop.txt", "rules/spamhaus_drop.dat")
+            self._downloadDatabase("CIArmy", "https://cinsscore.com/list/ci-badguys.txt", "rules/ciarmy.dat")
         sdist.run(self)
 
 
@@ -89,18 +89,16 @@ class my_install(install):
                 if dest[-4:] == "conf" and os.path.exists(dest):
                     dest += "-dist"
 
-                self.copy_file(f, destdir)
+                self.copy_file(f, dest)
 
         self.distribution.data_files = []
-        self.init_siteconfig(prefix)
         install.run(self)
-        os.remove("preludecorrelator/siteconfig.py")
+        self.init_siteconfig(prefix)
 
     def init_siteconfig(self, prefix):
-        config = open("preludecorrelator/siteconfig.py", "w")
-        config.write("conf_dir = '%s'\n" % os.path.abspath(prefix + "/etc/prelude-correlator"))
-        config.write("lib_dir = '%s'\n" % os.path.abspath(prefix + "/var/lib/prelude-correlator"))
-        config.close()
+        with open(os.path.join(self.install_lib, "preludecorrelator", "siteconfig.py"), "w") as config:
+            config.write("conf_dir = '%s'\n" % os.path.abspath(os.path.join(prefix, "etc", "prelude-correlator")))
+            config.write("lib_dir = '%s'\n" % os.path.abspath(os.path.join(prefix, "var", "lib", "prelude-correlator")))
 
 
 setup(

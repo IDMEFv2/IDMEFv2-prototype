@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2009-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoann.v@prelude-ids.com>
 #
 # This file is part of the Prelude-Correlator program.
@@ -27,6 +27,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import sys
+
+
+if sys.version_info[0] >= 3:
+    STRING_TYPES = str
+else:
+    STRING_TYPES = basestring
 
 
 def flatten(x):
@@ -47,7 +54,7 @@ def flatten(x):
 
     result = []
     for el in x:
-        if isinstance(el, collections.Iterable) and not isinstance(el, str):
+        if isinstance(el, collections.Iterable) and not isinstance(el, STRING_TYPES):
             result.extend(flatten(el))
         else:
             result.append(el)

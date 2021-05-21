@@ -253,11 +253,13 @@ setup(
             'ElasticsearchLog = prewikka.dataprovider.plugins.log.elasticsearch:ElasticsearchLogPlugin',
             'IDMEFAlert = prewikka.dataprovider.plugins.idmef:IDMEFAlertPlugin',
             'IDMEFHeartbeat = prewikka.dataprovider.plugins.idmef:IDMEFHeartbeatPlugin',
+            'ElasticsearchIDMEFv2 = prewikka.dataprovider.plugins.idmefv2.elasticsearch:ElasticsearchIDMEFv2Plugin',
         ],
         'prewikka.dataprovider.type': [
             'alert = prewikka.dataprovider.idmef:IDMEFAlertProvider',
             'heartbeat = prewikka.dataprovider.idmef:IDMEFHeartbeatProvider',
             'log = prewikka.dataprovider.log:LogAPI',
+            'IDMEFv2 = prewikka.dataprovider.idmefv2:IDMEFv2API',
         ],
         'prewikka.plugins': [
         ],
@@ -285,6 +287,7 @@ setup(
             'Statistics = prewikka.views.statistics:Statistics',
             'UserManagement = prewikka.views.usermanagement:UserManagement',
             'Warning = prewikka.plugins.warning:Warning',
+            'IDMEFv2DataSearch = prewikka.views.datasearch.idmefv2:IDMEFv2DataSearch',
         ],
         'prewikka.updatedb': [
             'prewikka = prewikka.sql',

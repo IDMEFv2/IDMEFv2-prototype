@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2009-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoann.v@prelude-ids.com>
 #
 # This file is part of the Prelude-Correlator program.
@@ -34,9 +34,15 @@ import signal
 import pkg_resources
 import errno
 import itertools
+import json
 
-from prelude import ClientEasy, checkVersion, IDMEFCriteria, IDMEFPath
+from prelude import ClientEasy, checkVersion
 from preludecorrelator import idmef, pluginmanager, context, log, config, require, error
+
+try:
+    import kafka
+except ImportError:
+    kafka = None
 
 
 if sys.version_info >= (3, 0):
@@ -117,6 +123,9 @@ class GenericReader(object):
     def run(self):
         pass
 
+    def stop(self):
+        pass
+
     def inject(self, idmef):
         self._messages = itertools.chain(self._messages, [idmef])
 
@@ -168,6 +177,58 @@ class FileReader(GenericReader):
                     yield msg
 
 
+class KafkaReader(GenericReader):
+    def __init__(self, prelude_client, server, topic, profile):
+        options = {
+            'bootstrap_servers': server,
+            'group_id': profile,
+            'value_deserializer': lambda v: json.loads(v.decode('utf-8')),
+        }
+        self.client = kafka.KafkaConsumer(topic, **options)
+        self.prelude_client = prelude_client
+
+    def run(self):
+        while True:
+            for msg in self._messages:
+                yield msg
+
+            ret = self.client.poll(1000)
+            if not ret:
+                yield None
+
+            for topic, messages in ret.items():
+                for data in messages:
+                    try:
+                        yield idmef.IDMEF(data.value)
+                    except RuntimeError:
+                        pass
+
+    def stop(self):
+        self.client.close()
+
+
+class ClientWriter(object):
+    def __init__(self, prelude_client):
+        self.prelude_client = prelude_client
+
+    def send(self, idmef):
+        self.prelude_client.client.sendIDMEF(idmef)
+
+
+class KafkaWriter(object):
+    def __init__(self, server, topic):
+        self._topic = topic
+
+        options = {
+            'bootstrap_servers': server,
+            'value_serializer': lambda v: json.dumps(v).encode('utf-8'),
+        }
+        self.client = kafka.KafkaProducer(**options)
+
+    def send(self, idmef):
+        self.client.send(self._topic, value=idmef.obj)
+
+
 class PreludeClient(object):
     def __init__(self, options, print_input=None, print_output=None, dry_run=False):
         self._events_processed = 0
@@ -176,8 +237,12 @@ class PreludeClient(object):
         self._print_output = print_output
         self._continue = True
         self._dry_run = dry_run
-        self._criteria = self._parse_criteria(env.config.get("general", "criteria"))
-        self._grouping = self._parse_path(env.config.get("general", "grouping"))
+        self._grouping = env.config.get("general", "grouping")
+
+        if kafka and options.kafka_server:
+            self._receiver = KafkaReader(self, options.kafka_server, options.kafka_consumer_topic, options.profile)
+            self._sender = KafkaWriter(options.kafka_server, options.kafka_producer_topic)
+            return
 
         if not options.input_file:
             self._receiver = ClientReader(self)
@@ -190,6 +255,8 @@ class PreludeClient(object):
 
         self.client.setConfigFilename(options.config)
         self.client.start()
+
+        self._sender = ClientWriter(self)
 
     def _handle_event(self, idmef):
         if self._print_input:
@@ -217,18 +284,18 @@ class PreludeClient(object):
         self._alert_generated = self._alert_generated + 1
 
         if not self._dry_run:
-            self.client.sendIDMEF(idmef)
+            self._sender.send(idmef)
 
         if self._print_output:
             self._print_output.write(str(idmef))
 
         # Reinject correlation alerts for meta-correlation
-        self._receiver.inject(idmef)
+        #self._receiver.inject(idmef)
 
     def run(self):
         last = time.time()
         for msg in self._receiver.run():
-            if msg and self._criteria.match(msg):
+            if msg:
                 self._handle_event(msg)
 
             now = time.time()
@@ -241,30 +308,7 @@ class PreludeClient(object):
 
     def stop(self):
         self._continue = False
-
-    @staticmethod
-    def _parse_criteria(criteria):
-        if not criteria:
-            return IDMEFCriteria("alert")
-
-        criteria = "alert && (%s)" % criteria
-
-        try:
-            return IDMEFCriteria(criteria)
-        except Exception as e:
-            raise error.UserError("Invalid criteria provided '%s': %s" % (criteria, e))
-
-    @staticmethod
-    def _parse_path(path):
-        if not path:
-            return None
-
-        try:
-            IDMEFPath(path)
-        except Exception as e:
-            raise error.UserError("Invalid path provided '%s': %s" % (path, e))
-
-        return path
+        self._receiver.stop()
 
 
 def runCorrelator():
@@ -292,6 +336,12 @@ def runCorrelator():
 
     group = parser.add_argument_group("Prelude", "Prelude generic options")
     group.add_argument("--profile", default=_DEFAULT_PROFILE, help="Profile to use for this analyzer")
+
+    if kafka:
+        group = parser.add_argument_group("Kafka Input", "Read IDMEF events from an Apache Kafka broker")
+        group.add_argument("--kafka-server", metavar="SERVER", help="Kafka bootstrap server")
+        group.add_argument("--kafka-consumer-topic", default="prelude", metavar="TOPIC", help="Kafka consumer topic")
+        group.add_argument("--kafka-producer-topic", default="prelude", metavar="TOPIC", help="Kafka producer topic")
 
     options = parser.parse_args()
 

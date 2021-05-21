@@ -1,7 +1,8 @@
-# Copyright (C) 2018-2021 CS GROUP - France. All Rights Reserved.
+# -*- coding: utf-8 -*-
+# Copyright (C) 2021 CS GROUP - France. All Rights Reserved.
 # Author: Antoine Luong <antoine.luong@c-s.fr>
 #
-# This file is part of the Prelude-Correlator program.
+# This file is part of the Prewikka program.
 #
 # SPDX-License-Identifier: BSD-2-Clause
 #
@@ -26,19 +27,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-class AbstractRule(object):
-    depends = []
+from prewikka.dataprovider.helpers.elasticsearch import ElasticsearchPlugin
 
-    def _can_correlate(self, idmef):
-        """
-        Return a boolean indicating if a rule is allowed to correlate an alert.
-        """
-        if idmef.get("alert.Analyzer.Name") != "Correlator":
-            return True
+from prewikka import version
 
-        for ref in idmef.get("alert.Ref") or ():
-            if ref.startswith("urn:correl:"):
-                return ref[11:] in self.depends
 
-        return False
+class ElasticsearchIDMEFv2Plugin(ElasticsearchPlugin):
+    plugin_name = "Elasticsearch IDMEFv2 API"
+    plugin_version = version.__version__
+    plugin_copyright = version.__copyright__
+    plugin_description = N_("Plugin for querying IDMEFv2 from Elasticsearch")
+    plugin_locale = version.__locale__
+    type = "idmefv2"

@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2020 CS GROUP - France. All Rights Reserved.
+# Copyright (C) 2009-2021 CS GROUP - France. All Rights Reserved.
 # Author: Yoann Vandoorselaere <yoann.v@prelude-ids.com>
 #
 # This file is part of the Prelude-Correlator program.
@@ -26,12 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import calendar
+import dateutil.parser
 import os
 import time
 import pickle
 import sys
 
-from prelude import IDMEFTime
 from preludecorrelator.idmef import IDMEF
 from preludecorrelator import require, log
 
@@ -127,7 +128,7 @@ class Context(IDMEF, Timer):
         if already_initialized is True:
             return
 
-        IDMEF.__init__(self, ruleid)
+        IDMEF.__init__(self, ruleid=ruleid)
         Timer.__init__(self, 0)
 
         self._version = self.FORMAT_VERSION
@@ -188,13 +189,10 @@ class Context(IDMEF, Timer):
         return super(Context, cls).__new__(cls)
 
     def _getTime(self, idmef=None):
-        if not idmef:
-            return time.time()
+        if isinstance(idmef, IDMEF):
+            return calendar.timegm(dateutil.parser.parse(idmef.getTime()).timetuple())
 
-        if isinstance(idmef, IDMEFTime):
-            return int(idmef)
-
-        return int(idmef.getTime())
+        return time.time()
 
     def _updateTime(self, itime):
         self._time_min = min(itime - self._options["expire"], self._time_min)
