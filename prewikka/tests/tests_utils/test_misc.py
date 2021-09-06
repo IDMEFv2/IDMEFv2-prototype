@@ -29,10 +29,8 @@
 Tests for `prewikka.utils.misc`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
+import io
 import pytest
-import StringIO
 
 from prewikka.dataprovider import Criterion
 from prewikka.utils import misc, json
@@ -142,9 +140,9 @@ def test_hexdump():
     """
     Test `prewikka.utils.misc.hexdump()`.
     """
-    assert misc.hexdump('Prewikka') == '0000:    50 72 65 77 69 6b 6b 61                            Prewikka\n'
-    assert misc.hexdump('Prelude') == '0000:    50 72 65 6c 75 64 65                               Prelude\n'
-    assert misc.hexdump('foobar') == '0000:    66 6f 6f 62 61 72                                  foobar\n'
+    assert misc.hexdump(b'Prewikka') == '0000:    50 72 65 77 69 6b 6b 61                            Prewikka\n'
+    assert misc.hexdump(b'Prelude') == '0000:    50 72 65 6c 75 64 65                               Prelude\n'
+    assert misc.hexdump(b'foobar') == '0000:    66 6f 6f 62 61 72                                  foobar\n'
 
 
 def test_deprecated():
@@ -167,7 +165,7 @@ def test_get_file_size():
     """
     Test `prewikka.utils.misc.get_file_size()`.
     """
-    fileobj = StringIO.StringIO()
+    fileobj = io.StringIO()
     fileobj.write("foobar")
     assert misc.get_file_size(fileobj) == 6
 

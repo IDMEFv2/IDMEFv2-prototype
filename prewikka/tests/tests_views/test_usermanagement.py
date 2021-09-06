@@ -29,10 +29,6 @@
 Tests for `prewikka.views.usermanagement`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from copy import deepcopy
-
 import pytest
 
 from prewikka import localization
@@ -53,55 +49,36 @@ def test_save():
     Test `prewikka.views.usermanagement.save` view.
     """
     view = load_view_for_fixtures("usersettings.save")
-    backup_parameters = deepcopy(env.request.parameters)
 
     # valid
     params = {
         'language': next(iter(localization.get_languages().keys())),
         'timezone': localization.get_timezones()[0],
     }
-    env.request.parameters = params
 
+    env.request.parameters = dict(params)
     view.render(name=env.request.user.name)
 
     # FIXME
     # valid with new email
-    # params_email = deepcopy(params)
-    # params_email['email'] = 'foo@bar.tld'
-    # env.request.parameters = params_email
-
+    # env.request.parameters = dict(params, email='foo@bar.tld')
     # view.render()
 
     # valid with new theme (reload page)
-    params_email = deepcopy(params)
-    params_email['theme'] = 'dark'
-    env.request.parameters = params_email
-
+    env.request.parameters = dict(params, theme='dark')
     view.render(name=env.request.user.name)
 
     # FIXME
     # valid with different user
-    # params_user = deepcopy(params)
-    # params_user['name'] = 'test_different'
-    # env.request.parameters = params_user
-
+    # env.request.parameters = dict(params, name='test_different')
     # view.modify()
 
     # invalid language
     with pytest.raises(PrewikkaUserError):
-        params_invalid = deepcopy(params)
-        params_invalid['language'] = None
-        env.request.parameters = params_invalid
-
+        env.request.parameters = dict(params, language=None)
         view.render(name=env.request.user.name)
 
     # invalid timezone
     with pytest.raises(PrewikkaUserError):
-        params_invalid = deepcopy(params)
-        params_invalid['timezone'] = None
-        env.request.parameters = params_invalid
-
+        env.request.parameters = dict(params, timezone=None)
         view.render(name=env.request.user.name)
-
-    # clean
-    env.request.parameters = backup_parameters

@@ -26,12 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import socket
 import time
-
-from prewikka import compat
 
 resolver = None
 import_fail = None
@@ -78,7 +74,7 @@ class DNSResolver(object):
         try:
             parts = list(socket.inet_pton(socket.AF_INET6, addr).encode('hex_codec'))
             origin = ".ip6.arpa"
-        except:
+        except Exception:
             parts = ["%d" % ord(byte) for byte in socket.inet_aton(addr)]
             origin = ".in-addr.arpa"
 
@@ -119,7 +115,7 @@ class DNSResolver(object):
     def resolve(self, addr, resolve_cb):
         try:
             addr = self._ip_reverse(addr)
-        except:
+        except Exception:
             return
 
         self.do_query(addr, resolve_cb)
@@ -136,7 +132,7 @@ class AddressResolve(object):
     def __init__(self, addr, format=None):
         global resolver
 
-        if not isinstance(addr, compat.STRING_TYPES):
+        if not isinstance(addr, str):
             raise TypeError('AddressResolve expects a valid IP address to resolve')
 
         self._addr = addr

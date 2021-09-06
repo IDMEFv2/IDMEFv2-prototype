@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import re
 
 from prewikka import resource, utils
@@ -57,7 +55,7 @@ class LinkManager(object):
             if not self._check_option(option, value):
                 continue
 
-            paths = filter(None, re.split('\s|,', config.get("paths", "")))
+            paths = filter(None, re.split(r'\s|,', config.get("paths", "")))
             self._register_link(list(paths) + [type], option, value)
 
     def _check_option(self, option, value):

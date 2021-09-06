@@ -29,8 +29,6 @@
 Tests for `prewikka.view`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pytest
 from werkzeug.routing import Map
 
@@ -119,7 +117,7 @@ def test_parameter_desc():
     # parse()
     assert parameter_desc_1.parse('param1') == 'param1'
     assert parameter_desc_2.parse('param2') == ['param2']
-    assert parameter_desc_1.parse(['param1']) == '[u\'param1\']'
+    assert parameter_desc_1.parse(['param1']) == '[\'param1\']'
     assert parameter_desc_2.parse(['param2']) == ['param2']
     assert parameter_desc_3.parse('param3') == 'param3'
     assert parameter_desc_4.parse('param4') == 'param4'

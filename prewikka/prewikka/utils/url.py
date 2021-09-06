@@ -26,38 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import base64
 import errno
 import os.path
-import sys
 import random
 
 from prewikka import siteconfig
 
-
-if sys.version_info >= (3, 0):
-    from urllib.parse import quote, quote_plus, urlparse, urlsplit, urlunsplit, urlencode as _urlencode  # noqa: imported but unused
-else:
-    from urllib import quote, quote_plus, urlencode as __urlencode  # noqa: imported but unused
-    from urlparse import urlparse, urlsplit, urlunsplit  # noqa: imported but unused
-
-    def _convert(d):
-        if isinstance(d, (list, tuple)):
-            return [_convert(i) for i in d]
-
-        elif isinstance(d, text_type):
-            return d.encode("utf8")
-
-        else:
-            return d
-
-    def _urlencode(parameters, doseq=False):
-        if hasattr(parameters, "items"):
-            parameters = parameters.items()
-
-        return __urlencode([(k.encode("utf8"), _convert(v)) for k, v in parameters], doseq)
+from urllib.parse import quote, quote_plus, urlparse, urlsplit, urlunsplit, urlencode as _urlencode  # noqa: imported but unused
 
 
 class mkdownload(object):

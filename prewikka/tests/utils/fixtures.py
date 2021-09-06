@@ -29,8 +29,6 @@
 Fixture utils for prewikka tests suite.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 import shutil
 import sys
@@ -100,7 +98,7 @@ class FakeInitialRequest(InitialRequest):
         sys.stdout.write('env.web.request.send_stream():\n')
 
         try:
-            for key, value in json.loads(data).iteritems():
+            for key, value in json.loads(data).items():
                 sys.stdout.write('    %s: %s\n' % (key, value))
         except ValueError:
             sys.stdout.write('    %s\n' % data)

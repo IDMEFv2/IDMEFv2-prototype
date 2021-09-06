@@ -28,8 +28,6 @@
 
 """ Login/password authentication module """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pkg_resources
 
 from prewikka import session, template, version

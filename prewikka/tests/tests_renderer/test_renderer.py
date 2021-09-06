@@ -29,8 +29,6 @@
 Tests for `prewikka.renderer`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pytest
 
 from prewikka.renderer import COLORS, RED_STD, GRAY_STD, \

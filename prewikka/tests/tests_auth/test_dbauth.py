@@ -29,8 +29,6 @@
 Tests for `prewikka.auth.dbauth`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from prewikka.auth.dbauth import DBAuth
 from prewikka.config import ConfigSection
 from prewikka.usergroup import Group, User

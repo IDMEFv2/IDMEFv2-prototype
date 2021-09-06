@@ -29,8 +29,6 @@
 Tests for `prewikka.error`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pytest
 
 from prewikka.error import RedirectionError, PrewikkaError, PrewikkaUserError, NotImplementedError

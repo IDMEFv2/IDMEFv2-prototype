@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from passlib.context import CryptContext
 
 from prewikka import auth, database, error, usergroup, version
@@ -125,7 +123,7 @@ class DBAuth(auth.Auth, database.DatabaseHelper):
         return set(r[0] for r in self.query("SELECT permission FROM Prewikka_Group_Permission WHERE groupid = %s", group.id))
 
     def _set_permissions(self, table, field, obj, permissions):
-        permissions = set(permissions)
+        permissions = sorted(set(permissions))  # sorting avoids potential deadlock
         self.upsert(table, (field, "permission"), ((obj.id, perm) for perm in permissions), merge={field: obj.id})
 
     def set_user_permissions(self, user, permissions):
@@ -170,7 +168,7 @@ class DBAuth(auth.Auth, database.DatabaseHelper):
         if not no_password_check:
             try:
                 real_password = user.get_property_fail("password")
-            except:
+            except Exception:
                 raise auth.AuthError(env.session, log_user=user)
 
             valid, new_hash = self._verify(password, real_password)

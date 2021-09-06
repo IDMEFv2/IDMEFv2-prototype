@@ -29,10 +29,6 @@
 Tests for `prewikka.baseview`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from copy import copy
-
 import pytest
 
 from prewikka import hookmanager
@@ -50,17 +46,7 @@ def baseview_fixtures(request):
     load_view_for_fixtures('BaseView.render')
 
     # dataset
-    backup_dataset = copy(env.request.dataset)
-    dataset = {'document': AttrObj()}
-    env.request.dataset = dataset
-
-    def tear_down():
-        """
-        TearDown
-        """
-        env.request.dataset = backup_dataset
-
-    request.addfinalizer(tear_down)
+    env.request.dataset = {'document': AttrObj()}
 
 
 def test_baseview_download(baseview_fixtures):
@@ -114,10 +100,8 @@ def test_baseview_render(baseview_fixtures):
     base_view.render()
 
     # no user
-    backup_user = env.request.user
     env.request.user = None
     base_view.render()
-    env.request.user = backup_user
 
     # clean
     hookmanager.unregister('HOOK_LOAD_HEAD_CONTENT', '<script src="foo.js"></script>')

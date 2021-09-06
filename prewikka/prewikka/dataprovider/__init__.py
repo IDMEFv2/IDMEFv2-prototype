@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import copy
 import itertools
 import time
@@ -35,7 +33,7 @@ import time
 from datetime import datetime, timedelta
 from enum import Enum
 
-from prewikka import compat, error, hookmanager, pluginmanager
+from prewikka import error, hookmanager, pluginmanager
 from prewikka.utils import AttrObj, CachingIterator, json
 from prewikka.utils.timeutil import parser, tzutc
 
@@ -153,9 +151,6 @@ class QueryResultsRow(CachingIterator):
     def _cast(self, value):
         type = self._get_current_path_type()
         try:
-            if isinstance(value, list):
-                return [self._cast(v) for v in value]
-
             if type is datetime:
                 return to_datetime(value)
 
@@ -190,9 +185,50 @@ class QueryResults(CachingIterator):
         return QueryResultsRow(self, value)
 
 
+# FIXME: this should be handled by the future libprelude
+class IDMEFLike(object):
+    def __init__(self, obj=None):
+        self.obj = obj or {}
+
+    def __str__(self):
+        return str(self.obj)
+
+    def _get(self, elem, index, depth):
+        if depth == 0:
+            return elem[index]
+        else:
+            return [self._get(i, index, depth - 1) for i in elem]
+
+    def get(self, path, replacement=None):
+        ret = self.obj
+        depth = 0
+        try:
+            for elem in path.split("."):
+                if "(" in elem:
+                    elem, index = elem[:-1].split("(")
+                    if index == "*":
+                        ret = self._get(ret, elem, depth)
+                        depth += 1
+                    else:
+                        ret = self._get(ret, elem, depth)[int(index)]
+                else:
+                    ret = self._get(ret, elem, depth)
+        except (KeyError, TypeError):
+            ret = [] if depth else None
+
+        if ret is None:
+            return replacement
+
+        typ = env.dataprovider.get_path_type(path)
+        if typ is datetime:
+            return to_datetime(ret)
+        else:
+            return typ(ret)
+
+
 class ResultObject(object):
     def __init__(self, obj, curpath=None):
-        self._obj = obj
+        self._obj = IDMEFLike(obj)
         self._curpath = curpath or []
 
     def preprocess_value(self, value):
@@ -510,7 +546,7 @@ class Criterion(json.JSONObject):
         if isinstance(value, timedelta):
             return int(value.total_seconds())
 
-        if not isinstance(value, compat.STRING_TYPES):
+        if not isinstance(value, str):
             value = text_type(value)
 
         return "'%s'" % value.replace("'", "\\'")

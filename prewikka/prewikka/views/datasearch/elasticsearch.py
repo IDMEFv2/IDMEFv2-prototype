@@ -27,8 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import re
 
 from prewikka import resource
@@ -44,6 +42,8 @@ class ElasticsearchHighLighter(HighLighter):
 
     @staticmethod
     def get_clean_value(value):
+        if value is None:
+            return None
         return value.replace(_HIGHLIGHT_PRE_TAG, "").replace(_HIGHLIGHT_POST_TAG, "")
 
     @staticmethod

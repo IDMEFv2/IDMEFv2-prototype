@@ -29,13 +29,9 @@
 Pytest fixtures.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import copy
-
 import pytest
 
-from prewikka import config, main, usergroup
+from prewikka import config, main, usergroup, Request
 from prewikka.web.request import cookies
 from tests.utils.database import init_idmef_database, clean_database
 from tests.utils.fixtures import FakeInitialRequest, clean_directory
@@ -60,31 +56,7 @@ def initialization_fixtures(request):
     init_idmef_database(config.Config(TEST_CONFIG_FILE))
 
     # init prewikka core with config file
-    core = main.Core.from_config(TEST_CONFIG_FILE, autoupdate=True)
-
-    # setup "env.request"
-    initial_request = FakeInitialRequest('/')
-
-    # load prewikka to setup all settings
-    core.process(initial_request)
-
-    # setup "env.request.web.input_cookie"
-    cookie = cookies.SimpleCookie()
-    cookie[str('sessionid')] = TEST_SESSION_ID  # force str() type to avoid TypeError, works with both py2 and py3
-    env.request.web.input_cookie = dict(cookie.items())
-
-    # setup "env.request.dataset" and "env.request.parameters"
-    # used only when just a specific test is launched to prevent fails
-    env.request.dataset = {}
-    env.request.menu_parameters = {
-        'timeline_value': 0,
-        'timeline_unit': 'day',
-        'timeline_absolute': None,
-        'auto_apply_value': None
-    }
-
-    # setup "env.request.user"
-    env.request.user = usergroup.User('anonymous')
+    main.Core.from_config(TEST_CONFIG_FILE, autoupdate=True)
 
     def tear_down():
         """
@@ -106,15 +78,11 @@ def prewikka_fixtures(request):
     """
     Fixture used on each test (automatically used).
     """
-    backup_request = copy.copy(env.request)
+    env.request = Request()
+    env.request.user = usergroup.User('anonymous')
+    env.request.web = FakeInitialRequest('/')
+    env.request.dataset = {}
 
-    def tear_down():
-        """
-        TearDown
-
-        - clean IDMEF tables (TODO)
-        - clean env.request
-        """
-        env.request = backup_request
-
-    request.addfinalizer(tear_down)
+    cookie = cookies.SimpleCookie()
+    cookie['sessionid'] = TEST_SESSION_ID
+    env.request.web.input_cookie = dict(cookie.items())

@@ -29,9 +29,6 @@
 Tests for `prewikka.log`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import copy
 import os
 import sys
 
@@ -84,7 +81,6 @@ def test_log(log_fixtures):
     log.log(10, TypeError())
 
     # request.web
-    backup_web = copy.copy(env.request.web)
     env.request.web.is_xhr = True
     log.log(10, 'foo bar')
     env.request.web.is_xhr = False
@@ -92,11 +88,6 @@ def test_log(log_fixtures):
     env.request.web.is_stream = True
     log.log(10, 'foo bar')
     env.request.web.is_stream = False
-
-    env.request.web.port = 8080
-
-    # clean
-    env.request.web = backup_web
 
 
 @pytest.mark.parametrize("log_fixtures", [("syslog", {"level": "debug"})], indirect=True)

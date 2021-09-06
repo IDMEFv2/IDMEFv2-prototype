@@ -29,10 +29,6 @@
 Tests `prewikka.views.datasearch.alert`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from copy import deepcopy
-
 import pytest
 
 from tests.utils.fixtures import load_view_for_fixtures
@@ -47,8 +43,6 @@ def datasearch_fixtures(request):
     :return: view for alerts.
     :rtype: prewikka.view.View
     """
-    backup_parameters = deepcopy(env.request.parameters)
-
     view = load_view_for_fixtures(request.param)
     view.process_parameters()
 
@@ -60,7 +54,6 @@ def datasearch_fixtures(request):
         """
         TearDown
         """
-        env.request.parameters = backup_parameters
         env.dataprovider._backends["alert"]._db.remove('alert.messageid')
 
     request.addfinalizer(tear_down)

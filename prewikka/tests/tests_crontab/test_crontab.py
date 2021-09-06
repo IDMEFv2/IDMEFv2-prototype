@@ -29,8 +29,6 @@
 Tests for `prewikka.crontab`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import gevent
 
 from datetime import datetime, timedelta

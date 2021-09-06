@@ -29,8 +29,6 @@
 Utils for `prewikka.session` tests.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import binascii
 import os
 import struct
@@ -89,7 +87,7 @@ def create_session(user, time_=None, session_id=None):
         time_ = time.time()
 
     if not session_id:
-        session_id = binascii.hexlify(os.urandom(16) + struct.pack(b'>d', time_))
+        session_id = binascii.hexlify(os.urandom(16) + struct.pack(b'>d', time_)).decode("utf-8")
 
     session_database = SessionDatabase()
     session_database.create_session(session_id, user, int(time_))

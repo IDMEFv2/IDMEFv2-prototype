@@ -27,20 +27,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import sys
+import builtins
 
 from copy import copy
-from prewikka import compat, csrf, error, hookmanager, log, mainmenu, pluginmanager, registrar, response, template, usergroup, utils
+from prewikka import csrf, error, hookmanager, log, mainmenu, pluginmanager, registrar, response, template, usergroup, utils
 
 import werkzeug.exceptions
 from werkzeug.routing import Map, Rule, BaseConverter
-
-if sys.version_info >= (3, 0):
-    import builtins
-else:
-    import __builtin__ as builtins
 
 
 _SENTINEL = object()
@@ -413,7 +406,7 @@ class _ViewDescriptor(object):
 
         resp = self._render()
 
-        if isinstance(resp, (template._Dataset, compat.STRING_TYPES)):
+        if isinstance(resp, (template._Dataset, str)):
             resp = ViewResponse(resp)
 
         elif not(resp) or not issubclass(resp.__class__, response.PrewikkaResponse):  # Any other type (eg: dict)

@@ -29,8 +29,6 @@
 Tests for `prewikka.auth.auth`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pytest
 
 from prewikka.auth.auth import Auth, AuthError

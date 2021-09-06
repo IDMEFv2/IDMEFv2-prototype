@@ -29,17 +29,11 @@
 Tests for `prewikka.session.session`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from copy import deepcopy
 import datetime
-import sys
 import time
 
-if sys.version_info >= (3, 0):
-    from http import cookies
-else:
-    import Cookie as cookies
+from http import cookies
 
 import pytest
 
@@ -86,7 +80,7 @@ def test_session_db_create_():
     """
     user = User('anonymous')
     session_id = create_session(user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
 
     assert query.getRowCount() == 1
     assert session_id in query.toString()
@@ -102,10 +96,10 @@ def test_session_db_update():
     session_database = SessionDatabase()
     user = User('anonymous')
     session_id = create_session(user)
-    old_query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    old_query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
     time_ = time.time() + 3600  # add 3600s
     session_database.update_session(session_id, time_)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
 
     assert old_query.toString() != query.toString()
     assert query.getRowCount() == 1
@@ -127,7 +121,7 @@ def test_session_db_get():
     session_database = SessionDatabase()
     user = User('anonymous')
     session_id = create_session(user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
 
     assert query.getRowCount() == 1
 
@@ -153,24 +147,24 @@ def test_session_db_delete():
 
     # delete 1 session based on sessionid
     session_id = create_session(user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
 
     assert query.getRowCount() == 1
 
     session_database.delete_session(sessionid=session_id)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
 
     assert query.getRowCount() == 0
 
     # delete 1 session based on userid
     session_id = create_session(user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert session_id in query.toString()
     assert query.getRowCount() == 1
 
     session_database.delete_session(user=user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert query.getRowCount() == 0
 
@@ -178,7 +172,7 @@ def test_session_db_delete():
     session_id_1 = create_session(user)
     session_id_2 = create_session(user)
     session_id_3 = create_session(user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert session_id_1 in query.toString()
     assert session_id_2 in query.toString()
@@ -186,7 +180,7 @@ def test_session_db_delete():
     assert query.getRowCount() == 3
 
     session_database.delete_session(user=user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert query.getRowCount() == 0
 
@@ -194,28 +188,28 @@ def test_session_db_delete():
 
     # delete session based on invalid sessionid: nothing happening
     create_session(user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert query.getRowCount() == 1
 
     fake_session_id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     session_database.delete_session(sessionid=fake_session_id)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert query.getRowCount() == 1
 
     # delete session based on invalid userid: nothing happening
     fake_user = User('fake')
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % fake_user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', fake_user.id)
 
     assert query.getRowCount() == 0
 
     session_database.delete_session(user=fake_user)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert query.getRowCount() == 1
 
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % fake_user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', fake_user.id)
 
     assert query.getRowCount() == 0
 
@@ -247,14 +241,14 @@ def test_session_db_delete_expired_():
     # with 1 session expired in database
     session_id = create_session(user, t_before)
     session_database.delete_expired_sessions(t_now)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
 
     assert query.getRowCount() == 0
 
     # with 1 session NOT expired in database
     session_id = create_session(user, t_after)
     session_database.delete_expired_sessions(t_now)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=\'%s\'' % session_id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE sessionid=%s', session_id)
 
     assert query.getRowCount() == 1
 
@@ -264,12 +258,12 @@ def test_session_db_delete_expired_():
     session_id_1 = create_session(user, t_before)
     session_id_2 = create_session(user, t_before)
     session_id_3 = create_session(user, t_after)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert query.getRowCount() == 3
 
     session_database.delete_expired_sessions(t_now)
-    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=\'%s\'' % user.id)
+    query = env.db.query('SELECT * from Prewikka_Session WHERE userid=%s', user.id)
 
     assert query.getRowCount() == 1
     assert session_id_1 not in query.toString()

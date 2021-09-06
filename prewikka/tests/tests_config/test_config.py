@@ -29,8 +29,6 @@
 Tests for `prewikka.config`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 
 import pytest
@@ -148,7 +146,7 @@ def test_config_parser_section():
         assert elt
 
     # values
-    assert section.values() == ['bar', 'foo']
+    assert list(section.values()) == ['bar', 'foo']
 
 
 def test_config_values(config_fixtures):

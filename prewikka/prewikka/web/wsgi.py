@@ -26,9 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function
-
-import sys
 import werkzeug.wsgi
 import wsgiref.headers
 import wsgiref.util
@@ -37,12 +34,6 @@ from prewikka import main, utils
 from prewikka.web import request
 
 from prewikka.compat.jquery_unparam import jquery_unparam
-
-
-if sys.version_info >= (3, 0):
-    Py3 = True
-else:
-    Py3 = False
 
 
 defined_status = {
@@ -76,7 +67,7 @@ class WSGIRequest(request.Request):
                 arg = self._handle_multipart(fp=environ['wsgi.input'], environ=environ)
             else:
                 arg = environ['wsgi.input'].read(int(environ['CONTENT_LENGTH']))
-                self.body = arg = arg.decode("utf8") if Py3 else arg
+                self.body = arg = arg.decode("utf8")
 
             self.arguments.update(jquery_unparam(arg, multipart=multipart))
 
@@ -94,7 +85,7 @@ class WSGIRequest(request.Request):
         # decoded with ISO-8859-1. This is wrong for Prewikka where UTF-8 is the
         # default. Re-encode to recover the original bytestring.
         if value is not None:
-            return value.encode("ISO-8859-1") if Py3 else value
+            return value.encode("ISO-8859-1")
 
     def _wsgi_get_unicode(self, key, default=None):
         value = self._wsgi_get_bytes(key, default)
@@ -104,7 +95,7 @@ class WSGIRequest(request.Request):
     def _wsgi_get_str(self, key, default=None):
         value = self._wsgi_get_bytes(key, default)
         if value is not None:
-            return value.decode("utf8") if Py3 else value
+            return value.decode("utf8")
 
     def get_target_origin(self):
         return "%s://%s" % (self._environ.get("wsgi.url_scheme"), werkzeug.wsgi.get_host(self._environ))
@@ -130,9 +121,6 @@ class WSGIRequest(request.Request):
 
     def send_headers(self, headers=[], code=200, status_text=None):
         headers = list(headers) + [("X-responseURL", utils.iri2uri(self.get_uri()))]
-
-        if sys.version_info[0] < 3:
-            headers = [(k.encode("ISO-8859-1"), v.encode("ISO-8859-1")) for k, v in headers]
 
         if self._output_cookie:
             headers += [("Set-Cookie", c.OutputString()) for c in self._output_cookie.values()]

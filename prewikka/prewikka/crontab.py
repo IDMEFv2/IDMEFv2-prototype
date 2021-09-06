@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 import croniter
 import datetime
@@ -120,9 +118,9 @@ class CronJob(object):
                 self.callback(self)
             else:
                 raise self.error
-        except Exception as err:
-            logger.exception("[%d/%s]: cronjob failed: %s", self.id, self.name, err)
-            err = utils.json.dumps(error.PrewikkaError(err, N_("Scheduled job execution failed")))
+        except Exception as e:
+            logger.exception("[%d/%s]: cronjob failed: %s", self.id, self.name, e)
+            err = utils.json.dumps(error.PrewikkaError(e, N_("Scheduled job execution failed")))
 
         self._finalize(err)
 

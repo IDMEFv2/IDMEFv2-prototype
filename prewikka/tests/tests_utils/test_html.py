@@ -29,8 +29,6 @@
 Tests for `prewikka.utils.html`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from prewikka.utils.html import escape, escapejs
 from prewikka.utils.html.helpers import selected, checked, disabled
 

@@ -29,10 +29,7 @@
 Tests for `prewikka.response`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from collections import OrderedDict
-from copy import deepcopy
 import os
 
 from prewikka.response import PrewikkaResponse, PrewikkaDownloadResponse, PrewikkaFileResponse, PrewikkaRedirectResponse
@@ -95,8 +92,7 @@ def test_prewikka_response():
     env.request.web.is_xhr = False  # clean
 
     # write()
-    req = deepcopy(env.request.web)
-    response.write(req)
+    response.write(env.request.web)
 
 
 def test_prewikka_download_response():
@@ -132,7 +128,6 @@ def test_prewikka_file_response():
     Test `prewikka.response.PrewikkaFileResponse` class.
     """
     path = os.path.join(TEST_DATA_DIR, 'file.txt')
-    backup_headers = deepcopy(env.request.web.headers)
 
     # default response
     response = PrewikkaFileResponse(path)
@@ -147,9 +142,6 @@ def test_prewikka_file_response():
     env.request.web.headers['if-modified-since'] = '2030-01-19 17:21:00 UTC'
     response3 = PrewikkaFileResponse(path)
     response3.write(env.request.web)
-
-    # clean
-    env.request.web.headers = backup_headers
 
 
 def test_prewikka_redirect_response():

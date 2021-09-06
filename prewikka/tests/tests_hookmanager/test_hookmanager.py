@@ -29,8 +29,6 @@
 Test for `prewikka.hookmanager`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pytest
 
 from prewikka import hookmanager
@@ -94,7 +92,9 @@ def test_hookmanager_unregister():
     Test `prewikka.hookmanager.HookManager.unregister()` method.
     """
     hook = 'hook_6'
-    method = lambda x: x
+
+    def method(x):
+        return x
 
     hookmanager.register(hook, method)
     hookmanager.unregister(hook, method)

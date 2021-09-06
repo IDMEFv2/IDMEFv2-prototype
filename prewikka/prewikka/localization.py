@@ -27,12 +27,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
+import builtins
 import collections
 import datetime
 import gettext
-import sys
 from threading import Lock, local
 
 import babel.core
@@ -42,11 +40,6 @@ import babel.numbers
 import pkg_resources
 import prelude
 from prewikka import log, utils
-
-if sys.version_info >= (3, 0):
-    import builtins
-else:
-    import __builtin__ as builtins
 
 try:
     # Needs babel >= 1.0
@@ -85,13 +78,13 @@ class TranslationProxy(object):
     def get_charset(self):
         try:
             return self._data.catalog.charset()
-        except:
+        except Exception:
             return env.config.general.encoding
 
     def get_locale(self):
         try:
             return self._data.lang
-        except:
+        except Exception:
             return env.config.general.default_locale
 
     def set_locale(self, lang):
@@ -107,19 +100,13 @@ class TranslationProxy(object):
         self._data.catalog = first
 
     def gettext(self, s):
-        if sys.version_info < (3, 0):
-            return self._data.catalog.ugettext(s) if hasattr(self._data, "catalog") else s
-        else:
-            return self._data.catalog.gettext(s) if hasattr(self._data, "catalog") else s
+        return self._data.catalog.gettext(s) if hasattr(self._data, "catalog") else s
 
     def ngettext(self, singular, plural, num):
         if not hasattr(self._data, "catalog"):
             return singular if num <= 1 else plural
 
-        if sys.version_info < (3, 0):
-            return self._data.catalog.ungettext(singular, plural, num)
-        else:
-            return self._data.catalog.ngettext(singular, plural, num)
+        return self._data.catalog.ngettext(singular, plural, num)
 
 
 translation = TranslationProxy()
@@ -303,7 +290,7 @@ def get_system_timezone():
     try:
         # Needs babel >= 1.0
         return babel.dates.LOCALTZ.zone
-    except:
+    except Exception:
         return "UTC"
 
 

@@ -29,8 +29,6 @@
 Utils for `prewikka.database` tests.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from prewikka.database import SQLScript
 
 

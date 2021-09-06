@@ -29,8 +29,6 @@
 Tests for `prewikka.localization`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from datetime import datetime, time, timedelta
 import os
 
@@ -159,15 +157,15 @@ def test_format_datetime():
     # datetime
     test_datetime = datetime(year=1985, month=10, day=26, hour=20, minute=0).replace(tzinfo=utils.timeutil.tzutc())
 
-    assert format_datetime(test_datetime) == '26 Oct 1985 21:00:00'  # UTC+1
+    assert format_datetime(test_datetime) == '26 Oct 1985, 21:00:00'  # UTC+1
 
     test_date = datetime(year=1985, month=10, day=26, hour=21, minute=0, tzinfo=utils.timeutil.tzutc())
 
     assert format_date(test_date, tzinfo=utils.timeutil.tzutc()) == '26 Oct 1985'
 
     # int
-    assert format_datetime(499204800) == '26 Oct 1985 21:00:00'  # UTC+1
-    assert format_datetime(499204800, tzinfo=utils.timeutil.tzutc()) == '26 Oct 1985 20:00:00'
+    assert format_datetime(499204800) == '26 Oct 1985, 21:00:00'  # UTC+1
+    assert format_datetime(499204800, tzinfo=utils.timeutil.tzutc()) == '26 Oct 1985, 20:00:00'
 
 
 @pytest.mark.xfail(reason='babel update required')
@@ -232,7 +230,7 @@ def test_get_calendar_format():
     """
     Test `prewikka.localization.get_calendar_format()` function.
     """
-    assert get_calendar_format() == 'dd/mm/yy'
+    assert get_calendar_format() == 'dd/mm/y'
 
 
 def test_get_timezones():

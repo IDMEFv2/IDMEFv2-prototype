@@ -28,17 +28,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import argparse
 import cmd
 import getpass
 import glob
 import io
+import json
 import locale
 import logging
 import os
-import re
+import shlex
 import sys
 
 from prewikka import cli, localization, log, main, siteconfig, usergroup, utils, version
@@ -118,11 +117,29 @@ class PrewikkaCLI(cmd.Cmd):
     def complete_sync(self, text, line, begidx, endidx):
         return self._complete_command("sync", text, line)
 
+    def complete_update(self, text, line, begidx, endidx):
+        return self._complete_command("update", text, line)
+
+    def _parse_with_json(self, arg):
+        data = {}
+        idx = arg.find('{')
+        while idx != -1:
+            try:
+                data = utils.json.loads(arg[idx:])
+                if not isinstance(data, dict):
+                    raise ValueError(data)
+                arg = arg[:idx]
+                break
+            except json.JSONDecodeError:
+                pass
+            idx = arg.find('{', idx + 1)
+
+        return shlex.split(arg), data
+
     def do_create(self, arg):
         try:
-            category, name, data = re.findall("^(\S+) (\S+)(?: ({.*}))?$", arg)[0]
-            data = utils.json.loads(data) if data else {}
-        except (IndexError, ValueError):
+            (category, name), data = self._parse_with_json(arg)
+        except ValueError:
             print("*** %s" % _("Could not parse input"))
             return PARSE_ERROR
 
@@ -130,7 +147,7 @@ class PrewikkaCLI(cmd.Cmd):
 
     def do_delete(self, arg):
         try:
-            category, name = arg.split()
+            category, name = shlex.split(arg)
         except ValueError:
             print("*** %s" % _("Could not parse input"))
             return PARSE_ERROR
@@ -138,7 +155,7 @@ class PrewikkaCLI(cmd.Cmd):
         return self._do_command("delete", category, name=name)
 
     def do_import(self, arg):
-        args = arg.split()
+        args = shlex.split(arg)
         try:
             category = args[0]
             filenames = args[1:]
@@ -159,14 +176,27 @@ class PrewikkaCLI(cmd.Cmd):
 
         return self._do_command("import", category, files=files)
 
-    def do_list(self, arg):
-        return self._do_command("list", arg)
-
-    def do_sync(self, arg):
-        return self._do_command("sync", arg)
-
     def do_update(self, arg):
-        return self._do_command("update", arg)
+        try:
+            (category,), data = self._parse_with_json(arg)
+        except ValueError:
+            print("*** %s" % _("Could not parse input"))
+            return PARSE_ERROR
+
+        return self._do_command("update", category, data=data)
+
+    def _do_generic(cmd):
+        def inner(self, arg):
+            try:
+                arg, = shlex.split(arg)
+            except ValueError:
+                print("*** %s" % _("Could not parse input"))
+                return PARSE_ERROR
+            return self._do_command(cmd, arg)
+        return inner
+
+    do_list = _do_generic("list")
+    do_sync = _do_generic("sync")
 
     def help_create(self):
         return self._help_command("create", ["create <type> <name> <data>", _("Create an object of the specified type")])
@@ -236,7 +266,7 @@ if __name__ == "__main__":
         print("*** %s" % _("prewikka-cli must be executed as the prewikka user"))
         sys.exit(SYSTEM_ERROR)
 
-    main.Core.from_config(args.config)
+    main.Core.from_config(args.config, ignore_errors=False)
     env.request.user = env.auth.authenticate(args.user, no_password_check=True)
     env.request.user.set_locale()
 
@@ -250,7 +280,7 @@ if __name__ == "__main__":
     if args.command:
         ret = 0
         for command in args.command.split(";"):
-            r = interpreter.onecmd(command)
+            r = interpreter.onecmd(command) or 0
             if r > ret:
                 ret = r
 

@@ -27,18 +27,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function
-
 import abc
 import cgi
-import sys
+
+from http import cookies
 
 from prewikka import error
-
-if sys.version_info >= (3, 0):
-    from http import cookies
-else:
-    import Cookie as cookies
 
 
 class BufferedWriter(object):
@@ -90,10 +84,6 @@ class Request(object):
     def add_cookie(self, param, value, expires=None, path="/", httponly=False):
         if not self._output_cookie:
             self._output_cookie = cookies.SimpleCookie()
-
-        if sys.version_info < (3, 0):
-            param = param.encode("ascii")
-            value = value.encode("utf8")
 
         self._output_cookie[param] = value
 

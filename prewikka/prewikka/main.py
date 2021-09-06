@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import errno
 import gc
 import os
@@ -51,7 +49,7 @@ _core_cache_lock = Lock()
 
 
 class Core(object):
-    def __init__(self, filename=None, autoupdate=False):
+    def __init__(self, filename=None, autoupdate=False, ignore_errors=True):
         self.autoupdate = autoupdate
         env.auth = None  # In case of database error
         env.config = config.Config(filename)
@@ -86,14 +84,16 @@ class Core(object):
 
         self._reload_time = None
         self._reload_count = 0
+
+        self._prewikka_initialized = False
         try:
-            self._prewikka_initialized = False
             self._prewikka_init_if_needed()
-        except:
-            pass
+        except Exception:
+            if not ignore_errors:
+                raise
 
     @staticmethod
-    def from_config(path=None, threaded=False, autoupdate=False):
+    def from_config(path=None, autoupdate=False, ignore_errors=True):
         global _core_cache
         global _core_cache_lock
 
@@ -102,7 +102,7 @@ class Core(object):
 
         with _core_cache_lock:
             if path not in _core_cache:
-                _core_cache[path] = Core(path, autoupdate)
+                _core_cache[path] = Core(path, autoupdate, ignore_errors)
 
         return _core_cache[path]
 

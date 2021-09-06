@@ -29,8 +29,6 @@
 
 """DataSearch IDMEF view."""
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from prewikka import dataprovider, resource, response, template, utils, view
 from prewikka.localization import format_datetime
 

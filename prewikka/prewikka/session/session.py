@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import binascii
 import os
 import struct
@@ -122,7 +120,7 @@ class Session(pluginmanager.PluginBase):
 
         try:
             login, t = self._db.get_session(sessionid)
-        except:
+        except Exception:
             request.delete_cookie("sessionid")
             raise SessionInvalid(template=self.template)
 

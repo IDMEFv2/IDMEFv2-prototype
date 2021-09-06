@@ -29,8 +29,6 @@
 
 """ DataSearch view """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 import csv
 import datetime
@@ -633,7 +631,7 @@ class DataSearch(view.View):
                 else:
                     cells[prop.name] = ret
 
-            resrows.append({"id": text_type(i), "cell": cells})
+            resrows.append({"_rowId": text_type(i), "cell": cells})
 
         return utils.viewhelpers.GridAjaxResponse(resrows, results.total, criteria=search.all_criteria).add_html_content(mainmenu.HTMLMainMenu(update=True))
 

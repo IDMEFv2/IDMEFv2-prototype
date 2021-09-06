@@ -29,9 +29,6 @@
 Tests for `prewikka.views.agents`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from copy import deepcopy
 from datetime import datetime, timedelta
 
 import pytest
@@ -79,7 +76,6 @@ def test_agents_online(agents_fixtures):
     Test `prewikka.views.agents.agents.Agents.agents` view.
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     idmef = create_heartbeat('01123581-3213-4558-9144', status='online')
     env.idmef_db.insert(idmef)
@@ -90,7 +86,6 @@ def test_agents_online(agents_fixtures):
 
     # clean
     delete_heartbeat('01123581-3213-4558-9144')
-    env.request.parameters = backup_parameters
 
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.agents"], indirect=True)
@@ -99,7 +94,6 @@ def test_agents_status_unknown(agents_fixtures):
     Test `prewikka.views.agents.agents.Agents.agents` view.
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     idmef = create_heartbeat('01123581-3213-4558-9144', status='online')
     env.idmef_db.insert(idmef)
@@ -110,7 +104,6 @@ def test_agents_status_unknown(agents_fixtures):
 
     # clean
     delete_heartbeat('01123581-3213-4558-9144')
-    env.request.parameters = backup_parameters
 
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.delete"], indirect=True)
@@ -121,7 +114,6 @@ def test_delete_heartbeat(agents_fixtures):
     Type(s): Heartbeat (x1)
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     idmef_id = '01123581-3213-4558-9144'
     idmef = create_heartbeat(idmef_id)
@@ -134,9 +126,6 @@ def test_delete_heartbeat(agents_fixtures):
     assert view.render()
     assert len(get_heartbeat(idmef_id)) == 0
 
-    # clean
-    env.request.parameters = backup_parameters
-
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.delete"], indirect=True)
 def test_delete_heartbeat_multiple(agents_fixtures):
@@ -146,7 +135,6 @@ def test_delete_heartbeat_multiple(agents_fixtures):
     Type(s): Heartbeat (x2)
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     idmef_id = '01123581-3213-4558-9144'
     idmef_id_2 = '01123581-3213-4558-9145'
@@ -164,9 +152,6 @@ def test_delete_heartbeat_multiple(agents_fixtures):
     assert len(get_heartbeat(idmef_id)) == 0
     assert len(get_heartbeat(idmef_id_2)) == 0
 
-    # clean
-    env.request.parameters = backup_parameters
-
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.delete"], indirect=True)
 def test_delete_alert(agents_fixtures):
@@ -176,7 +161,6 @@ def test_delete_alert(agents_fixtures):
     Type(s): Alert (x1)
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     idmef_id = '01123581-3213-4558-9144'
     idmef = create_alert(idmef_id)
@@ -189,9 +173,6 @@ def test_delete_alert(agents_fixtures):
     assert view.render()
     assert len(get_alert(idmef_id)) == 0
 
-    # clean
-    env.request.parameters = backup_parameters
-
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.delete"], indirect=True)
 def test_delete_alert_multiple(agents_fixtures):
@@ -201,7 +182,6 @@ def test_delete_alert_multiple(agents_fixtures):
     Type(s): Alert (x2)
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     idmef_id = '01123581-3213-4558-9144'
     idmef_id_2 = '01123581-3213-4558-9145'
@@ -219,9 +199,6 @@ def test_delete_alert_multiple(agents_fixtures):
     assert len(get_alert(idmef_id)) == 0
     assert len(get_alert(idmef_id_2)) == 0
 
-    # clean
-    env.request.parameters = backup_parameters
-
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.delete"], indirect=True)
 def test_delete_alert_and_heartbeat(agents_fixtures):
@@ -231,7 +208,6 @@ def test_delete_alert_and_heartbeat(agents_fixtures):
     Type(s): Alert (x2, one deleted and one not deleted) + Heartbeat (x1)
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     idmef_id = '01123581-3213-4558-9144'
     idmef_id_2 = '01123581-3213-4558-9145'  # not deleted
@@ -254,9 +230,6 @@ def test_delete_alert_and_heartbeat(agents_fixtures):
     assert len(get_alert(idmef_id_2)) == 1
     assert len(get_heartbeat(idmef_id_3)) == 0
 
-    # clean
-    env.request.parameters = backup_parameters
-
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.delete"], indirect=True)
 def test_delete_unknown_type(agents_fixtures):
@@ -266,15 +239,11 @@ def test_delete_unknown_type(agents_fixtures):
     Type(s): unknown
     """
     view = agents_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     env.request.parameters['types'] = ['unknown']
     env.request.parameters['id'] = [42]
 
     assert view.render()
-
-    # clean
-    env.request.parameters = backup_parameters
 
 
 @pytest.mark.parametrize("agents_fixtures", ["agents.analyze"], indirect=True)

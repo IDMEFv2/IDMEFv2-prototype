@@ -554,6 +554,7 @@ function DataSearchPage(backend, criterion_config, criterion_config_default, sep
             url: url,
             postData: set_postdata(elem, false),
             colModel: columns.model,
+            jsonReader: {id: "_rowId"},
             rowattr: function(row, data, id) {
                 if ( data._classes )
                     return { "class": data._classes };

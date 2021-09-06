@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 import copy
 import itertools
@@ -36,22 +34,21 @@ import voluptuous
 import yaml
 
 from prewikka import error, hookmanager
-from prewikka.compat import STRING_TYPES
 from prewikka.utils import cache
 
 
 _SCHEMA = voluptuous.Schema([{
-    "name": STRING_TYPES,
-    "icon": STRING_TYPES,
+    "name": str,
+    "icon": str,
     "default": bool,
     voluptuous.Required("categories", default=[]): [{
-        "name": STRING_TYPES,
-        "icon": STRING_TYPES,
+        "name": str,
+        "icon": str,
         voluptuous.Required("sections", default=[]): [{
-            voluptuous.Required("name"): STRING_TYPES,
-            "icon": STRING_TYPES,
-            voluptuous.Required("tabs", default=[]): [STRING_TYPES],
-            "default_tab": STRING_TYPES,
+            voluptuous.Required("name"): str,
+            "icon": str,
+            voluptuous.Required("tabs", default=[]): [str],
+            "default_tab": str,
             "expand": bool
         }]
     }]

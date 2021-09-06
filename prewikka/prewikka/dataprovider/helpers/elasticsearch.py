@@ -27,8 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import datetime
 import dateutil.parser
 import re
@@ -38,7 +36,7 @@ from collections import OrderedDict
 from prewikka import dataprovider, error, hookmanager
 from prewikka.dataprovider import CriterionOperator, utils
 from prewikka.dataprovider.parsers import lucene
-from prewikka.utils import json, AttrObj
+from prewikka.utils import json, AttrObj, CachingIterator
 from prewikka.utils.timeutil import timezone, get_timestamp_from_datetime
 
 
@@ -127,6 +125,9 @@ class ElasticsearchInstance(dataprovider.DataProviderInstance):
         results = self._client.query(paths, criteria, limit, offset, highlight)
 
         return results.api_results
+
+    def get(self, criteria, paths, limit, offset):
+        return self.get_values([], criteria, False, limit, offset)
 
 
 class ElasticsearchClient(object):
@@ -224,7 +225,7 @@ class ElasticsearchClient(object):
         search = ElasticsearchQuery(self._type, self._version, self._mapping, path, criteria, limit, offset, highlight)
         results = self.request("/_search", search.get_json_query())
 
-        return ElasticsearchResult(self._mapping, results.json(), search, limit)
+        return ElasticsearchResult(self._type, self._mapping, results.json(), search, limit)
 
     def get_mapping(self, root=None, mapping=None, prefix=""):
         if mapping is None:
@@ -485,13 +486,13 @@ class ElasticsearchQuery(object):
 
     def _add_nested(self, field):
         es_field_name = self._mapping.to_es(field, nested=True)
-        l = es_field_name.split("(*).")
-        if len(l) == 1:
+        elem = es_field_name.split("(*).")
+        if len(elem) == 1:
             return {}
 
         return {
             "nested": {
-                "path": ".".join(l[:-1]),
+                "path": ".".join(elem[:-1]),
             }
         }
 
@@ -693,7 +694,8 @@ class ElasticsearchQuery(object):
 
 
 class ElasticsearchResult(object):
-    def __init__(self, mapping, result, query, limit):
+    def __init__(self, type, mapping, result, query, limit):
+        self._type = type
         self._mapping = mapping
         self._result = result
         self._query = query
@@ -704,7 +706,11 @@ class ElasticsearchResult(object):
             # For Elasticsearch >= 7
             self.total_result = self.total_result["value"]
 
-        self.api_results = dataprovider.QueryResults(self._get_rows())
+        if query.path:
+            self.api_results = dataprovider.QueryResults(self._get_rows())
+        else:
+            self.api_results = CachingIterator([dataprovider.ResultObject({self._type: row}) for row in self._get_rows()])
+
         self.api_results.total = self.total_result
 
     def _get_rows(self):
@@ -903,7 +909,25 @@ class ElasticsearchResult(object):
         return value
 
     def _get_row(self, result):
+        if not self._query.path:
+            return self._apply_mapping(result)
+
         return [self._get_field_value(i, result) for i in self._query.path]
+
+    def _apply_mapping(self, result, root=""):
+        if isinstance(result, list):
+            return [self._apply_mapping(r, root) for r in result]
+
+        if not isinstance(result, dict):
+            return result
+
+        ret = {}
+        for k, v in result.items():
+            field = self._mapping.from_es(root + k)
+            if field:
+                ret[field.split(".")[-1]] = self._apply_mapping(v, root + k + ".")
+
+        return ret
 
 
 class ElasticsearchMap(object):
@@ -927,9 +951,14 @@ class ElasticsearchMap(object):
                 raise error.PrewikkaUserError(N_("Invalid configuration"), err)
 
         self._mapping, self._group_mapping = self._get_mapping(conf)
+        self._reverse_mapping = {}
         paths = env.dataprovider.get_paths(name)
 
         for field, es_field in self._mapping.items():
+            elem = es_field.replace("(*)", "").split(".")
+            for i, _ in enumerate(elem, 1):
+                self._reverse_mapping[".".join(elem[:i])] = ".".join(field.split(".")[:i])
+
             if field in paths or field == "default_field":
                 continue
 
@@ -981,3 +1010,6 @@ class ElasticsearchMap(object):
 
     def to_operator(self, field):
         return self._OPERATOR.get(field, field)
+
+    def from_es(self, field):
+        return self._reverse_mapping.get(field)

@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import hashlib
 import itertools
 import re
@@ -357,7 +355,7 @@ class MessageSummary(Table, view.View):
             if name.find("http://") != -1:
                 url = name
 
-            elif re.compile("\.[^\s]+\.[^\s+]").search(name):
+            elif re.compile(r"\.[^\s]+\.[^\s+]").search(name):
                 url = "http://" + name
 
             else:
@@ -385,7 +383,7 @@ class MessageSummary(Table, view.View):
 
         try:
             self.newTableEntry(_("Detect time"), self.getTime(msg["detect_time"]))
-        except:
+        except Exception:
             pass
 
         if msg["analyzer_time"]:
@@ -459,19 +457,19 @@ class MessageSummary(Table, view.View):
         self.endTable()
 
     def buildAnalyzerList(self, msg):
-        l = []
+        lst = []
         for analyzer in msg["analyzer"]:
-            l.insert(0, analyzer)
+            lst.insert(0, analyzer)
 
-        l.pop(0)
+        lst.pop(0)
 
-        self.beginSection(_("Analyzer Path (%d not shown)") % len(l), display="none")
+        self.beginSection(_("Analyzer Path (%d not shown)") % len(lst), display="none")
 
         self.beginTable(cl="table-borderless")
 
         i = 1
-        index = len(l) - 1
-        for analyzer in l:
+        index = len(lst) - 1
+        for analyzer in lst:
             self.newTableCol(i - 1, _("Analyzer #%d") % index, None, header=True)
             self.buildAnalyzer(analyzer)
             self.newTableRow()

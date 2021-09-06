@@ -29,16 +29,10 @@
 Database utils for prewikka tests suite.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 
-import prelude
 import preludedb
 
-# FIXME: remove this with pytest 3+, it is used to prevent some encoding (latin-1 for example)
-# errors in database messages
-prelude.python2_return_unicode(False)
 
 _LIBPRELUDEDB_DEFAULT_SQL_PATH = '/usr/share/libpreludedb/classic/'
 

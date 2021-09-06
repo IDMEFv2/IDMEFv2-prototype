@@ -27,8 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 import os.path
 import re
@@ -41,11 +39,6 @@ from prewikka.utils.timeutil import now
 
 port_dict = {}
 read_done = False
-
-if sys.version_info >= (3, 0):
-    text_type = str
-else:
-    text_type = unicode
 
 
 class AttrObj(object):
@@ -62,10 +55,7 @@ class AttrObj(object):
         return self.__dict__ == other.__dict__
 
     def __iter__(self):
-        if sys.version_info >= (3, 0):
-            return self.__dict__.items()
-        else:
-            return self.__dict__.iteritems()
+        return self.__dict__.items()
 
     def __getitem__(self, val):
         return self.__dict__.__getitem__(val)
@@ -97,7 +87,7 @@ def _load_protocol():
         return port_dict
 
     read_done = True
-    sreg = re.compile("^\s*(?P<name>[^#]\S+)\s*(?P<number>\d+)\s*(?P<alias>\S+)")
+    sreg = re.compile(r"^\s*(?P<name>[^#]\S+)\s*(?P<number>\d+)\s*(?P<alias>\S+)")
 
     try:
         fd = open("/etc/protocols", "r")
@@ -169,8 +159,8 @@ def soundex(name):
     sndx = ''
     fc = ''
 
-    # We need to call text_type() so that we work on a string (not bytes) with Py3
-    name = text_type(unicodedata.normalize("NFKD", name).encode("ascii", "ignore"))
+    # make sure we work on an ASCII string (not bytes)
+    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("utf-8")
 
     # translate alpha chars in name to soundex digits
     for i, c in enumerate(name):
@@ -240,7 +230,7 @@ def path_sort_key(path):
     Return a key to sort dataprovider paths in natural order,
     so that alert.source(10) comes after alert.source(2).
     """
-    return [int(part) if part.isdigit() else part for part in re.split("(\d+)", path)]
+    return [int(part) if part.isdigit() else part for part in re.split(r"(\d+)", path)]
 
 
 def get_file_size(fileobj):

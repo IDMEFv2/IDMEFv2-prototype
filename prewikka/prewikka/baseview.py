@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import base64
 import collections
 import string
@@ -136,7 +134,7 @@ class BaseView(view._View):
     def logout(self):
         try:
             env.session.logout(env.request.web)
-        except:
+        except Exception:
             # logout always generate an exception to render the logout template
             pass
 

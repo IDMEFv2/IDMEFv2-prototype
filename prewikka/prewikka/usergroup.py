@@ -26,13 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import abc
 import copy
 import hashlib
 
-from prewikka import compat, error, hookmanager, localization, log, utils
+from prewikka import error, hookmanager, localization, log, utils
 from prewikka.utils import cache, json
 
 ADMIN_LOGIN = "admin"
@@ -45,7 +43,7 @@ class UnknownNameIDError(KeyError):
 
 class PermissionDeniedError(error.PrewikkaUserError):
     def __init__(self, permissions, view=None):
-        if isinstance(permissions, compat.STRING_TYPES):
+        if isinstance(permissions, str):
             permissions = [permissions]
 
         if view and permissions:
@@ -78,7 +76,7 @@ class Permissions(set):
 
     def declare(self, permission):
         """Add the permission to the set if it is not already declared"""
-        if isinstance(permission, compat.STRING_TYPES):
+        if isinstance(permission, str):
             self.add(permission)
         else:
             self.update(permission)
@@ -244,7 +242,7 @@ class User(NameID):
             if v not in self.configuration:
                 continue
 
-            for k in self.configuration[v].keys():
+            for k in list(self.configuration[v]):
                 if k.find(key) != -1:
                     self.del_property(k, view=v)
 

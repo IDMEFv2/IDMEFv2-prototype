@@ -29,10 +29,6 @@
 Tests for `prewikka.views.crontab`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from copy import deepcopy
-
 import pytest
 
 from prewikka import crontab
@@ -48,7 +44,6 @@ def crontab_fixtures(request):
     :rtype: prewikka.view.View
     """
     view = env.viewmanager.get_view(request.param)
-    backup_parameters = deepcopy(env.request.parameters)
     env.request.parameters = view.view_parameters(view)
     env.request.view = view
     view.process_parameters()
@@ -68,7 +63,6 @@ def crontab_fixtures(request):
          - Restore "env.request.parameters" to initial values
         """
         env.db.query('DELETE FROM Prewikka_Crontab')
-        env.request.parameters = backup_parameters
 
     request.addfinalizer(tear_down)
 

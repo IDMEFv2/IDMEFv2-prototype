@@ -29,8 +29,6 @@
 Tests for `prewikka.resource`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from prewikka.resource import Link, CSSLink, JSLink, HTMLSource, CSSSource, JSSource, HTMLNode
 from prewikka.utils import json
 

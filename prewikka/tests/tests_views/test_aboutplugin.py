@@ -29,10 +29,6 @@
 Tests for `prewikka.views.aboutplugin`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from copy import deepcopy
-
 import pytest
 
 
@@ -67,14 +63,10 @@ def test_enable(aboutplugin_fixtures):
     Test `prewikka.views.aboutplugin.enable` view.
     """
     view = aboutplugin_fixtures
-    backup_parameters = deepcopy(env.request.parameters)
 
     env.request.parameters['enable_plugin'] = 'prewikka.views.filter.filter:FilterView'
 
     view.render()
-
-    # clean
-    env.request.parameters = backup_parameters
 
 
 @pytest.mark.parametrize("aboutplugin_fixtures", ["aboutplugin.update"], indirect=True)

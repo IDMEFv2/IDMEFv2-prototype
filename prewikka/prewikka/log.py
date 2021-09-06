@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import logging
 import logging.handlers
 import os
@@ -55,7 +53,7 @@ class Log(object):
             try:
                 if stat.S_ISSOCK(os.stat(f).st_mode):
                     return str(f)
-            except:
+            except Exception:
                 pass
 
         return "localhost", 514

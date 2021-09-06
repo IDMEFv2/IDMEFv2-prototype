@@ -27,12 +27,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pkg_resources
 
-from prewikka import database, error, hookmanager, resource, response, template, view
+from prewikka import cli, database, error, hookmanager, resource, response, template, view
 from prewikka.dataprovider import CriterionOperator
+from prewikka.dataprovider.parsers.criteria import parse
 from prewikka.utils import AttrObj, json
 from prewikka.utils.viewhelpers import GridParameters
 
@@ -59,12 +58,12 @@ class Filter(object):
 
 class FilterDatabase(database.DatabaseHelper):
     def get_filters(self, user, ftype=None):
-        l = self.query("SELECT id, name, category, description, value FROM Prewikka_Filter "
-                       "WHERE userid = %s ORDER BY name", user.id)
+        rows = self.query("SELECT id, name, category, description, value FROM Prewikka_Filter "
+                          "WHERE userid = %s ORDER BY name", user.id)
 
-        l = next(hookmanager.trigger("HOOK_FILTER_LISTING", l), l)
+        rows = next(hookmanager.trigger("HOOK_FILTER_LISTING", rows), rows)
 
-        for id_, name, category, description, value in l:
+        for id_, name, category, description, value in rows:
             criteria = json.loads(value)
             if not ftype or ftype in criteria:
                 yield Filter(id_, name, category, description, criteria)
@@ -238,15 +237,28 @@ class FilterView(view.View):
         category = env.request.parameters.get("filter_category")
         description = env.request.parameters.get("filter_description")
 
-        if not new_name:
-            raise error.PrewikkaUserError(N_("Could not save filter"), N_("No name for this filter was provided"))
-        elif new_name.startswith("/"):
-            raise error.PrewikkaUserError(N_("Could not save filter"), N_("The filter name cannot start with a slash"))
-
         criteria = dict(zip(
             env.request.parameters.getlist("filter_types"),
             (json.loads(c) for c in env.request.parameters.getlist("filter_criteria"))
         ))
+
+        self._save(name, new_name, category, description, criteria)
+        return response.PrewikkaResponse({"type": "reload", "target": "#main_menu_ng", "options": {"filter": new_name}})
+
+    @cli.register("create", "filter", help=N_("""create filter <name> <data>: create a filter
+     data is a JSON-encoded object with the following keys:
+     * category: an optional category for the filter
+     * description: an optional description for the filter
+     * criteria: an object containing the filter criterion for each datatype"""))
+    def save_filter(self, name, data):
+        criteria = {typ: parse(crit) for typ, crit in data["criteria"].items()}
+        self._save(None, name, data.get("category"), data.get("description"), criteria)
+
+    def _save(self, name, new_name, category, description, criteria):
+        if not new_name:
+            raise error.PrewikkaUserError(N_("Could not save filter"), N_("No name for this filter was provided"))
+        elif new_name.startswith("/"):
+            raise error.PrewikkaUserError(N_("Could not save filter"), N_("The filter name cannot start with a slash"))
 
         filter_ = self._db.get_filter(env.request.user, name) if name else None
         filter_id = filter_.id_ if filter_ else None
@@ -263,5 +275,3 @@ class FilterView(view.View):
 
         criteria = dict((k, v) for k, v in criteria.items() if v is not None)
         self._db.upsert_filter(env.request.user, Filter(filter_id, new_name, category, description, criteria))
-
-        return response.PrewikkaResponse({"type": "reload", "target": "#main_menu_ng", "options": {"filter": new_name}})

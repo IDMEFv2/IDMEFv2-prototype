@@ -1,21 +1,9 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import errno
 import os
 import stat
-import sys
-import prelude
-import preludedb
 
-if sys.version_info >= (3, 0):
-    import builtins
-    builtins.text_type = str
-else:
-    import __builtin__ as builtins
-    builtins.text_type = unicode
-
-    prelude.python2_return_unicode(True)
-    preludedb.python2_return_unicode(True)
+import builtins
+builtins.text_type = str
 
 try:
     from threading import local
@@ -27,7 +15,7 @@ except ImportError:
 os.umask(0o027)
 
 
-from prewikka import mainmenu, siteconfig, utils, view
+from prewikka import mainmenu, siteconfig, utils, view  # noqa
 
 
 try:

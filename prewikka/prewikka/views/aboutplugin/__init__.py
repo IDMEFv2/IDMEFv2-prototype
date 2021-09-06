@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 import itertools
 import json
@@ -111,17 +109,33 @@ class AboutPlugin(view.View):
 
     @view.route("/settings/apps/enable", methods=["POST"])
     def enable(self):
+        self._enable(env.request.parameters["enable_plugin"])
+        return response.PrewikkaResponse({"type": "reload", "target": "window"})
+
+    @cli.register("update", "plugin", help=N_("""update plugin <data>: enable/disable the plugins
+     data is a JSON-encoded object with the following keys:
+     * enable: the list of plugins to enable
+     * disable: the list of plugins to disable"""))
+    def _enable_plugins(self, data):
+        enabled = set()
+        for plugins in self._get_plugin_infos().installed.values():
+            for mod, active in plugins:
+                if active:
+                    enabled.add(mod.full_module_name)
+
+        enabled = enabled.union(data.get("enable", [])).difference(data.get("disable", []))
+        self._enable(enabled)
+
+    def _enable(self, plugins):
         upsrt = []
 
         for catname, plugin in self._iter_plugin():
-            enabled = plugin.plugin_mandatory or plugin.full_module_name in env.request.parameters["enable_plugin"]
+            enabled = plugin.plugin_mandatory or plugin.full_module_name in plugins
             upsrt.append((plugin.full_module_name, enabled))
 
         if upsrt:
             env.db.upsert("Prewikka_Module_Registry", ["module", "enabled"], upsrt, pkey=["module"])
             env.db.trigger_plugin_change()
-
-        return response.PrewikkaResponse({"type": "reload", "target": "window"})
 
     @view.route("/settings/apps/update", methods=["GET"])
     def update(self):

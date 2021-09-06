@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import abc
 import collections
 import fcntl
@@ -40,7 +38,7 @@ from datetime import datetime
 
 import pkg_resources
 import preludedb
-from prewikka import compat, error, log, utils, version
+from prewikka import error, log, utils, version
 from prewikka.utils import cache
 
 
@@ -98,7 +96,7 @@ def use_transaction(func):
         db.transaction_start()
         try:
             ret = func(self, *args, **kwargs)
-        except:
+        except Exception:
             db.transaction_abort()
             raise
 
@@ -119,7 +117,7 @@ def use_lock(table):
 
             try:
                 ret = func(self, *args, **kwargs)
-            except:
+            except Exception:
                 db._unlock_table(table)
                 raise
 
@@ -194,9 +192,9 @@ class SQLScript(object):
             ("DATETIME", "TIMESTAMP"),
             ("ENGINE=InnoDB", ""),
             ("\"([^\"]*)\"", "'\\1'"),
-            ("\"\([^\"]*\)\"", "'\1'"),
-            ("(\S*) ENUM\((.*)\)", "\\1 TEXT CHECK (\\1 IN (\\2))"),
-            ("VARCHAR[ ]*[^)]+\)", "TEXT"),
+            ("\"\\([^\"]*\\)\"", "'\1'"),
+            ("(\\S*) ENUM\\((.*)\\)", "\\1 TEXT CHECK (\\1 IN (\\2))"),
+            ("VARCHAR[ ]*[^)]+\\)", "TEXT"),
             ("(DROP INDEX [^ ]*) ON [^;]*", "\\1")
         ]
 
@@ -207,8 +205,8 @@ class SQLScript(object):
             ("#.*", ""),
             ("[a-zA-Z]*INT ", "INTEGER "),
             ("UNSIGNED ", ""),
-            ("ENUM[ ]*[^)]+\)", "TEXT"),
-            ("VARCHAR[ ]*[^)]+\)", "TEXT"),
+            ("ENUM[ ]*[^)]+\\)", "TEXT"),
+            ("VARCHAR[ ]*[^)]+\\)", "TEXT"),
             ("AUTO_INCREMENT", "AUTOINCREMENT"),
             ("ENGINE=InnoDB", ""),
             ("ALTER TABLE [^ ]* DROP.*", ""),
@@ -340,7 +338,7 @@ class DatabaseUpdateHelper(DatabaseHelper):
                 mod = importer.find_module(package_name).load_module(package_name).SQLUpdate(self)
             except Exception as e:
                 log.get_logger().exception("[%s]: error loading SQL update '%s' : %s" %
-                                          (self._full_module_name, package_name, e))
+                                           (self._full_module_name, package_name, e))
                 continue
 
             if any(kwargs[k] != getattr(mod, k) for k in kwargs.keys()):
@@ -582,7 +580,7 @@ class DatabaseCommon(object):
         if prefilter:
             return prefilter(data)
 
-        if not isinstance(data, compat.STRING_TYPES):
+        if not isinstance(data, str):
             return data if data is not None else "NULL"
 
         return self._db.escape(data)
@@ -891,7 +889,7 @@ class PrewikkaDatabaseCommon(DatabaseCommon):
     def modinfos(self):
         try:
             rows = self.query("SELECT module, branch, version, enabled FROM Prewikka_Module_Registry")
-        except:
+        except Exception:
             return {}
 
         return dict((i[0], ModuleInfo(i[1], i[2], int(i[3]))) for i in rows)

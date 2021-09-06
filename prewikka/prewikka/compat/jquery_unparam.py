@@ -3,25 +3,13 @@
 
 import functools
 import re
-import sys
 
-try:
-    from urllib import unquote_plus
-except ImportError:
-    from urllib.parse import unquote_plus
-
-if sys.version_info >= (3, 0):
-    Py3 = True
-else:
-    Py3 = False
+from urllib.parse import unquote_plus
 
 
 def _decode(string, unquote=False):
     if unquote:
         string = unquote_plus(string)
-
-    if not Py3:
-        string = string.decode("utf8")
 
     return string
 

@@ -26,9 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 import io
 import glob
@@ -204,9 +201,9 @@ class MyConfigParser(object):
       the OrderedDict class that subclass dict)
     """
 
-    EMPTY_LINE_REGEXP = re.compile("^\s*(\#.*)?$")
-    SECTION_REGEXP = re.compile("^\s*\[\s*(?P<name>[^\s]+)\s*(?P<instance>.+)?]\s*$")
-    OPTION_REGEXP = re.compile("^\s*(?P<name>[^:=]+)([:=]\s*(?P<value>.+))?$")
+    EMPTY_LINE_REGEXP = re.compile(r"^\s*(\#.*)?$")
+    SECTION_REGEXP = re.compile(r"^\s*\[\s*(?P<name>[^\s]+)\s*(?P<instance>.+)?]\s*$")
+    OPTION_REGEXP = re.compile(r"^\s*(?P<name>[^:=]+)([:=]\s*(?P<value>.+))?$")
 
     def __init__(self):
         self._sections = collections.OrderedDict()
@@ -229,16 +226,12 @@ class MyConfigParser(object):
         """Read and parse a string."""
         self._read(string.splitlines())
 
-    def readfp(self, fp):
-        """Like read() but the argument must be a file-like object."""
-        self._read(fp.readlines())
-
     def read(self, filename):
         """Read and parse a filename."""
         with io.open(filename, 'r', encoding="utf8") as f:
-            self.readfp(f)
+            self._read(f.readlines(), filename)
 
-    def _read(self, iterable):
+    def _read(self, iterable, filename=None):
         cursection = None
 
         for lineno, line in enumerate(iterable):
@@ -253,7 +246,7 @@ class MyConfigParser(object):
 
             result = self.OPTION_REGEXP.match(line)
             if not result:
-                raise ConfigParseError(file.name, lineno + 1, line)
+                raise ConfigParseError(filename, lineno + 1, line)
 
             if cursection is None:
                 continue

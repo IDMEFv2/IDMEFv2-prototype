@@ -29,8 +29,6 @@
 Tests for `prewikka.session.anonymous.anonymous`.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from prewikka.config import ConfigSection
 from prewikka.session.anonymous.anonymous import AnonymousSession
 

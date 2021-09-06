@@ -27,8 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import cgi
 import glob
 import io
@@ -159,6 +157,7 @@ class Schema(dict):
             mult=value.get("multiplicity"),
             type=value.get("type"),
         )
+
 
 if __name__ == "__main__":
     if not WITH_PYDOT:

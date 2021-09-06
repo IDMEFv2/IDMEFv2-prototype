@@ -29,8 +29,6 @@
 
 """DataSearch log view."""
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 
 from prewikka import hookmanager, localization, resource, utils, version, view

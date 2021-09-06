@@ -27,8 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function
-
 import collections
 import mimetypes
 import os
@@ -39,7 +37,7 @@ import stat
 import string
 import unicodedata
 
-from prewikka import compat, utils
+from prewikka import utils
 from prewikka.utils import json
 
 
@@ -121,7 +119,7 @@ class PrewikkaResponse(object):
 
             self.data = {}
 
-        if isinstance(self.data, compat.STRING_TYPES):
+        if isinstance(self.data, str):
             return self.data
 
         self.headers["Content-Type"] = "application/json"
@@ -198,8 +196,10 @@ class PrewikkaDownloadResponse(PrewikkaResponse):
         if not self._is_file:
             request.write(self.data)
         else:
-            for i in iter(lambda: self.data.read(8192), b''):
-                request.write(i)
+            content = self.data.read(8192)
+            while content:
+                request.write(content)
+                content = self.data.read(8192)
 
 
 class PrewikkaFileResponse(PrewikkaResponse):

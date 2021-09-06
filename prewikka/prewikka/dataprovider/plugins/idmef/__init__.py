@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from datetime import datetime
 
 import prelude
@@ -37,6 +35,10 @@ from prewikka.dataprovider import DataProviderBackend, QueryResults, QueryResult
 
 
 class IDMEFResultObject(ResultObject, utils.json.JSONObject):
+    def __init__(self, obj, curpath=None):
+        self._obj = obj
+        self._curpath = curpath or []
+
     def preprocess_value(self, value):
         if isinstance(value, IDMEFTime):
             return datetime.fromtimestamp(value, utils.timeutil.tzoffset(None, value.getGmtOffset()))

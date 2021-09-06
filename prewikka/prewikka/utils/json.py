@@ -26,13 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 import datetime
 import json
 
-from prewikka.compat import with_metaclass
 
 _TYPES = {}
 
@@ -46,17 +43,13 @@ class _JSONMetaClass(type):
         return nclass
 
 
-class _JSONObject(object):
+class JSONObject(metaclass=_JSONMetaClass):
     @classmethod
     def from_json(cls, data):
         return cls(**data)
 
     def __jsonobj__(self):
         return {"__prewikka_class__": (self.__class__.__name__, self.__json__())}
-
-
-class JSONObject(with_metaclass(_JSONMetaClass, _JSONObject)):
-    pass
 
 
 class PrewikkaJSONEncoder(json.JSONEncoder):

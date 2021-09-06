@@ -26,12 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import functools
 import operator
 
-from prewikka import hookmanager, statistics, usergroup, utils, version, view
+from prewikka import hookmanager, statistics, usergroup, version, view
 from prewikka.dataprovider import Criterion
 from prewikka.renderer import RendererItem
 
@@ -44,43 +42,43 @@ _DEFAULT_GRAPHS = [
         'title': N_("Severities"),
         'category': "diagram",
         'type': "pie",
-        'path': "alert.assessment.impact.severity",
+        'path': "idmefv2.severity",
         'description': N_("This graph shows the severities of the reported alerts. "
                           "There are 5 existing severities: n/a, info, low, medium, and high.")
     },
     {
-        'title': N_("Top {limit} Analyzer Node Locations"),
+        'title': N_("Top {limit} Analyzer locations"),
         'category': "diagram",
         'type': "pie",
-        'path': "alert.analyzer(-1).node.location",
+        'path': "idmefv2.analyzer.location",
         'description': N_("This graph shows the most recurrent locations of the analyzers reporting an alert.")
     },
     {
         'title': N_("Timeline"),
         'category': "chronology",
         'type': "timeline",
-        'path': "alert.assessment.impact.severity",
+        'path': "idmefv2.severity",
         'description': N_("This graph shows the evolution of the alerts severities over time.")
     },
     {
         'title': N_("Top {limit} Source Addresses"),
         'category': "diagram",
         'type': "horizontal-bar",
-        'path': "alert.source.node.address.address",
+        'path': "idmefv2.source.ip",
         'description': N_("This graph shows the most common alert source IP addresses.")
     },
     {
         'title': N_("Top {limit} Targeted Addresses"),
         'category': "diagram",
         'type': "horizontal-bar",
-        'path': "alert.target.node.address.address",
+        'path': "idmefv2.target.ip",
         'description': N_("This graph shows the most common alert target IP addresses.")
     },
     {
         'title': N_("Top {limit} Classifications"),
         'category': "diagram",
         'type': "pie",
-        'path': "alert.classification.text",
+        'path': "idmefv2.category",
         'description': N_("This graph shows the most recurrent classifications of the reported alerts. "
                           "The classification is a short description of the alert.")
     },
@@ -88,24 +86,22 @@ _DEFAULT_GRAPHS = [
         'title': N_("Top {limit} Classifications Trend"),
         'category': "chronology",
         'type': "timeline",
-        'path': "alert.classification.text",
+        'path': "idmefv2.category",
         'description': N_("This graph shows the evolution of the alerts classifications over time.")
     },
     {
         'title': N_("Top {limit} Analyzer Classes"),
         'category': "diagram",
         'type': "pie",
-        'path': "alert.analyzer(-1).class",
-        'description': N_("This graph shows the most recurrent types of the first analyzer reporting an alert. "
-                          "For further details on existing types, please visit "
-                          "https://www.prelude-siem.org/projects/prelude/wiki/DevelAgentClassification")
+        'path': "idmefv2.analyzer.category",
+        'description': N_("This graph shows the most recurrent analyzer classes")
     },
     {
         'title': N_("Top {limit} Analyzer Classes Trend"),
         'category': "chronology",
         'type': "timeline",
-        'path': "alert.analyzer(-1).class",
-        'description': N_("This graph shows the evolution of the type of the analyzers, reporting an alert, over time.")
+        'path': "idmefv2.analyzer.category",
+        'description': N_("This graph shows the evolution of the analyzer classes, reporting an alert, over time.")
     }
 ]
 
@@ -117,21 +113,15 @@ class ProtocolChart(statistics.DiagramChart):
 
     def _get_data(self):
         criteria = env.request.menu.get_criteria() + (
-            Criterion("alert.target.service.iana_protocol_number", "==", 6) |
-            Criterion("alert.target.service.iana_protocol_number", "==", 17) |
-            Criterion("alert.target.service.iana_protocol_name", "=*", "tcp") |
-            Criterion("alert.target.service.iana_protocol_name", "=*", "udp") |
-            Criterion("alert.target.service.protocol", "=*", "udp") |
-            Criterion("alert.target.service.protocol", "=*", "tcp"))
+            Criterion("idmefv2.source.protocol", "=*", "udp") |
+            Criterion("idmefv2.source.protocol", "=*", "tcp"))
 
         try:
             results = env.dataprovider.query(
                 [
-                    "alert.target.service.port/group_by",
-                    "alert.target.service.iana_protocol_number/group_by",
-                    "alert.target.service.iana_protocol_name/group_by",
-                    "alert.target.service.protocol/group_by",
-                    "alert.target.service.name/group_by",
+                    "idmefv2.target.port/group_by",
+                    "idmefv2.source.protocol/group_by",
+                    "idmefv2.target.service/group_by",
                     "count(1)/order_desc"
                 ],
                 criteria=criteria,
@@ -149,18 +139,16 @@ class ProtocolChart(statistics.DiagramChart):
             "udp": {}
         }
 
-        for port, iana_protocol_number, iana_protocol_name, protocol, service_name, count in results:
+        for port, protocol, service_name, count in results:
             if not port:
                 continue
 
-            if iana_protocol_number:
-                protocol = utils.protocol_number_to_name(iana_protocol_number)
-
-            elif iana_protocol_name:
-                protocol = iana_protocol_name
-
             if protocol:
-                protocol = protocol.lower()
+                proto = set(["tcp", "udp"]) & set([p.lower() for p in protocol])
+                if len(proto) == 1:
+                    protocol = proto[0]
+                else:
+                    protocol = None
 
             if protocol not in merge:
                 protocol = _("n/a")
@@ -181,9 +169,9 @@ class ProtocolChart(statistics.DiagramChart):
                 results.append((port_info[0], port_info[1], protocol, count))
 
         for port, service, protocol, count in sorted(results, key=operator.itemgetter(3), reverse=True):
-            criteria = Criterion("alert.target.service.port", "=", port)
+            criteria = Criterion("idmefv2.target.port", "=*", port)
             link = None
-            linkview = env.viewmanager.get(datatype="alert", keywords=["listing"])
+            linkview = env.viewmanager.get(datatype="idmefv2", keywords=["listing"])
             if linkview:
                 link = linkview[-1].make_url(criteria=criteria, **env.request.menu.get_parameters())
 
@@ -208,63 +196,63 @@ class AlertStats(StaticStats):
     _MONITORING_CRITERIA = {
         'Analyzer': functools.reduce(
             lambda x, y: x | y,
-            (Criterion("alert.analyzer(-1).class", "~", cls) for cls in ("HIDS", "Host IDS", "NIDS", "Network IDS"))
+            (Criterion("idmefv2.analyzer.category", "=*", cls) for cls in ("HIDS", "NIDS", "WIDS"))
         ),
-        'Correlation': Criterion("alert.correlation_alert.name", "!=", None),
-        'Simple': Criterion("alert.correlation_alert.name", "=", None)
+        'Correlation': Criterion("idmefv2.status", "=", "Incident"),
+        'Simple': Criterion("idmefv2.status", "!=", "Incident"),
     }
 
     _CATEGORIZATION_GRAPHS = [
         {
             "title": N_("Top {limit} Classifications Trend"),
             "category": "chronology",
-            "path": "alert.classification.text",
+            "path": "idmefv2.category",
             "width": 12,
         },
         {
             "title": N_("Top {limit} Classifications"),
             "category": "diagram",
-            "path": "alert.classification.text",
+            "path": "idmefv2.category",
         },
         {
             "title": N_("Top {limit} Alert References"),
             "category": "diagram",
-            "path": "alert.classification.reference.name",
+            "path": "idmefv2.reference",
         },
         {
             "title": N_("Alert: Severity"),
             "category": "diagram",
-            "path": "alert.assessment.impact.severity",
+            "path": "idmefv2.severity",
         },
         {
             "title": N_("Top {limit} Alert Impact Types"),
             "category": "diagram",
-            "path": "alert.assessment.impact.type",
+            "path": "idmefv2.analyzer.type",
         }]
 
     _SOURCE_GRAPHS = [
         {
             "title": N_("Top {limit} Sources Trend"),
             "category": "chronology",
-            "path": "alert.source.node.address.address",
+            "path": "idmefv2.source.ip",
             "width": 12,
         },
         {
             "title": N_("Top {limit} Source Addresses"),
             "category": "diagram",
-            "path": "alert.source.node.address.address",
+            "path": "idmefv2.source.ip",
         },
         {
             "title": N_("Top {limit} Source Users"),
             "category": "diagram",
-            "path": "alert.source.user.user_id.name",
+            "path": "idmefv2.source.user",
         }]
 
     _TARGET_GRAPHS = [
         {
             "title": N_("Top {limit} Targeted Addresses"),
             "category": "diagram",
-            "path": "alert.target.node.address.address",
+            "path": "idmefv2.target.ip",
         },
         {
             "title": N_("Top {limit} Targeted Ports"),
@@ -274,103 +262,103 @@ class AlertStats(StaticStats):
         {
             "title": N_("Top {limit} Targeted Users"),
             "category": "diagram",
-            "path": "alert.target.user.user_id.name",
+            "path": "idmefv2.target.user",
         },
         {
-            "title": N_("Top {limit} Targeted Processes"),
+            "title": N_("Top {limit} Targeted Services"),
             "category": "diagram",
-            "path": "alert.target.process.name",
+            "path": "idmefv2.target.service",
         }]
 
     _ANALYZER_GRAPHS = [
         {
             "title": N_("Top {limit} Analyzer Classes Trend"),
             "category": "chronology",
-            "path": "alert.analyzer(-1).class",
+            "path": "idmefv2.analyzer.category",
         },
         {
             "title": N_("Top {limit} Analyzers"),
             "category": "diagram",
             "path": [
-                "alert.analyzer(-1).name",
-                "alert.analyzer(-1).node.name"
+                "idmefv2.analyzer.name",
+                "idmefv2.analyzer.hostname"
             ],
         },
         {
             "title": N_("Top {limit} Analyzer Models"),
             "category": "diagram",
-            "path": "alert.analyzer(-1).model",
+            "path": "idmefv2.analyzer.model",
         },
         {
             "title": N_("Top {limit} Analyzer Classes"),
             "category": "diagram",
-            "path": "alert.analyzer(-1).class",
+            "path": "idmefv2.analyzer.category",
         },
         {
             "title": N_("Top {limit} Analyzer Node Addresses"),
             "category": "diagram",
-            "path": "alert.analyzer(-1).node.address.address",
+            "path": "idmefv2.analyzer.ip",
         },
         {
             "title": N_("Top {limit} Analyzer Node Locations"),
             "category": "diagram",
-            "path": "alert.analyzer(-1).node.location",
+            "path": "idmefv2.analyzer.location",
         }]
 
     _METROLOGY_GRAPHS = [
         {
             'category': 'chronology',
             'title': N_('Number of source addresses'),
-            'aggregate': 'count(distinct(alert.source.node.address.address))',
+            'aggregate': 'count(distinct(idmefv2.source.ip))',
             'criteria': _MONITORING_CRITERIA['Simple'],
             'legend': False,
         },
         {
             'category': 'chronology',
             'title': N_('Number of target addresses'),
-            'aggregate': 'count(distinct(alert.target.node.address.address))',
+            'aggregate': 'count(distinct(idmefv2.target.ip))',
             'criteria': _MONITORING_CRITERIA['Simple'],
             'legend': False,
         },
         {
             'category': 'chronology',
             'title': N_('Number of simple alerts'),
-            'aggregate': 'count(alert.classification.text)',
+            'aggregate': 'count(idmefv2.id)',
             'criteria': _MONITORING_CRITERIA['Simple'],
             'legend': False,
         },
         {
             'category': 'chronology',
             'title': N_('Number of alerts per analyzer type'),
-            'path': ['alert.analyzer(-1).class'],
+            'path': ['idmefv2.analyzer.type'],
             'criteria': _MONITORING_CRITERIA['Simple'],
         },
         {
             'category': 'chronology',
             'title': N_('Number of alerts'),
-            'aggregate': 'count(alert.messageid)',
+            'aggregate': 'count(idmefv2.id)',
             'legend': False,
         },
         {
             'category': 'chronology',
             'title': N_('Number of correlation alerts'),
-            'aggregate': 'count(alert.classification.text)',
+            'aggregate': 'count(idmefv2.id)',
             'criteria': _MONITORING_CRITERIA['Correlation'],
             'legend': False,
         },
         {
             'category': 'chronology',
             'title': N_('Number of machines/devices'),
-            'aggregate': 'count(alert.target.node.address.address)',
+            'aggregate': 'count(idmefv2.target.ip)',
             'criteria': _MONITORING_CRITERIA['Simple'],
             'legend': False,
         },
         {
             'category': 'chronology',
             'title': N_('Number of machines/devices per analyzer type (HIDS, NIDS)'),
-            'path': 'alert.analyzer(-1).class',
+            'path': 'idmefv2.analyzer.type',
             'criteria': _MONITORING_CRITERIA['Analyzer'],
-            'aggregate': 'count(alert.target.node.address.address)',
+            'aggregate': 'count(idmefv2.target.ip)',
             'legend': True,
         }]
 
@@ -383,12 +371,12 @@ class AlertStats(StaticStats):
     _PREDEFINED_GRAPHS = compute_charts_infos(_CHARTS_INFOS)
 
     def __init__(self):
-        env.dataprovider.check_datatype("alert")
+        env.dataprovider.check_datatype("idmefv2")
         StaticStats.__init__(self)
 
         hookmanager.register("HOOK_DASHBOARD_DEFAULT_GRAPHS", _DEFAULT_GRAPHS)
 
-    @view.route("/statistics/alerts", methods=["GET", "POST"], menu=(N_("Statistics"), N_("Alerts")), datatype="alert", help="#alertstats")
+    @view.route("/statistics/alerts", methods=["GET", "POST"], menu=(N_("Statistics"), N_("Alerts")), datatype="idmefv2", help="#alertstats")
     def render(self):
         # Call again to resolve translation
         self.chart_infos = compute_charts_infos(self._CHARTS_INFOS)
