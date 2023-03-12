@@ -1,0 +1,4 @@
+elasticsearch_data
+elasticsearch_logs
+kafka_logs
+logs

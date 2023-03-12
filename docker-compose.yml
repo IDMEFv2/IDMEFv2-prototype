@@ -1,0 +1,194 @@
+version: '3.7'
+
+services:
+
+    setup:
+      build:
+        context: setup/
+        args:
+          ELASTIC_VERSION: ${ELASTIC_VERSION}
+      init: true
+      volumes:
+        - ./setup/entrypoint.sh:/entrypoint.sh:ro,Z
+        - setup:/state:Z
+      networks:
+        - proto
+      depends_on:
+        - kafdrop
+
+    gui:
+      build:
+        context: gui/
+      volumes:
+        - ./gui/entrypoint.sh:/entrypoint.sh:ro,Z
+        - ./gui/config/idmefv2.conf:/etc/prewikka/conf.d/idmefv2.conf:ro,Z
+        - ./gui/config/logs.conf:/etc/prewikka/conf.d/logs.conf:ro,Z
+        - ./gui/config/secef/netflows.conf:/etc/prewikka/conf.d/netflows.conf:ro,Z
+        - ./gui/config/secef/secef.conf:/etc/prewikka/conf.d/secef.conf:ro,Z
+        - ./gui/config/secef/menusecef.yml:/etc/prewikka/menusecef.yml:ro,Z
+        - ./gui/config/secef/SECEF-Favicon.png:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/images/SECEF-Favicon.png:ro,Z
+        - ./gui/config/secef/SECEF-logo.png:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/images/SECEF-logo.png:ro,Z
+        - ./gui/config/secef/secef.css:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/css/themes/secef.css:ro,Z
+      ports:
+        - 80:80
+      networks:
+        - proto
+      restart: on-failure
+      depends_on:
+        es01:
+        postgres:
+          condition: service_healthy
+
+    postgres:
+      build:
+        context: postgres/
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER:-postgres}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+        PGDATA: /data/postgres
+      volumes:
+         - postgres:/data/postgres
+      ports:
+        - "5432:5432"
+      networks:
+        - proto
+      restart: on-failure
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+  
+    es01:
+      build:
+        context: elasticsearch/
+        args:
+          ELASTIC_VERSION: ${ELASTIC_VERSION}
+      volumes:
+        - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+        - ./elasticsearch_data:/usr/share/elasticsearch/data:Z
+        - ./elasticsearch_logs:/usr/share/elasticsearch/logs:Z
+      ports:
+        - 9200:9200
+        - 9300:9300
+      environment:
+        ES_JAVA_OPTS: ${ELASTIC_JVM}
+        ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      networks:
+        - proto
+  
+    logstash:
+      build:
+        context: logstash/
+        args:
+          LOGSTASH_VERSION: ${LOGSTASH_VERSION}
+      volumes:
+        - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+        - ./logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro,Z
+        - ./logstash/rules.yml:/usr/share/logstash/config/rules.yml:ro,Z
+        - ./logstash/IDMEFv2-light.schema:/usr/share/logstash/config/IDMEFv2-light.schema:ro,Z
+        - ./logstash/IDMEFv2.schema:/usr/share/logstash/config/IDMEFv2.schema:ro,Z
+        - ./logstash/IDMEFv2.mapping:/usr/share/logstash/config/IDMEFv2.mapping:ro,Z
+        - ./logstash/NXLog.schema:/usr/share/logstash/config/NXLog.schema:ro,Z
+        - ./logstash/pipeline:/usr/share/logstash/config/pipeline:ro,Z
+        - ./logstash/scripts:/usr/share/logstash/config/scripts:ro,Z
+      ports:
+        - 6514:6514
+      environment:
+        LS_JAVA_OPTS: ${LOGSTASH_JVM}
+        LOGSTASH_INTERNAL_PASSWORD: ""
+        MONITORING_ENABLED: false
+        MAX_MSG_SIZE: 1048576
+        BOOTSTRAP_SERVER: "http://kafka1:9092"
+        BIG_DATA_SERVER: "http://es01:9200/"
+        BIG_DATA_USERNAME: "elastic"
+        BIG_DATA_PASSWORD: "elastic"
+        ANALYZER_NAME: "Logstash"
+        ANALYZER_LOCATION: "SECEF - Prototype"
+        ANALYZER_UNLOCATION: "FR PAR"
+        ANALYZER_GEOLOCATION: "48.7730817, 2.2442167"
+        ANALYZER_IP: "${DOCKER_IP}"
+        ANALYZER_HOSTNAME: "${DOCKER_HOSTNAME}"
+        LISTEN_SYSLOG: 6514
+        TOPIC_COLLECTED: my_collected
+        TOPIC_PROCESSED: my_processed
+        INDEX_ALERT: alerts
+      networks:
+        - proto
+      depends_on:
+        - es01
+        - kafka1
+
+    kafdrop:
+      build:
+        context: kafdrop/
+        args:
+          KAFDROP_VERSION: ${KAFDROP_VERSION}
+      ports:
+        - 9201:9201
+      environment:
+        KAFKA_BROKERCONNECT: "kafka1:9092"
+        JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+        CMD_ARGS: "--server.port=9201"
+      networks:
+        - proto
+      restart: on-failure
+      depends_on:
+        - kafka1
+
+    zoo1:
+      build:
+        context: zoo/
+        args:
+          ZOO_VERSION: ${ZOO_VERSION}
+      hostname: zoo1
+      ports:
+        - "2181:2181"
+      environment:
+        ZOOKEEPER_CLIENT_PORT: 2181
+        ZOOKEEPER_SERVER_ID: 1
+        ZOOKEEPER_SERVERS: zoo1:2888:3888
+      restart: on-failure
+  
+    kafka1:
+      build:
+        context: kafka/
+        args:
+          KAFKA_VERSION: ${KAFKA_VERSION}
+      hostname: kafka1
+      ports:
+        - "9092:9092"
+        - "29092:29092"
+        - "9999:9999"
+      volumes:
+        - ./kafka_logs:/var/lib/kafka/logs:Z
+      environment:
+        KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,EXTERNAL://kafka1:9092,DOCKER://kafka1:29092
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+        KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+        KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+        KAFKA_BROKER_ID: 1
+        KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+        KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+        KAFKA_JMX_PORT: 9999
+        KAFKA_JMX_HOSTNAME: kafka1
+        KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+        KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+        KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: false
+      restart: on-failure
+      depends_on:
+        - zoo1
+
+networks:
+  proto:
+    driver: bridge
+
+volumes:
+  setup:
+  postgres:

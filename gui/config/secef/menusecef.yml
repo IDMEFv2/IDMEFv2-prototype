@@ -1,0 +1,90 @@
+# ========================= Prelude SIEM Configuration =========================
+#
+# This file is a part of the Prelude SIEM configurations files.
+# Purpose:  Tune the main and sub menus.
+#
+# ------------------------------------ Menu ------------------------------------
+#
+# Specify the section order in the upper menu:
+#   - All the icons available are here (v4.5): http://fontawesome.io/icons/
+#
+- name: ALERT
+  icon: exclamation-triangle
+  categories:
+      - sections:
+            - name: Alerts
+              expand: true
+              tabs:
+                  - Alerts
+                  - Aggregated alerts
+            - name: Incidents
+              tabs:
+                  - Incidents
+                  - Incidents report
+- name: ANALYSE
+  icon: bar-chart
+  categories:
+      - sections:
+            - name: Dashboard
+              default_tab: General
+              expand: true
+              tabs:
+                  - General
+                  - MSSP
+            - name: Statistics
+              expand: true
+              tabs:
+                  - Events
+                  - Tickets
+            - name: Behavioral
+              tabs:
+                  - Volumetry
+            - name: Reporting
+              tabs:
+                  - Reports
+                  - Templates
+                  - Styles
+- name: ARCHIVE
+  icon: database
+  categories:
+      - name: Events
+        sections:
+            - name: Logs
+              tabs:
+                  - Logs
+                  - Aggregated logs
+            - name: Flows
+              tabs:
+                  - Flows
+                  - Aggregated flows
+- name: ADMIN
+  icon: sliders
+  categories:
+      - sections:
+            - name: Access control
+              expand: true
+              tabs:
+                  - Users
+                  - Groups
+                  - Entities
+            - name: Configuration
+              tabs:
+                  - Scheduling
+            - name: Preferences
+              expand: true
+              tabs:
+                  - My account
+                  - Views
+                  - Filters
+            - name: Monitoring
+              expand: true
+              tabs:
+                  - System
+                  - Elasticsearch
+- icon: question
+  default: true
+  categories:
+      - sections:
+            - name: Apps
+              tabs:
+                  - Apps

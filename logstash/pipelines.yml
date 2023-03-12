@@ -1,0 +1,13 @@
+#cat /usr/share/logstash/config/pipelines.yml 
+# This file is where you define your pipelines. You can define multiple.
+# For more information on multiple pipelines, see the documentation:
+#   https://www.elastic.co/guide/en/logstash/current/multiple-pipelines.html
+
+- pipeline.id: my_collected
+  path.config: /usr/share/logstash/config/pipeline/00-my_collected.conf
+
+- pipeline.id: my_processed
+  path.config: /usr/share/logstash/config/pipeline/00-my_processed.conf
+
+- pipeline.id: my_stored
+  path.config: /usr/share/logstash/config/pipeline/00-my_stored.conf

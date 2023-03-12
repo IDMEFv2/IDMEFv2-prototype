@@ -1,0 +1,856 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"title": "IDMEF v0.2",
+	"description": "JSON schema for the Intrusion Detection Message Exchange Format (IDMEF) version 2 (revision 0.3)",
+	"definitions": {
+		"attachmentNameType": {
+			"description": "A a unique identifier among attachments.",
+			"type": "string",
+			"pattern": "^[a-zA-Z0-9]+$"
+		},
+		"observableNameType": {
+			"description": "A unique identifier among observables.",
+			"type": "string",
+			"pattern": "^[a-zA-Z0-9]+$"
+		},
+		"portType": {
+			"description": "A network port number. The value 0 is excluded from the range because it never appears in an actual network connection.",
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 65535,
+			"exclusiveMinimum": true
+		},
+		"timestampType": {
+			"description": "A JSON string containing a timestamp conforming to the format given in section 5.6 of RFC 3339.",
+			"type": "string",
+			"pattern": "^[0-9]{4}-(0[0-9]|1[012])-([0-2][0-9]|3[01])T([0-1][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]+)?(Z|[-+]([0-1][0-9]|2[0-3]):[0-5][0-9])?$"
+		},
+		"geoLocationType": {
+			"description": "Geolocation coordinates. The format for this type matches the definition for locations inside ISO 6709 (eg. \"+48.75726, +2.299528, +65.1\").",
+			"type": "string",
+			"pattern": "^[-+]?([0-9]+(\\.[0-9]*)?)(, ?[-+]?([0-9]+(\\.[0-9]*)?)){1,2}$"
+		},
+		"unLocodeType": {
+			"description": "A valid UN/LOCODE location (e.g. \"FR PAR\"). See also the UN/LOCODE Code List 2020-2 at https://unece.org/trade/cefact/unlocode-code-list-country-and-territory.",
+			"type": "string",
+			"pattern": "^[A-Z]{2} ?[A-Z]{3}$"
+		},
+		"ipAddressType": {
+			"description": "An Internet Protocol address, either version 4 or version 6.",
+			"type": "string",
+			"pattern": "^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$"
+		},
+		"mediaTypeType": {
+			"description": "A valid media type (e.g. \"text/plain\") conforming to the format defined in section 3.1.1.1 of RFC 7231. See also http://www.iana.org/assignments/media-types/media-types.xhtml.",
+			"type": "string",
+			"pattern": "^[-!#$%&'*+.^_`|~0-9a-zA-Z]+/[-!#$%&'*+.^_`|~0-9a-zA-Z]+([ \t]*;[ \t]*[-!#$%&'*+.^_`|~0-9a-zA-Z]+=([-!#$%&'*+.^_`|~0-9a-zA-Z]+|\"([\\x5D-~\t !#-\\x5B]|\\\\([\t 0-9a-zA-Z]))*\"))*$"
+		},
+		"uuidType": {
+			"description": "Canonical textual representation for an UUID, as defined in RFC 4122 (e.g. \"e5f9bbae-163e-42f9-a2f2-0daaf78fefb1\")",
+			"type": "string",
+			"pattern": "^[0-9A-Fa-f]{8}(-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}$"
+		},
+		"protocolNameType": {
+			"description": "A JSON string containing a service or protocol name from the set of permitted values defined in the IANA \"Service Name and Transport Protocol Port Number\" registry (http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml).",
+			"type": "string",
+			"pattern": "^[a-zA-Z0-9](-?[a-zA-Z0-9])*$"
+		},
+		"hashType": {
+			"description": "A cryptographic hash acting as a checksum for some content, using the format \"function:hex-value\" (e.g. \"md5:dc89f0b4ff9bd3b061dd66bb66c991b1\").",
+			"type": "string",
+			"pattern": "^[a-zA-Z0-9-]+:([a-fA-F0-9]{2})+$"
+		},
+		"statusEnum": {
+			"description": "Possible alert statuses",
+			"enum": [
+				"Event",
+				"Incident"
+			]
+		},
+		"causeEnum": {
+			"description": "Possible alert causes",
+			"enum": [
+				 "Normal",
+				 "Error",
+				 "Malicious",
+				 "Malfunction",
+				 "Natural",
+				 "Unknown"
+			]
+		},
+		"severityEnum": {
+			"description": "Possible alert severities",
+			"enum": [
+				"Unknown",
+				"Info",
+				"Low",
+				"Medium",
+				"High"
+			]
+		},
+		"analyzerCategoryEnum": {
+			"description": "Possible analyzer categories",
+			"enum": [
+				"1DLiS",
+				"2DLiS",
+				"3DLiS",
+				"1DLaS",
+				"2DLaS",
+				"3DLaS",
+				"VAD",
+				"HAR",
+				"FRC",
+				"VNIR",
+				"SWIR",
+				"LWIR",
+				"MWIR",
+				"ADS",
+				"ODC",
+				"WEA",
+				"DDOS",
+				"SPAM",
+				"AV",
+				"EDR",
+				"FW",
+				"NIDS",
+				"HIDS",
+				"WIDS",
+				"PROX",
+				"WAF",
+				"HPT",
+				"LOG",
+				"IAM",
+				"VPN",
+				"ETL",
+				"RASP",
+				"BAST",
+				"NAC",
+				"SIEM",
+				"NMS"
+			]
+		},
+		"analyzerTypeEnum": {
+			"description": "Possible analyzer types",
+			"enum": [
+				"Cyber",
+				"Physical",
+				"Availability",
+				"Combined"
+			]
+		},
+		"analyzerDataEnum": {
+			"description": "Possible types of data/sensors",
+			"enum": [
+				"Light",
+				"Noise",
+				"Touch",
+				"Images",
+				"Vibration",
+				"Lidar",
+				"Thermic",
+				"Seismic",
+				"Temperature",
+				"Rain",
+				"Water",
+				"Humidity",
+				"Particles",
+				"Contact",
+				"MagneticField",
+				"Acoustics",
+				"Fog",
+				"External",
+				"Reporting",
+				"Connection",
+				"Datagram",
+				"Content",
+				"Data",
+				"File",
+				"Flow",
+				"Log",
+				"Protocol",
+				"Host",
+				"Network",
+				"Alert",
+				"Relay",
+				"Auth",
+				"SNMP"
+			]
+		},
+		"analyzerMethodEnum": {
+			"description": "Possible detection methods",
+			"enum": [
+				"Biometric",
+				"Signature",
+				"Monitor",
+				"Policy",
+				"Statistical",
+				"AI",
+				"Heat",
+				"Movement",
+				"Blackhole",
+				"Heuristic",
+				"Integrity",
+				"Honeypot",
+				"Tarpit",
+				"Recon",
+				"Correlation",
+				"Threshold"
+			]
+		},
+		"vectorCategoryEnum": {
+			"description": "Possible categories for attack vectors",
+			"enum": [
+				"Unknown",
+				"Face",
+				"RunningMan",
+				"Human",
+				"Man",
+				"Woman",
+				"Chilren",
+				"Animal",
+				"Object",
+				"Blast",
+				"Fire",
+				"Wind",
+				"Snow",
+				"Rain",
+				"Chemical",
+				"Smoke",
+				"Vapors",
+				"Drug",
+				"Device",
+				"Drone",
+				"Car",
+				"Truck",
+				"Vehicle",
+				"Bird",
+				"Storm",
+				"HighTemperature",
+				"Artifact",
+				"AutonomousSystem",
+				"Directory",
+				"DomainName",
+				"EmailAddress",
+				"EmailMessage",
+				"File",
+				"IPv4Address",
+				"IPv6Address",
+				"Mutex",
+				"NetworkTraffic",
+				"Process",
+				"URL",
+				"UserAccount",
+				"WindowsRegistryKey",
+				"X509Certificate"
+			]
+		},
+		"vectorSizeEnum": {
+			"description": "Possible sizes for attack vectors",
+			"enum": [
+				"Small",
+				"Medium",
+				"Large",
+				"Huge"
+			]
+		},
+		"categoryEnum": {
+			"description": "Possible alert categories",
+			"enum": [
+				"Abusive.Spam",
+				"Abusive.Harassment",
+				"Abusive.Illicit",
+				"Malicious.System",
+				"Malicious.Botnet",
+				"Malicious.Distribution",
+				"Malicious.Configuration",
+				"Recon.Scanning",
+				"Recon.Sniffing",
+				"Recon.SocialEngineering",
+				"Attempt.Exploit",
+				"Attempt.Login",
+				"Attempt.NewSignature",
+				"Intrusion.AdminCompromise",
+				"Intrusion.UserCompromise",
+				"Intrusion.AppCompromise",
+				"Intrusion.SysCompromise",
+				"Intrusion.Burglary",
+				"Availability.DoS",
+				"Availability.DDoS",
+				"Availability.Misconf",
+				"Availability.Theft",
+				"Availability.Sabotage",
+				"Availability.Outage",
+				"Availability.Failure",
+				"Information.UnauthorizedAccess",
+				"Information.UnauthorizedModification",
+				"Information.DataLoss",
+				"Information.DataLeak",
+				"Fraud.UnauthorizedUsage",
+				"Fraud.Copyright",
+				"Fraud.Masquerade",
+				"Fraud.Phishing",
+				"Vulnerable.Crypto",
+				"Vulnerable.DDoS",
+				"Vulnerable.Surface",
+				"Vulnerable.Disclosure",
+				"Vulnerable.System",
+				"Geophysical.Earthquake",
+				"Geophysical.MassMovement",
+				"Geophysical.Volcanic",
+				"Meteorological.Temperature",
+				"Meteorological.Fog",
+				"Meteorological.Storm",
+				"Hydrological.Flood",
+				"Hydrological.Landslide",
+				"Hydrological.Wave",
+				"Climatological.Drought",
+				"Climatological.LakeOutburst",
+				"Climatological.Wildfire",
+				"Biological.Epidemic",
+				"Biological.Insect",
+				"Biological.Animal",
+				"Extraterrestrial.Impact",
+				"Extraterrestrial.SpaceWeather",
+				"Other.Uncategorized",
+				"Other.Undetermined",
+				"Test.Test"
+			]
+		}
+	},
+	"required": [
+		"Version",
+		"ID",
+		"CreateTime",
+		"Analyzer"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"Version": {
+			"description": "Version of the IDMEFv2 Format",
+			"enum": ["2.0.3"]
+		},
+		"ID": {
+			"description": "128-bit Universally Unique IDentifier (UUID), either UUID version 4 (random) or 5 (SHA-1)",
+			"$ref": "#/definitions/uuidType"
+		},
+		"Entity": {
+			"description": "Tenant ID to support multi-tenancy (e.g. decentralized infrastructure, local agency, subsidiary  company, etc.) Should be used when there are multiple sites/locations or multiple tenants (e.g. MSSPs)",
+			"type": "string"
+		},
+		"Category": {
+			"description": "The ENISA:RIST incident category & subcategory",
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/categoryEnum"
+			}
+		},
+		"Cause": {
+			"description": "Alert cause's origin, if known at the time of detection. If unknown, this key should not be defined and may be filled later on by a manager or a human operator.",
+			"$ref": "#/definitions/causeEnum"
+		},
+		"Description": {
+			"description": "Short free text human-readable description.",
+			"type": "string"
+		},
+		"Status": {
+			"description": "Alert state in the overall alert lifecycle",
+			"$ref": "#/definitions/statusEnum"
+		},
+		"Severity": {
+			"description": "Severity of the alert",
+			"$ref": "#/definitions/severityEnum"
+		},
+		"Confidence": {
+			"description": "Confidence of detector in its own reliability of this particular detection. (0 – surely false, 1 – no doubts). ",
+			"type": "number",
+			"minimum": 0,
+			"maximum": 1
+		},
+		"Note": {
+			"description": "Free text human-readable additional note, possibly longer description of incident if not obvious.",
+			"type": "string"
+		},
+		"CreateTime": {
+			"description": "Message creation timestamp. May point out delay between detection and processing of data.",
+			"$ref": "#/definitions/timestampType"
+		},
+		"StartTime": {
+			"description": "Deduced start of the event, or just time of the event if it is solitary.",
+			"$ref": "#/definitions/timestampType"
+		},
+		"CeaseTime": {
+			"description": "Deduced end of the event.",
+			"$ref": "#/definitions/timestampType"
+		},
+		"DeleteTime": {
+			"description": "Message deletion timestamp. MUST be specified if the message has to be deleted after this date for technical, organizational or ethical reasons.",
+			"$ref": "#/definitions/timestampType"
+		},
+		"AltNames": {
+			"description": "Alternative identifiers; strings which help pair the event to internal systems' information (for example tickets in request tracking systems).",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"AltCategory": {
+			"description": "Alternate category from another reference than RIST (e.g. MISP, MITRE ATT@CK or another proprietary internal reference)",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"Ref": {
+			"description": "References to known sources, related to the alert and/or vulnerability, and specific to this alert. This MAY be a URL to additional info, or a URN (according to RFC 2141) in a registered (IANA) or unregistered ad-hoc namespace bearing reasonable information value and uniqueness, such as \"urn:cve:CVE-2013-2266\".",
+			"type": "array",
+			"items": {
+				"type": "string",
+				"format": "uri"
+			}
+		},
+		"CorrelID": {
+			"description": "Identifiers for the  messages which were used as information sources to create this message, in case the message has been created based on correlation/analysis/deduction from other messages.",
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/uuidType"
+			}
+		},
+		"AggrCondition": {
+			"description": "List of IDMEF fields that are shared (with the same value) by all aggregated events. Should be sent mostly by intermediary nodes, which detect duplicates, or aggregate events, spanning multiple detection windows, into a longer one.\n\nIDMEF fields syntax:\n- <field> for top-level fields. E.g. \"CeaseTime\"\n- <class>.<field> for subfields. E.g. \"Source.IP\"\n- <field>(<N>) to reference the Nth element (0-based) inside a list. N defaults to 0 if omitted. E.g. \n\"Source.IP(0)\n\" refers to the first IP of the first source.\nThe \"StartTime\" and \"CeaseTime\" fields are used to describe the aggregation timeframe, in conjunction with this field.",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"PredID": {
+			"description": "Identifiers of previous messages which are obsoleted by this message. The obsoleted alert should no longer be used. This field can be used to \"update\" an alert.",
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/uuidType"
+			}
+		},
+		"RelID": {
+			"description": "Other messages related to this message",
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/uuidType"
+			}
+		},
+		"Analyzer": {
+			"description": "The Analyzer class identifies the analyzer from which the message originates.",
+			"type": "object",
+			"required": [
+				"IP",
+				"Name",
+				"Model",
+				"Category",
+				"Data",
+				"Method"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"IP": {
+					"description": "IP address (either version 4 or version 6)",
+					"$ref": "#/definitions/ipAddressType"
+				},
+				"Name": {
+					"description": "Name of the analyzer, which must be reasonably unique, however still bear some meaningful sense. Usually denotes hierarchy of organizational units which detector belongs to and its own name or it can distinguish multiple analyzers running with the same IP.",
+					"type": "string"
+				},
+				"Hostname": {
+					"description": "Hostname of this analyzer. SHOULD be a fully-qualified domain name.",
+					"type": "string"
+				},
+				"Type": {
+					"description": "Analyzer type",
+					"$ref": "#/definitions/analyzerTypeEnum"
+				},
+				"Model": {
+					"description": "Generic name, brand, version",
+					"type": "string"
+				},
+				"Category": {
+					"description": "Analyzer categories",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/analyzerCategoryEnum"
+					}
+				},
+				"Data": {
+					"description": "Data analyzed for detection",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/analyzerDataEnum"
+					}
+				},
+				"Method": {
+					"description": "Detection method",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/analyzerMethodEnum"
+					}
+				},
+				"GeoLocation": {
+					"description": "GPS coordinates for the sensor",
+					"$ref": "#/definitions/geoLocationType"
+				},
+				"UnLocation": {
+					"description": "Standard UN/LOCODE location",
+					"$ref": "#/definitions/unLocodeType"
+				},
+				"Location": {
+					"description": "Internal location of the agent/sensor",
+					"type": "string"
+				}
+			}
+		},
+		"Sensor": {
+			"type": "array",
+			"items": {
+				"description": "The Sensor class identifies the sensor used by the analyzer for its analysis.",
+				"type": "object",
+				"required": [
+					"IP",
+					"Name",
+					"Model"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"IP": {
+						"description": "The sensor's IP address (either version 4 or version 6) ",
+						"$ref": "#/definitions/ipAddressType"
+					},
+					"Name": {
+						"description": "Name of the sensor, which must be reasonably unique, however still bear some meaningful sense. Usually denotes the hierarchy of organizational units the detector belongs to and its own name. May also be used to help distinguish sensors running with the same IP address.",
+						"type": "string"
+					},
+					"Hostname": {
+						"description": "Hostname of this sensor. Should be a fully qualified domain name, but may not conform exactly because values extracted from logs, messages, DNS, etc. may themselves be malformed. An empty string can be used to explicitly state that this value was inquired but not found (missing DNS name).",
+						"type": "string"
+					},
+					"Model": {
+						"description": "Generic name, brand, version.",
+						"type": "string"
+					},
+					"UnLocation": {
+						"description": "Standard UN/LOCODE location.",
+						"$ref": "#/definitions/unLocodeType"
+					},
+					"Location": {
+						"description": "Internal location of the sensor",
+						"type": "string"
+					},
+					"CaptureZone": {
+						"description": "String that describes the capture zone of the sensor in a serialized JSON string",
+						"type": "string"
+					}
+				}
+			}
+		},
+		"Source": {
+			"type": "array",
+			"items": {
+				"description": "The Source class contains information about the possible source(s) of the event(s) that generated this message.",
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"UnLocation": {
+						"description": "Standard UN/LOCODE location for this source.",
+						"$ref": "#/definitions/unLocodeType"
+					},
+					"Location": {
+						"description": "Internal location description (for internal sources)",
+						"type": "string"
+					},
+					"GeoLocation": {
+						"description": "GPS coordinates for the source",
+						"$ref": "#/definitions/geoLocationType"
+					},
+					"Note": {
+						"description": "Free text human-readable additional note.",
+						"type": "string"
+					},
+					"TI": {
+						"description": "Threat intelligence information about the source",
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"IP": {
+						"description": "Source IP address (either version 4 or version 6)",
+						"$ref": "#/definitions/ipAddressType"
+					},
+					"Hostname": {
+						"description": "Hostname of this source. Should be a fully qualified domain name, but may not conform exactly because values extracted from logs, messages, DNS, etc. may themselves be malformed. An empty string can be used to explicitly state that this value was inquired but not found (missing DNS name).",
+						"type": "string"
+					},
+					"User": {
+						"description": "User ID or login responsible for the alert",
+						"type": "string"
+					},
+					"Email": {
+						"description": "Email address (e.g. the value of the \"Reply-To\" or \"From\" header inside a phishing e-mail).",
+						"type": "string",
+						"format": "email"
+					},
+					"Protocol": {
+						"description": "Protocols related to connections from/to this source/target. If several protocols are stacked, they must be ordered from the lowest (the closest to the medium) to the highest (the closest to the application) according to the ISO/OSI model.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/protocolNameType"
+						}
+					},
+					"Port": {
+						"description": "Source ports involved",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/portType"
+						}
+					},
+					"Attachment": {
+						"description": "Identifiers for attachments related to this source. Each identifier listed here MUST match the \"Name\" attribute for one of the attachments described using the \"Attachment\" class.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/attachmentNameType"
+						}
+					},
+					"Observable": {
+						"description": "Identifiers for observables related to this source. Each identifier listed here MUST match the \"Name\" attribute for one of the observables described using the \"Observable\" class.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/observableNameType"
+						}
+					}
+				}
+			}
+		},
+		"Target": {
+			"type": "array",
+			"items": {
+				"description": "The Target class contains information about the possible target(s) of the event(s) that generated this message.",
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"UnLocation": {
+						"description": "Standard UN/LOCODE location for this target",
+						"$ref": "#/definitions/unLocodeType"
+					},
+					"Location": {
+						"description": "Internal location of the target",
+						"type": "string"
+					},
+					"GeoLocation": {
+						"description": "GPS coordinates for the target",
+						"$ref": "#/definitions/geoLocationType"
+					},
+					"Note": {
+						"description": "Free text human-readable additional note.",
+						"type": "string"
+					},
+					"IP": {
+						"description": "Target IP address (either version 4 or version 6)",
+						"$ref": "#/definitions/ipAddressType"
+					},
+					"Hostname": {
+						"description": "Hostname of this target. Should be a fully qualified domain name, but may not conform exactly because values extracted from logs, messages, DNS, etc. may themselves be malformed. An empty string can be used to explicitly state that this value was inquired but not found (missing DNS name).",
+						"type": "string"
+					},
+					"Service": {
+						"description": "Service(s)/process(es) impacted by the event/alert",
+						"type": "string"
+					},
+					"User": {
+						"description": "User ID or login targeted by the alert",
+						"type": "string"
+					},
+					"Email": {
+						"description": "Email address (e.g. the value of the \"To\" header inside a phishing e-mail).",
+						"type": "string"
+					},
+					"Port": {
+						"description": "Destination ports affected",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/portType"
+						}
+					},
+					"Attachment": {
+						"description": "Identifiers for attachments related to this target. Each identifier listed here MUST match the \"Name\" attribute for one of the attachments described using the \"Attachment\" class.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/attachmentNameType"
+						}
+					},
+					"Observable": {
+						"description": "Identifiers for observables related to this target. Each identifier listed here MUST match the \"Name\" attribute for one of the observables described using the \"Observable\" class.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/observableNameType"
+						}
+					}
+				}
+			}
+		},
+		"Vector": {
+			"type": "array",
+			"items": {
+				"description": "The Vector class contains information about the vector(s) of the event(s) that generated this message.",
+				"type": "object",
+				"required": [
+					"Category"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"Category": {
+						"description": "Category for the detected \"vector\"",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/vectorCategoryEnum"
+						}
+					},
+					"TI": {
+						"description": "Threat intelligence information about the vector.",
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"Name": {
+						"description": "Name of the detected vector or \"Unknown\"",
+						"type": "string"
+					},
+					"Size": {
+						"description": "Average size of the detected vector",
+						"$ref": "#/definitions/vectorSizeEnum"
+					},
+					"UnLocation": {
+						"description": "UN Location of the vector (e.g. Storm detected on Athens)",
+						"$ref": "#/definitions/unLocodeType"
+					},
+					"GeoLocation": {
+						"description": "GPS coordinates for the vector, providing event geolocation (i.e. where a man/car/animal was detected, a storm/drought/fire risk was predicted, etc.)",
+						"$ref": "#/definitions/geoLocationType"
+					},
+					"GeoRadius": {
+						"description": "Estimated radius around the provided geolocation (error margin) in meters. The value can be very precise or approximated (e.g. 100 m)",
+						"type": "number"
+					},
+					"Location": {
+						"description": "Internal location.",
+						"type": "string"
+					},
+					"Note": {
+						"description": "Free text human-readable additional note.",
+						"type": "string"
+					},
+					"Attachment": {
+						"description": "Identifiers for attachments related to this vector. Each identifier listed here MUST match the \"Name\" attribute for one of the attachments described using the \"Attachment\" class.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/attachmentNameType"
+						}
+					},
+					"Observable": {
+						"description": "Identifiers for observables related to this vector. Each identifier listed here MUST match the \"Name\" attribute for one of the observables described using the \"Observable\" class.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/observableNameType"
+						}
+					}
+				}
+			}
+		},
+		"Attachment": {
+			"type": "array",
+			"items": {
+				"description": "The Attachment class contains information about data linked to a source, target or vector",
+				"type": "object",
+				"required": [
+					"Name"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"Name": {
+						"description": "Unique identifier among attachments that can be used to reference this attachment from other classes using the \"Attachment\" attribute.",
+						"$ref": "#/definitions/attachmentNameType"
+					},
+					"FileName": {
+						"description": "Attachment filename",
+						"type": "string"
+					},
+					"Hash": {
+						"description": "Checksum of the attachment's content. The use of a hash function from the SHA-2 or SHA-3 family is recommended.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/hashType"
+						}
+					},
+					"Size": {
+						"description": "Length of the content (Bytes)",
+						"type": "integer"
+					},
+					"Ref": {
+						"description": "References to known sources, related to the attack and/or vulnerability, and specific to this attachment. This MAY be a URL to additional info, or a URN (according to RFC 2141) in a registered (IANA) or unregistered ad-hoc namespace bearing reasonable information value and uniqueness, such as \"urn:clamav:Win.Trojan.Banker-14334\".",
+						"type": "array",
+						"items": {
+							"type": "string",
+							"format": "uri"
+						}
+					},
+					"ExternalURI": {
+						"description": "If the attachment's content is available and/or recognizable from an external resource, this is the URI (usually a URL) to that resource. This MAY also be a URN (according to RFC 2141) in a registered (IANA) or unregistered ad-hoc namespace bearing reasonable information value and uniqueness, such as \"urn:mhr:55eaf7effadc07f866d1eaed9c64e7ee49fe081a\", \"magnet:?xt=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C\".",
+						"type": "array",
+						"items": {
+							"type": "string",
+							"format": "uri"
+						}
+					},
+					"Note": {
+						"description": "Free text human-readable additional note.",
+						"type": "string"
+					},
+					"ContentType": {
+						"description": "Internet Media Type of the attachment, according to RFC 2046 and related. Along with types standardized by IANA also non standard but widely used media types can be used (for examples see MIME types list at freeformatter.com).",
+						"$ref": "#/definitions/mediaTypeType"
+					},
+					"ContentEncoding": {
+						"description": "Content encoding. The following encodings are defined in this version of the specification:\n\"json\" - Content refers to a JSON object which has been serialized to a string using the serialization procedure defined in RFC 7159.\n\"base64\" - The Content has been serialized using the Base64 encoding defined in RFC 4648. This encoding SHOULD be used when the content contains binary data.\nIf omitted, the \"json\" encoding should be assumed.",
+						"type": "string"
+					},
+					"Content": {
+						"description": "The attachment's content if the content is included inside the message.",
+						"type": "string"
+					}
+				}
+			}
+		},
+		"Observable": {
+			"type": "array",
+			"items": {
+				"description": "The Observable class contains information about metadata linked to a source, target or vector",
+				"type": "object",
+				"required": [
+					"Name",
+					"Content"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"Name": {
+						"description": "Unique identifier among observables that can be used to reference this observable from other classes using the \"Observable\" attribute.",
+						"$ref": "#/definitions/observableNameType"
+					},
+					"Reference": {
+						"description": "Name of the reference from where the observable is specified.",
+						"type": "string"
+					},
+					"Content": {
+						"description": "Observable content",
+						"type": "string"
+					}
+				}
+			}
+		}
+	}
+}

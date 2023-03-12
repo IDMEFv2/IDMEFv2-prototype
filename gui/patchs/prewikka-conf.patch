@@ -1,0 +1,11 @@
+--- /etc/prewikka/prewikka.conf 2023-03-12 08:49:33.908046150 +0000
++++ /etc/prewikka/prewikka.conf2        2023-03-12 08:50:49.427663281 +0000
+@@ -134,7 +134,7 @@
+ # Prewikka DB
+ [database]
+ type: pgsql
+-host: localhost
++host: postgres
+ user: prelude
+ pass: prelude
+ name: prewikka

@@ -1,0 +1,109 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"title": "NXLog",
+	"description": "JSON schema for NXLog-forwarded Microsoft Windows events",
+	"definitions": {
+		"timestampType": {
+			"description": "A JSON string containing a timestamp conforming to the format given in section 5.6 of RFC 3339 or close to it.",
+			"type": "string",
+			"pattern": "^[0-9]{4}-(0[0-9]|1[012])-([0-2][0-9]|3[01])[T ]([0-1][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]+)?(Z|[-+]([0-1][0-9]|2[0-3]):[0-5][0-9])?$"
+		}
+	},
+
+
+	"required": [
+		"EventTime",
+		"Hostname",
+		"EventID",
+		"SourceName",
+		"RecordNumber"
+	],
+	"additionalProperties": true,
+	"properties": {
+		"EventTime": {
+			"$ref": "#/definitions/timestampType"
+		},
+		"ActivityID": {
+			"type": "string"
+		},
+		"Hostname": {
+			"type": "string"
+		},
+		"EventID": {
+			"type": "integer"
+		},
+		"Keywords": {
+			"type": "integer"
+		},
+		"Channel": {
+			"type": "string"
+		},
+		"SeverityValue": {
+			"type": "integer"
+		},
+		"Severity": {
+			"type": "string"
+		},
+		"EventType": {
+			"type": "string"
+		},
+		"Message": {
+			"type": "string"
+		},
+		"RecordNumber": {
+			"type": "integer"
+		},
+		"RelatedActivityID": {
+			"type": "integer"
+		},
+		"OpcodeValue": {
+			"type": "integer"
+		},
+		"Opcode": {
+			"type": "string"
+		},
+		"ProviderGuid": {
+			"type": "string"
+		},
+		"ProcessID": {
+			"type": "integer"
+		},
+		"SourceName": {
+			"type": "string"
+		},
+		"Task": {
+			"type": "integer"
+		},
+		"ThreadID": {
+			"type": "integer"
+		},
+		"UserID": {
+			"type": "string"
+		},
+		"AccountName": {
+			"type": "string"
+		},
+		"Domain": {
+			"type": "string"
+		},
+		"AccountType": {
+			"type": "string"
+		},
+		"Version": {
+			"type": "integer"
+		},
+		"Category": {
+			"type": "string"
+		},
+		"EventReceivedTime": {
+			"$ref": "#/definitions/timestampType"
+		},
+		"SourceModuleName": {
+			"type": "string"
+		},
+		"SourceModuleType": {
+			"type": "string"
+		}
+	}
+}

@@ -1,0 +1,11 @@
+--- auth.conf.bak	2021-09-07 14:24:31.000000000 +0200
++++ auth.conf	2021-09-16 10:55:22.959466471 +0200
+@@ -9,7 +9,7 @@
+ #
+ [session loginform]
+ expiration: 60
+-footer: Prelude SIEM $version
++footer: Prototype SECEF
+ #
+ # --------------------------- Disable authentication ---------------------------
+ #
