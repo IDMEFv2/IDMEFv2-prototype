@@ -1,15 +1,27 @@
 #!/usr/bin/env bash
 
-set -eu
+set -u
 set -o pipefail
 
-echo "Running IHM"
+echo "Waiting for database to be ready ..."
+while true; do
+    pg_isready -U postgres -h postgres
+    if [ $? -eq 0 ]; then
+        break
+    else
+        sleep 2
+    fi
+done
+echo "Database is ready"
 
-PGPASSWORD=changeme psql -h postgres -U postgres -c "CREATE DATABASE prewikka;" || :
-PGPASSWORD=changeme psql -h postgres -U postgres -c "CREATE USER prelude WITH ENCRYPTED PASSWORD 'prelude';" || :
-PGPASSWORD=changeme psql -h postgres -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE prewikka TO prelude;" || :
-PGPASSWORD=changeme psql -h postgres -U postgres -c "ALTER DATABASE prewikka OWNER TO prelude;" || :
+echo "Waiting for elasticsearch to be ready ..."
+until curl --user elastic:elastic 'http://es01:9200/_cluster/health?wait_for_status=yellow&timeout=30s'; do
+    sleep 2
+done
+echo "Elasticsearch is ready"
 
-/usr/local/bin/prewikka-cli -C 'sync plugin' || :
+echo "Running GUI"
+sleep 20
+/usr/local/bin/prewikka-cli -C 'sync plugin'
 
 /usr/local/bin/prewikka-httpd -p 80

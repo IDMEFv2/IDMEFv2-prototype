@@ -1,0 +1,4 @@
+- Réactiver le support ILM dans l'output ES de logstash
+- Réactiver les règles logstash de parsing de logs
+- Réactiver le stockage des logs en plus des alertes
+- Améliorer le détail des alertes dans le détail des alertes

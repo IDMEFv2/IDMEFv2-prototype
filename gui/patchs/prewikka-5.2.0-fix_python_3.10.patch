@@ -1,0 +1,88 @@
+Description: Add support for Python 3.10
+Author: Thomas Andrejak <thomas.andrejak@gmail.com>
+Last-Update: 2021-08-13
+
+--- prewikka-5.2.0/prewikka/utils/json.py	2020-09-09 16:44:23.000000000 +0200
++++ prewikka-5.2.0/prewikka/utils/json.py2	2021-08-14 01:47:23.872893323 +0200
+@@ -61,7 +61,7 @@
+         elif isinstance(obj, datetime.datetime):
+             return text_type(obj)
+ 
+-        elif isinstance(obj, collections.Iterable):
++        elif isinstance(obj, collections.abc.Iterable):
+             return list(obj)
+ 
+         return json.JSONEncoder.default(self, obj)
+--- prewikka-5.2.0/prewikka/views/datasearch/idmef.py	2020-09-09 16:44:23.000000000 +0200
++++ prewikka-5.2.0/prewikka/views/datasearch/idmef.py2	2021-08-14 01:47:52.233327128 +0200
+@@ -80,7 +80,7 @@
+         out2 = []
+         key = text_type(iclass)
+ 
+-        child = child if isinstance(child, collections.Iterable) else [child]
++        child = child if isinstance(child, collections.abc.Iterable) else [child]
+         for j in filter(None, map(lambda x: self._format_generic(root, x), child)):
+             out2.append(resource.HTMLNode("ul", *j, _class="object %s dp-%d" % (key, self._get_priority(iclass))))
+ 
+@@ -223,7 +223,7 @@
+                 continue
+ 
+             if vtype == prelude.IDMEFValue.TYPE_CLASS:
+-                if isinstance(child, collections.Iterable):
++                if isinstance(child, collections.abc.Iterable):
+                     for j in child:
+                         self._recurse_idmef(output, j)
+                 else:
+--- prewikka-5.2.0/prewikka/config.py	2020-09-09 16:44:23.000000000 +0200
++++ prewikka-5.2.0/prewikka/config.py2	2021-08-14 01:48:19.409784571 +0200
+@@ -55,7 +55,7 @@
+                                       {'name': key}))
+ 
+ 
+-class ConfigSection(collections.Mapping):
++class ConfigSection(collections.abc.Mapping):
+     def __init__(self, name):
+         object.__setattr__(self, "_instance_name", name)
+         object.__setattr__(self, "_od", collections.OrderedDict())
+--- prewikka-5.2.0/prewikka/database.py	2020-09-09 16:44:23.000000000 +0200
++++ prewikka-5.2.0/prewikka/database.py2	2021-08-14 01:49:16.741639981 +0200
+@@ -473,7 +473,7 @@
+         self._dbtype = settings["type"]
+ 
+     def _get_prefilter(self, v):
+-        if not(isinstance(v, (text_type, bytes))) and isinstance(v, collections.Iterable):
++        if not(isinstance(v, (text_type, bytes))) and isinstance(v, collections.abc.Iterable):
+             return self.__ESCAPE_PREFILTER["iterable"]
+         else:
+             return self.__ESCAPE_PREFILTER.get(type(v))
+--- prewikka-5.2.0/prewikka/template.py	2020-09-09 16:44:23.000000000 +0200
++++ prewikka-5.2.0/prewikka/template.py2	2021-08-14 01:49:35.528264920 +0200
+@@ -49,7 +49,7 @@
+ # We cannot inherit dict directly because it's __json__() method would never be called. Simplejson
+ # only call the user provided encoding callback when the object is not known to be serializable.
+ 
+-class _Dataset(collections.MutableMapping):
++class _Dataset(collections.abc.MutableMapping):
+     def __init__(self, template, *args, **kwargs):
+         self._d = dict(*args, **kwargs)
+         self._template = template
+--- prewikka-5.2.0/prewikka/dataprovider/plugins/idmef/__init__.py	2020-09-09 16:44:23.000000000 +0200
++++ prewikka-5.2.0/prewikka/dataprovider/plugins/idmef/__init__.py2	2021-08-14 22:44:20.253259032 +0200
+@@ -30,7 +30,7 @@
+ class IDMEFResultObject(ResultObject, utils.json.JSONObject):
+     def preprocess_value(self, value):
+         if isinstance(value, IDMEFTime):
+-            return datetime.fromtimestamp(value, utils.timeutil.tzoffset(None, value.getGmtOffset()))
++            return datetime.fromtimestamp(int(value), utils.timeutil.tzoffset(None, value.getGmtOffset()))
+ 
+         return ResultObject.preprocess_value(self, value)
+ 
+@@ -47,7 +47,7 @@
+ 
+     def preprocess_value(self, value):
+         if isinstance(value, IDMEFTime):
+-            return datetime.fromtimestamp(value, utils.timeutil.tzoffset(None, value.getGmtOffset()))
++            return datetime.fromtimestamp(int(value), utils.timeutil.tzoffset(None, value.getGmtOffset()))
+ 
+         return QueryResultsRow.preprocess_value(self, value)
+ 

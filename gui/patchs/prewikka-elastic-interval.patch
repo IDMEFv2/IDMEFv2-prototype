@@ -1,0 +1,11 @@
+--- prewikka-5.2.0/prewikka/dataprovider/helpers/elasticsearch.py	2023-03-25 23:35:49.940310028 +0100
++++ prewikka-5.2.0/prewikka/dataprovider/helpers/elasticsearch.py2	2023-03-26 00:06:10.236589423 +0100
+@@ -642,7 +642,7 @@
+         return {
+             "date_histogram": {
+                 "field": field,
+-                "interval": interval,
++                "calendar_interval": interval,
+                 "format": form,
+                 "time_zone": env.request.user.timezone.zone,
+                 "order": {"_key": order or "asc"},

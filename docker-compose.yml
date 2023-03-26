@@ -11,30 +11,32 @@ services:
       volumes:
         - ./setup/entrypoint.sh:/entrypoint.sh:ro,Z
         - setup:/state:Z
+        - ./setup/config:/config:ro,Z
       networks:
         - proto
-      depends_on:
-        - kafdrop
 
     gui:
       build:
         context: gui/
       volumes:
         - ./gui/entrypoint.sh:/entrypoint.sh:ro,Z
+        - ./gui/config/prewikka.conf:/etc/prewikka/prewikka.conf:ro,Z
+        - ./gui/config/auth.conf:/etc/prewikka/conf.d/auth.conf:ro,Z
         - ./gui/config/idmefv2.conf:/etc/prewikka/conf.d/idmefv2.conf:ro,Z
         - ./gui/config/logs.conf:/etc/prewikka/conf.d/logs.conf:ro,Z
-        - ./gui/config/secef/netflows.conf:/etc/prewikka/conf.d/netflows.conf:ro,Z
-        - ./gui/config/secef/secef.conf:/etc/prewikka/conf.d/secef.conf:ro,Z
-        - ./gui/config/secef/menusecef.yml:/etc/prewikka/menusecef.yml:ro,Z
-        - ./gui/config/secef/SECEF-Favicon.png:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/images/SECEF-Favicon.png:ro,Z
-        - ./gui/config/secef/SECEF-logo.png:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/images/SECEF-logo.png:ro,Z
-        - ./gui/config/secef/secef.css:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/css/themes/secef.css:ro,Z
+        - ./gui/config/secef.conf:/etc/prewikka/conf.d/secef.conf:ro,Z
+        - ./gui/config/menu.yml:/etc/prewikka/menu.yml:ro,Z
+        - ./gui/config/SECEF-Favicon.png:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/images/SECEF-Favicon.png:ro,Z
+        - ./gui/config/SECEF-logo.png:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/images/SECEF-logo.png:ro,Z
+        - ./gui/config/secef.css:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/css/themes/secef.css:ro,Z
       ports:
         - 80:80
+        - 81:81
       networks:
         - proto
       restart: on-failure
       depends_on:
+        setup:
         es01:
         postgres:
           condition: service_healthy
@@ -47,7 +49,7 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
         PGDATA: /data/postgres
       volumes:
-         - postgres:/data/postgres
+        - postgres:/data/postgres
       ports:
         - "5432:5432"
       networks:
@@ -116,7 +118,7 @@ services:
         LISTEN_SYSLOG: 6514
         TOPIC_COLLECTED: my_collected
         TOPIC_PROCESSED: my_processed
-        INDEX_ALERT: alerts
+        INDEX_ALERTS: alerts
       networks:
         - proto
       depends_on:

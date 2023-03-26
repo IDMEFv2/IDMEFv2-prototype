@@ -1,0 +1,11 @@
+--- prewikka-5.2.0/prewikka/dataprovider/idmefv2.py	2023-03-26 14:20:46.864416721 +0200
++++ prewikka-5.2.0/prewikka/dataprovider/idmefv2.py2	2023-03-26 14:42:01.930338841 +0200
+@@ -47,7 +47,7 @@
+     plugin_license = version.__license__
+     plugin_copyright = version.__copyright__
+     plugin_description = N_("Provides an API to fetch IDMEFv2")
+-    dataprovider_label = N_("Incidents")
++    dataprovider_label = N_("Alerts")
+ 
+     def __init__(self):
+         PathParser.__init__(self, _IDMEFv2_PATHS, "create_time")

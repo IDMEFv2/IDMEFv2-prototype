@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "index_patterns": ["alerts*"],
+  "index_patterns": ["alerts-*"],
   "version": 20210614,
   "settings": {
     "refresh_interval": "5s",

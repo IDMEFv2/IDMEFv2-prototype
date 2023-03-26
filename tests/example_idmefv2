@@ -1,0 +1,72 @@
+[  {
+     "Description": "Potential intruder detected",
+     "Severity": "Low",
+     "Status": "Incident",
+     "Cause": "Malicious",
+     "CreateTime": "2023-03-24T16:52:13.075994+00:00",
+     "StartTime": "2023-03-24T16:52:13+00:00",
+     "Category": [
+       "Intrusion.Burglary"
+     ],
+     "Analyzer": {
+       "Name": "BigBrother",
+       "Hostname": "bb.example.com",
+       "Type": "Physical",
+       "Model": "Big Brother v42",
+       "Category": [
+         "HAR",
+         "FRC"
+       ],
+       "Data": [
+         "Images"
+       ],
+       "Method": [
+         "Movement",
+         "Biometric",
+         "AI"
+       ],
+       "IP": "192.0.2.1"
+     },
+     "Sensor": [
+       {
+         "IP": "192.0.2.2",
+         "Name": "Camera #23",
+         "Model": "SuperDuper Camera v1",
+         "Location": "Hallway to server room A1"
+       }
+     ],
+     "Source": [
+       {
+         "Note": "Black Organization, aka. APT 4869"
+       }
+     ],
+     "Vector": [
+       {
+         "Category": ["Man"],
+         "TI": ["Name:FBI-Wanted"],
+         "Name": "John Doe",
+         "Note": "Codename Vodka, known henchman for APT 4869",
+         "Size": "Medium",
+         "Location": "Hallway to server room A1",
+         "Attachment": ["pic01", "wanted"]
+       }
+     ],
+     "Attachment": [
+       {
+         "Name": "wanted",
+         "FileName": "fbi-wanted-poster.jpg",
+         "Size": 1234567,
+         "Ref": ["https://www.fbi.gov/wanted/topten"],
+         "ContentType": "image/jpg",
+         "ContentEncoding": "base64",
+         "Content": "..."
+       },
+       {
+         "Name": "pic01",
+         "Note": "Hi-res picture showing John Doe near server room A1",
+         "ExternalURI": ["ftps://192.0.2.1/cam23/20210510165211.jpg"],
+         "ContentType": "image/jpg"
+       }
+     ]
+   }
+]

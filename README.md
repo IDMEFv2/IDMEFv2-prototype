@@ -70,5 +70,16 @@ Mar  11 11:00:35 itguxweb2 sshd[24541]: Failed password for root from 12.34.56.7
 ```
 with the netcat tool:
 ```
-echo 'Mar  11 11:00:35 itguxweb2 sshd[24541]: Failed password for root from 12.34.56.78 port 1806' | nc localhost 6514
+echo 'Mar  11 11:00:35 itguxweb2 sshd[24541]: Failed password for root from 12.34.56.78 port 1806' | nc -N localhost 6514
 ```
+or with embeded test container:
+```
+make tests_logs
+```
+Note: logs are in `tests/example_logs` file.
+
+You can also try to send an IDMEFv2 alert with embeded test container:
+```
+make tests_idmefv2
+```
+Note: IDMEFv2 alerts are in `tests/example_idmefv2` file.

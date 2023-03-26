@@ -1,0 +1,21 @@
+--- prewikka-5.2.0/prewikka/views/about/templates/about.mak	2023-03-26 14:20:46.930417017 +0200
++++ prewikka-5.2.0/prewikka/views/about/templates/about.mak2	2023-03-26 14:31:23.732277665 +0200
+@@ -12,15 +12,15 @@
+         <div class="col-sm-4">
+           <img src="about/images/secef-logo-400.png"/>
+         </div>
+-        <p class="col-sm-8">
++        <div class="col-sm-8">
+           ${ _("This piece of software is the SECEF project's prototype for an IDMEFv2 implementation. Please do not use it in a production environment.") }
+           <br><br>
+-          ${ _("More information:")
++          ${ _("More information:") }
+           <ul>
+             <li><a href="http://www.secef.net">www.secef.net</a></li>
+             <li><a href="https://github.com/SECEF">github.com/SECEF</a></li>
+           </ul>
+-        </p>
++        </div>
+       </div>
+     </div>
+ 

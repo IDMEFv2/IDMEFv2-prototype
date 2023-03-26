@@ -1,0 +1,8 @@
+--- prewikka-5.2.0/prewikka/dataprovider/plugins/idmefv2/elasticsearch.py	2023-03-25 22:57:28.138268079 +0100
++++ prewikka-5.2.0/prewikka/dataprovider/plugins/idmefv2/elasticsearch.py2	2023-03-25 22:58:31.501583436 +0100
+@@ -36,5 +36,4 @@
+     plugin_version = version.__version__
+     plugin_copyright = version.__copyright__
+     plugin_description = N_("Plugin for querying IDMEFv2 from Elasticsearch")
+-    plugin_locale = version.__locale__
+     type = "idmefv2"

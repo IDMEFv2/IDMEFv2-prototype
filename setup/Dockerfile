@@ -9,6 +9,8 @@ RUN set -eux; \
 	chmod 0775 /state; \
 	chown elasticsearch:root /state
 
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
 USER elasticsearch:root
 
 ENTRYPOINT ["/entrypoint.sh"]
