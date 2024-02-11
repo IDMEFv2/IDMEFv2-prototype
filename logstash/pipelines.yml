@@ -11,3 +11,6 @@
 
 - pipeline.id: my_stored
   path.config: /usr/share/logstash/config/pipeline/00-my_stored.conf
+
+- pipeline.id: my_stored_logs
+  path.config: /usr/share/logstash/config/pipeline/00-my_stored_logs.conf

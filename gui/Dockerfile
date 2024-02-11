@@ -20,6 +20,8 @@ RUN patch -p0 -i/patchs/prewikka-elastic-interval.patch
 RUN patch -p0 -i/patchs/prewikka-idmefdetails.patch
 RUN patch -p0 -i/patchs/prewikka-about.patch
 RUN patch -p0 -i/patchs/prewikka-idmefv2_filter_name.patch
+RUN patch -p0 -i/patchs/prewikka-location.patch
+RUN patch -p0 -i/patchs/prewikka-stats.patch
 
 WORKDIR /prewikka/prototype/prewikka-5.2.0
 

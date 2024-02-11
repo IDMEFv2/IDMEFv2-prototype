@@ -1,0 +1,11 @@
+--- prewikka-5.2.0/prewikka/views/statistics/alertstats.py	2024-01-26 09:54:04.261333600 +0000
++++ prewikka-5.2.0/prewikka/views/statistics/alertstats.py2	2024-02-04 00:37:48.346459392 +0000
+@@ -234,7 +234,7 @@
+         {
+             "title": N_("Top {limit} Sources Trend"),
+             "category": "chronology",
+-            "path": "idmefv2.source.ip",
++            "path": "idmefv2.source(0).ip",
+             "width": 12,
+         },
+         {
