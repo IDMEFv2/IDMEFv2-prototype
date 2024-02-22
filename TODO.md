@@ -17,3 +17,8 @@ Logs are collected from my_collected kafka topic.
 Pop-up are showing but tables are empty.
 
 # Enalbe github "action" feature
+
+# Improve Dockerfile files
+
+Rebuild the whole image in the Dockerfile instead of just doing 'FROM postgres' for example.
+Use alpine images
