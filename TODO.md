@@ -28,3 +28,5 @@ Use alpine images
 # Add documentation to add nginx in front of the prototype
 
 # Automatically create mapping in a clean run
+
+# Update all docker images
