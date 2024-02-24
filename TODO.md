@@ -8,11 +8,11 @@ For now, all logs and alerts goes to the Elasticsearch database so hard drive di
 
 To make the prototype works relly fast, the prototype is only few files and is it quite complicated to understand everything.
 
-# Logs storage maybe with too many information
+# Logs storage has maybe too many information
 
 Logs are collected from my_collected kafka topic.
 
-# Enable the IDMEFv2 detail
+# Enable the IDMEFv2 detail in web interface
 
 Pop-up are showing but tables are empty.
 
@@ -22,3 +22,9 @@ Pop-up are showing but tables are empty.
 
 Rebuild the whole image in the Dockerfile instead of just doing 'FROM postgres' for example.
 Use alpine images
+
+# Export to an other repositories the GUI and Correlator
+
+# Add documentation to add nginx in front of the prototype
+
+# Automatically create mapping in a clean run
