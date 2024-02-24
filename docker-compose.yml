@@ -26,7 +26,6 @@ services:
         - ./gui/config/logs.conf:/etc/prewikka/conf.d/logs.conf:ro,Z
         - ./gui/config/secef.conf:/etc/prewikka/conf.d/secef.conf:ro,Z
         - ./gui/config/menu.yml:/etc/prewikka/menu.yml:ro,Z
-        - ./gui/config/S4SOC-logo.png:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/images/S4SOC-logo.png:ro,Z
         - ./gui/config/secef.css:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/css/themes/secef.css:ro,Z
       ports:
         - 80:80

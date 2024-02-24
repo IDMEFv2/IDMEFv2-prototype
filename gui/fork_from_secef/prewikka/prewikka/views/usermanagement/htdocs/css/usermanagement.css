@@ -1,7 +1,0 @@
-/*
- * Users and Groups listing grids
- */
-
-#gbox_users .ui-jqgrid-htable thead {
-    background-color: transparent;
-}
