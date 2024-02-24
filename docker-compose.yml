@@ -30,7 +30,7 @@ services:
         - ./gui/config/secef.css:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/css/themes/secef.css:ro,Z
       ports:
         - 80:80
-        - 81:81
+        - 127.0.0.1:81:81
       networks:
         - proto
       restart: on-failure
@@ -50,7 +50,7 @@ services:
       volumes:
         - postgres:/data/postgres
       ports:
-        - "5432:5432"
+        - "127.0.0.1:5432:5432"
       networks:
         - proto
       restart: on-failure
@@ -70,8 +70,8 @@ services:
         - ./elasticsearch_data:/usr/share/elasticsearch/data:Z
         - ./elasticsearch_logs:/usr/share/elasticsearch/logs:Z
       ports:
-        - 9200:9200
-        - 9300:9300
+        - 127.0.0.1:9200:9200
+        - 127.0.0.1:9300:9300
       environment:
         ES_JAVA_OPTS: ${ELASTIC_JVM}
         ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
@@ -98,7 +98,7 @@ services:
         - ./logstash/pipeline:/usr/share/logstash/config/pipeline:ro,Z
         - ./logstash/scripts:/usr/share/logstash/config/scripts:ro,Z
       ports:
-        - 6514:6514
+        - 127.0.0.1:6514:6514
       environment:
         LS_JAVA_OPTS: ${LOGSTASH_JVM}
         LOGSTASH_INTERNAL_PASSWORD: ""
@@ -131,7 +131,7 @@ services:
         args:
           KAFDROP_VERSION: ${KAFDROP_VERSION}
       ports:
-        - 9201:9201
+        - 127.0.0.1:9201:9201
       environment:
         KAFKA_BROKERCONNECT: "kafka1:9092"
         JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
@@ -149,7 +149,7 @@ services:
           ZOO_VERSION: ${ZOO_VERSION}
       hostname: zoo1
       ports:
-        - "2181:2181"
+        - "127.0.0.1:2181:2181"
       environment:
         ZOOKEEPER_CLIENT_PORT: 2181
         ZOOKEEPER_SERVER_ID: 1
@@ -163,9 +163,9 @@ services:
           KAFKA_VERSION: ${KAFKA_VERSION}
       hostname: kafka1
       ports:
-        - "9092:9092"
-        - "29092:29092"
-        - "9999:9999"
+        - "127.0.0.1:9092:9092"
+        - "127.0.0.1:29092:29092"
+        - "127.0.0.1:9999:9999"
       volumes:
         - ./kafka_logs:/var/lib/kafka/logs:Z
       environment:
