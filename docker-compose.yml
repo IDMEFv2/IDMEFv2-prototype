@@ -24,9 +24,7 @@ services:
         - ./gui/config/auth.conf:/etc/prewikka/conf.d/auth.conf:ro,Z
         - ./gui/config/idmefv2.conf:/etc/prewikka/conf.d/idmefv2.conf:ro,Z
         - ./gui/config/logs.conf:/etc/prewikka/conf.d/logs.conf:ro,Z
-        - ./gui/config/secef.conf:/etc/prewikka/conf.d/secef.conf:ro,Z
         - ./gui/config/menu.yml:/etc/prewikka/menu.yml:ro,Z
-        - ./gui/config/secef.css:/usr/local/lib/python3.11/site-packages/prewikka/htdocs/css/themes/secef.css:ro,Z
       ports:
         - 80:80
         - 127.0.0.1:81:81
