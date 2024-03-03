@@ -31,6 +31,13 @@ This repository provide docker files and docker-compose files for theses service
   - SIEM Web Interface
   - PostgreSQL
 
+# Prerequisite
+
+You need :
+
+  - podman version 4 or higher
+  - podman-compose version 1 or higher
+
 # Run the prototype
 
 Run the following command:

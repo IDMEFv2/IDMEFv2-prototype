@@ -1,8 +1,4 @@
-Next action to improve the PROTO
-
-# Add a pre-requisite chapter in the readme
-
-Podman version, etc.
+Next action to improve the S4SOC prototype
 
 # Enable the ILM workflow in Elasticsearch
 
