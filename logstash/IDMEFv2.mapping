@@ -1,7 +1,7 @@
 {
   "order": 0,
   "index_patterns": ["alerts*"],
-  "version": 20210614,
+  "version": 20231011,
   "settings": {
     "refresh_interval": "5s",
     "number_of_shards": "5",
@@ -59,6 +59,10 @@
         "type": "keyword",
         "norms": false
       },
+      "ext-Category": {
+        "type": "keyword",
+        "norms": false
+      },
       "Cause": {
         "type": "keyword",
         "norms": false
@@ -77,7 +81,7 @@
         "type": "keyword",
         "norms": false
       },
-      "Severity": {
+      "Priority": {
         "type": "keyword",
         "norms": false
       },
@@ -96,11 +100,7 @@
         "type": "date",
         "format": "strict_date_optional_time_nanos"
       },
-      "CeaseTime": {
-        "type": "date",
-        "format": "strict_date_optional_time_nanos"
-      },
-      "DeleteTime": {
+      "EndTime": {
         "type": "date",
         "format": "strict_date_optional_time_nanos"
       },
@@ -166,11 +166,11 @@
             "type": "keyword",
             "norms": false
           },
-          "Type": {
+          "Model": {
             "type": "keyword",
             "norms": false
           },
-          "Model": {
+          "Type": {
             "type": "keyword",
             "norms": false
           },
@@ -178,11 +178,23 @@
             "type": "keyword",
             "norms": false
           },
+          "ext-Category": {
+            "type": "keyword",
+            "norms": false
+          },
           "Data": {
             "type": "keyword",
             "norms": false
           },
+          "ext-Data": {
+            "type": "keyword",
+            "norms": false
+          },
           "Method": {
+            "type": "keyword",
+            "norms": false
+          },
+          "ext-Method": {
             "type": "keyword",
             "norms": false
           },
@@ -238,6 +250,9 @@
             "type": "keyword",
             "norms": false
           },
+          "GeoLocation": {
+            "type": "geo_point"
+          },
           "UnLocation": {
             "type": "keyword",
             "norms": false,
@@ -270,42 +285,18 @@
         "type": "nested",
         "dynamic": false,
         "properties": {
-          "UnLocation": {
+          "IP": {
+            "type": "ip"
+          },
+          "Hostname": {
             "type": "keyword",
-            "norms": false,
-            "fields": {
-              "country": {
-                "type": "keyword",
-                "normalizer": "unlocode_normalizer",
-                "norms": false
-              }
-            }
-          },
-          "Location": {
-            "type": "text",
-            "norms": false,
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "norms": false
-              }
-            }
-          },
-          "GeoLocation": {
-            "type": "geo_point"
+            "norms": false
           },
           "Note": {
             "type": "text",
             "norms": false
           },
           "TI": {
-            "type": "keyword",
-            "norms": false
-          },
-          "IP": {
-            "type": "ip"
-          },
-          "Hostname": {
             "type": "keyword",
             "norms": false
           },
@@ -324,21 +315,9 @@
           "Port": {
             "type": "integer"
           },
-          "Attachment": {
-            "type": "keyword",
-            "norms": false
+          "GeoLocation": {
+            "type": "geo_point"
           },
-          "Observable": {
-            "type": "keyword",
-            "norms": false
-          }
-        }
-      },
-
-      "Target": {
-        "type": "nested",
-        "dynamic": false,
-        "properties": {
           "UnLocation": {
             "type": "keyword",
             "norms": false,
@@ -360,18 +339,26 @@
               }
             }
           },
-          "GeoLocation": {
-            "type": "geo_point"
-          },
-          "Note": {
-            "type": "text",
+          "Attachment": {
+            "type": "keyword",
             "norms": false
-          },
+          }
+        }
+      },
+
+      "Target": {
+        "type": "nested",
+        "dynamic": false,
+        "properties": {
           "IP": {
             "type": "ip"
           },
           "Hostname": {
             "type": "keyword",
+            "norms": false
+          },
+          "Note": {
+            "type": "text",
             "norms": false
           },
           "Service": {
@@ -389,11 +376,31 @@
           "Port": {
             "type": "integer"
           },
-          "Attachment": {
-            "type": "keyword",
-            "norms": false
+          "GeoLocation": {
+            "type": "geo_point"
           },
-          "Observable": {
+          "UnLocation": {
+            "type": "keyword",
+            "norms": false,
+            "fields": {
+              "country": {
+                "type": "keyword",
+                "normalizer": "unlocode_normalizer",
+                "norms": false
+              }
+            }
+          },
+          "Location": {
+            "type": "text",
+            "norms": false,
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
+          },
+          "Attachment": {
             "type": "keyword",
             "norms": false
           }
@@ -408,7 +415,7 @@
             "type": "keyword",
             "norms": false
           },
-          "TI": {
+          "ext-Category": {
             "type": "keyword",
             "norms": false
           },
@@ -422,9 +429,19 @@
               }
             }
           },
-          "Size": {
+          "Note": {
+            "type": "text",
+            "norms": false
+          },
+          "TI": {
             "type": "keyword",
             "norms": false
+          },
+          "GeoLocation": {
+            "type": "geo_point"
+          },
+          "GeoRadius": {
+            "type": "double"
           },
           "UnLocation": {
             "type": "keyword",
@@ -437,12 +454,6 @@
               }
             }
           },
-          "GeoLocation": {
-            "type": "geo_point"
-          },
-          "GeoRadius": {
-            "type": "double"
-          },
           "Location": {
             "type": "text",
             "norms": false,
@@ -453,15 +464,7 @@
               }
             }
           },
-          "Note": {
-            "type": "text",
-            "norms": false
-          },
           "Attachment": {
-            "type": "keyword",
-            "norms": false
-          },
-          "Observable": {
             "type": "keyword",
             "norms": false
           }
@@ -533,37 +536,6 @@
           "ContentEncoding": {
             "type": "keyword",
             "norms": false
-          },
-          "Content": {
-            "type": "wildcard"
-          }
-        }
-      },
-
-      "Observable": {
-        "type": "nested",
-        "dynamic": false,
-        "properties": {
-          "Name": {
-            "type": "text",
-            "norms": false,
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "norms": false
-              }
-            }
-          },
-          "Reference": {
-            "type": "text",
-            "analyzer": "urn_analyzer",
-            "norms": false,
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "norms": false
-              }
-            }
           },
           "Content": {
             "type": "wildcard"
