@@ -486,7 +486,7 @@
                         },
                         "Content": {
                             "description": "The attachment's content, in case it is directly embedded inside the message. For large attachments, it is RECOMMENDED that implementations make use of the \"ExternalURI\" attribute to refererence a copy of the content saved in an external storage mechanism.",
-                            "type": "string"
+                            "type": ["object", "string"]
                         }
                     },
                     "additionalProperties": false,
@@ -755,6 +755,11 @@
             ],
             "description": "Possible vector category"
         },
+        "attachmentNameType": {
+            "description": "A a unique identifier among attachments.",
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9]+$"
+        },
         "portType": {
             "description": "A network port number. The value 0 is excluded from the range because it never appears in an actual network connection.",
             "type": "integer",
@@ -785,7 +790,7 @@
         "mediatypeType": {
             "description": "A valid media type (e.g. \"text/plain\") conforming to the format defined in section 3.1.1.1 of RFC 7231. See also http://www.iana.org/assignments/media-types/media-types.xhtml.",
             "type": "string",
-            "pattern": "^[-!#$%&'*+.^_`|~0-9a-zA-Z]+/[-!#$%&'*+.^_`|~0-9a-zA-Z]+([ \t]*;[ \t]*[-!#$%&'*+.^_`|~0-9a-zA-Z]+=([-!#$%&'*+.^_`|~0-9a-zA-Z]+|\"([]-~\t !#-[\\x80-\\xFF]|\\\\([\t 0-9a-zA-Z\\x80-\\xFF]))*\"))*$"
+            "pattern": "^[-!#$%&'*+.^_`|~0-9a-zA-Z]+/[-!#$%&'*+.^_`|~0-9a-zA-Z]+([ \t]*;[ \t]*[-!#$%&'*+.^_`|~0-9a-zA-Z]+=([-!#$%&'*+.^_`|~0-9a-zA-Z]+|\"([\\x5D-~\t !#-\\x5B]|\\\\([\t 0-9a-zA-Z]))*\"))*$"
         },
         "uuidType": {
             "description": "Canonical textual representation for an UUID, as defined in RFC 4122 (e.g. \"e5f9bbae-163e-42f9-a2f2-0daaf78fefb1\")",
