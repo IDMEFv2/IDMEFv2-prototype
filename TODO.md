@@ -1,5 +1,9 @@
 Next action to improve the S4SOC prototype
 
+# More alerts type/format/etc.
+
+We need more diversity in the alert stored : cyber, physical, login, anti-virus, camera, etc.
+
 # Enable the ILM workflow in Elasticsearch
 
 For now, all logs and alerts goes to the Elasticsearch database so hard drive disk is more and more used. At the end, the hard drive will be full and service will stop.
