@@ -6,6 +6,15 @@
 - pipeline.id: my_collected
   path.config: /usr/share/logstash/config/pipeline/00-my_collected.conf
 
+- pipeline.id: my_collected_cleaned
+  path.config: /usr/share/logstash/config/pipeline/00-my_collected_cleaned.conf
+
+- pipeline.id: my_collected_analyzed
+  path.config: /usr/share/logstash/config/pipeline/00-my_collected_analyzed.conf
+
+- pipeline.id: my_collected_rules
+  path.config: /usr/share/logstash/config/pipeline/00-my_collected_rules.conf
+
 - pipeline.id: my_processed
   path.config: /usr/share/logstash/config/pipeline/00-my_processed.conf
 
@@ -14,3 +23,6 @@
 
 - pipeline.id: my_stored_logs
   path.config: /usr/share/logstash/config/pipeline/00-my_stored_logs.conf
+
+- pipeline.id: my_errors
+  path.config: /usr/share/logstash/config/pipeline/00-my_errors.conf

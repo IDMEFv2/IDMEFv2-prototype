@@ -34,21 +34,21 @@ def filter(event)
     return []
   end
 
-  cti = {}
+  extdata = {}
   ['IP', 'Email', 'URI'].each do |k|
     data = {}
     msg.scan(@re[k]).flatten.each do |m|
       data[m] = []
     end
     unless data.empty?
-      cti[k] = data
+      extdata[k] = data
     end
   end
 
-  unless cti.empty?
-    event.set('[Attachment][CTI]', {
+  unless extdata.empty?
+    event.set('[Attachment][EXTDATA]', {
       'ContentType' => 'application/json',
-      'Content'     => cti
+      'Content'     => extdata
     })
   end
 
