@@ -10,30 +10,32 @@ def register(params)
   @dummy = {nil => nil}
   @fields = ['author', 'category', 'description', 'license', 'version']
 
-  YAML.load_stream(File.read(params['rules'])) do |doc|
-    patterns = []
-    rules = {}
-    name = doc['ruleset']['name']
+  Dir.glob(params['rules']) do |filename|
+    YAML.load_stream(File.read(filename)) do |doc|
+      patterns = []
+      rules = {}
+      name = doc['ruleset']['name']
 
-    doc['ruleset'].fetch('rules', []).each do |rule|
-      patterns.push("%{RULEID:[@metadata][ruleid][#{rule['id']}]}#{rule['pattern']}")
-      rules[rule['id']] = rule
+      doc['ruleset'].fetch('rules', []).each do |rule|
+        patterns.push("%{RULEID:[@metadata][ruleid][#{rule['id']}]}#{rule['pattern']}")
+        rules[rule['id']] = rule
+      end
+      next unless patterns # Ignore empty rulesets
+
+      @rulesets.push({'name' => name, 'predicate' => doc['ruleset']['predicate'], 'rules' => rules})
+      filter = LogStash::Filters::Grok.new({
+        'match'               => {doc['ruleset']['field'] => patterns},
+        'keep_empty_captures' => true,
+        'break_on_match'      => true,
+        'ecs_compatibility'   => "disabled",
+        'add_tag'             => ["last"],
+        'tag_on_timeout'      => 'last',
+        'tag_on_failure'      => [],
+        'pattern_definitions' => {'RULEID' => '(?<!>)'}
+      })
+      @groks[name] = filter
+      filter.register
     end
-    next unless patterns # Ignore empty rulesets
-
-    @rulesets.push({'name' => name, 'predicate' => doc['ruleset']['predicate'], 'rules' => rules})
-    filter = LogStash::Filters::Grok.new({
-      'match'               => {doc['ruleset']['field'] => patterns},
-      'keep_empty_captures' => true,
-      'break_on_match'      => true,
-      'ecs_compatibility'   => "disabled",
-      'add_tag'             => ["last"],
-      'tag_on_timeout'      => 'last',
-      'tag_on_failure'      => [],
-      'pattern_definitions' => {'RULEID' => '(?<!>)'}
-    })
-    @groks[name] = filter
-    filter.register
   end
 end
 
