@@ -26,8 +26,8 @@ endif
 
 .PHONY: proto_dirs
 proto_dirs:
-	sudo mkdir -pv elasticsearch_data elasticsearch_logs kafka_logs
-	sudo chown -R 1000:0 elasticsearch_data elasticsearch_logs
+	sudo mkdir -pv elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data
+	sudo chown -R 1000:0 elasticsearch_data elasticsearch_logs postgres_data setup_data
 
 .PHONY: ps
 ps: check_bin
@@ -41,12 +41,14 @@ up: check_bin $(ELASTIC_MMC) $(PROTO_DIRS)
 down: check_bin
 	sudo podman-compose -p proto -f docker-compose.yml down
 
-.PHONY: clean
+.PHONY: clean_podman
 clean: check_bin down
+	sudo podman rmi localhost/proto_es01 localhost/proto_logstash localhost/proto_kafka1 localhost/proto_zoo1 localhost/proto_kafdrop localhost/proto_gui localhost/proto_postgres
+
+.PHONY: clean
+clean: clean_podman check_bin down
 	sudo rm -rvf logs
-	sudo rm -rvf elasticsearch_data elasticsearch_logs kafka_logs
-	sudo podman rmi localhost/proto_setup localhost/proto_es01 localhost/proto_logstash localhost/proto_kafka1 localhost/proto_zoo1 localhost/proto_kafdrop localhost/proto_gui localhost/proto_postgres
-	sudo podman volume rm -f proto_setup proto_postgres
+	sudo rm -rvf elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data
 
 .PHONY: tests_logs
 tests_logs: check_bin

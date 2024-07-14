@@ -10,7 +10,7 @@ services:
       init: true
       volumes:
         - ./setup/entrypoint.sh:/entrypoint.sh:ro,Z
-        - setup:/state:Z
+        - ./setup_data:/state:Z
         - ./setup/config:/config:ro,Z
       networks:
         - proto
@@ -45,7 +45,7 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
         PGDATA: /data/postgres
       volumes:
-        - postgres:/data/postgres
+        - ./postgres_data:/data/postgres
       ports:
         - "127.0.0.1:5432:5432"
       networks:

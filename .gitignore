@@ -2,3 +2,5 @@ elasticsearch_data
 elasticsearch_logs
 kafka_logs
 logs
+setup_data
+postgres_data
