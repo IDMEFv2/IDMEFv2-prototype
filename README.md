@@ -30,6 +30,7 @@ This repository provide docker files and docker-compose files for theses service
   - Logstash
   - SIEM Web Interface
   - PostgreSQL
+  - NGINX Server
 
 # Prerequisite
 
@@ -67,7 +68,26 @@ Following services are exposed:
   - Alert's database: http://elastic:elastic@localhost:9200
   - Syslog input: tcp://localhost:6514
   - Kafka status: http://localhost:9201
-  - Kafka broker http://localhost:9092
+  - Kafka broker: http://localhost:9092
+  - NGINX Server: http://localhost:8080
+
+# Configure your system to send logs to prototype
+
+By default, localhost listen on 6514 port to get logs on TCP and UDP (no SSL).
+
+You can configure your own localhost logs to go to the prototype. For example with rsyslog:
+  - Edit /etc/rsyslog.conf
+  - At the end of the file, add the following line:
+    - *.* @@127.0.0.1:6514
+  - Restart the rsyslog process:
+    - systemctl restart rsyslog
+
+A web server is available by default and already configured to send logs to prototype. NGINX server has 4 possibles URL:
+  - http://localhost to get 200 access code
+  - http://localhost/test_403 to get 403 error
+  - http://localhost/test_404 to get 404 error
+  - http://localhost/test_500 to get 500 error
+  - All other URL to get 404 error
 
 # Test your prototype
 

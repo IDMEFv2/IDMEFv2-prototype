@@ -15,6 +15,20 @@ services:
       networks:
         - proto
 
+    nginx:
+      build:
+        context: nginx/
+      volumes:
+        - ./nginx/index.html:/var/www/html/index.html:ro,Z
+        - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:Z,ro
+      ports:
+        - 8080:80
+      networks:
+        - proto
+      restart: on-failure
+      depends_on:
+        logstash:
+
     gui:
       build:
         context: gui/

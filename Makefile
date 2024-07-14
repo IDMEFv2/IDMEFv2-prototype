@@ -26,8 +26,8 @@ endif
 
 .PHONY: proto_dirs
 proto_dirs:
-	sudo mkdir -pv elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data
-	sudo chown -R 1000:0 elasticsearch_data elasticsearch_logs postgres_data setup_data
+	sudo mkdir -pv elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data nginx_data
+	sudo chown -R 1000:0 elasticsearch_data elasticsearch_logs postgres_data setup_data nginx_data
 
 .PHONY: ps
 ps: check_bin
@@ -43,12 +43,12 @@ down: check_bin
 
 .PHONY: clean_podman
 clean: check_bin down
-	sudo podman rmi localhost/proto_es01 localhost/proto_logstash localhost/proto_kafka1 localhost/proto_zoo1 localhost/proto_kafdrop localhost/proto_gui localhost/proto_postgres
+	sudo podman rmi localhost/proto_es01 localhost/proto_logstash localhost/proto_kafka1 localhost/proto_zoo1 localhost/proto_kafdrop localhost/proto_gui localhost/proto_postgres localhost/proto_nginx
 
 .PHONY: clean
 clean: clean_podman check_bin down
 	sudo rm -rvf logs
-	sudo rm -rvf elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data
+	sudo rm -rvf elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data nginx_data
 
 .PHONY: tests_logs
 tests_logs: check_bin
