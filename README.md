@@ -2,9 +2,12 @@
 
 The IDMEFv2 prototype is an alert manager compatible with the IDMEFv2 format.
 
-The aim of this prototype is to demonstrate the capacity to build a (cyber and physical) cyphy-siem on top of IDMEFv2 (Incident Detection Message Exchange Format v2)
+The aim of this prototype is to demonstrate the capacity to build a (cyber and
+physical) cyphy-siem on top of IDMEFv2 (Incident Detection Message Exchange
+Format v2)
 
-The prototype is partially based on Prelude OSS (IDMEFv1) and still under heavy development.
+The prototype is partially based on Prelude OSS (IDMEFv1) and still under heavy
+development.
 
 The prototype will offer:
 * A communication bus based on kakfa
@@ -12,16 +15,20 @@ The prototype will offer:
 * Web user operating interface (based on Prewikka OSS)
 * Python rules based correlator engine (based on Prelude OSS Correlator)
 * Log management analysis with Logstash
+* A test environment with local Linux logs and local webserver
 
-IDMEFv2-prototype is an effort provided by the SECEF (SECurity Exchange Format) consortium toward IDMEFv2 standardisation.
+IDMEFv2-prototype is an effort provided by the SECEF (SECurity Exchange Format)
+consortium toward IDMEFv2 standardisation.
 
 A pre-release is expected for T2 2023.
 
-More information about IDMEFv2 at : [https://www.idmefv2.org](https://www.idmefv2.org)
+More information about IDMEFv2 at :
+[https://www.idmefv2.org](https://www.idmefv2.org)
 
 # Prototype of IDMEFv2 implementation
 
-This repository provide docker files and docker-compose files for theses services:
+This repository provide docker files and docker-compose files for theses
+services:
 
   - Kafka
   - Zookeeper
@@ -30,7 +37,7 @@ This repository provide docker files and docker-compose files for theses service
   - Logstash
   - SIEM Web Interface
   - PostgreSQL
-  - NGINX Server
+  - NGINX test Webserver
 
 # Prerequisite
 
@@ -69,27 +76,34 @@ Following services are exposed:
   - Syslog input: tcp://localhost:6514
   - Kafka status: http://localhost:9201
   - Kafka broker: http://localhost:9092
-  - NGINX Server: http://localhost:8080
+  - NGINX test Webserver: http://localhost:8080
 
-# Configure your system to send logs to prototype
+# Test your prototype system
 
-By default, localhost listen on 6514 port to get logs on TCP and UDP (no SSL).
+## Configure your system to send logs to your prototype
 
-You can configure your own localhost logs to go to the prototype. For example with rsyslog:
+By default, the prototype is listen on localhost on port 6514 port to get logs
+on TCP (no SSL) and UDP.
+
+You can configure your own localhost logs to go to the prototype. For example
+with rsyslog:
   - Edit /etc/rsyslog.conf
   - At the end of the file, add the following line:
     - *.* @@127.0.0.1:6514
   - Restart the rsyslog process:
     - systemctl restart rsyslog
 
-A web server is available by default and already configured to send logs to prototype. NGINX server has 4 possibles URL:
+## Generate errors from your NGINX test webserver
+
+A web server is available by default and already configured to send logs to
+prototype. NGINX test webserver has 4 possibles URL:
   - http://localhost to get 200 access code
   - http://localhost/test_403 to get 403 error
   - http://localhost/test_404 to get 404 error
   - http://localhost/test_500 to get 500 error
   - All other URL to get 404 error
 
-# Test your prototype
+## Manually send logs to your prototype
 
 For exeample, you can send a log that content a failed login from SSH
 ```
