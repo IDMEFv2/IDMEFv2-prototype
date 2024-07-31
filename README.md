@@ -103,6 +103,19 @@ prototype. NGINX test webserver has 4 possibles URL:
   - http://localhost/test_500 to get 500 error
   - All other URL to get 404 error
 
+To manage the test webwerver, you can use the following commands:
+```
+make up-test
+```
+òr
+```
+make down-test
+```
+òr
+```
+make clean-test
+```
+
 ## Manually send logs to your prototype
 
 For exeample, you can send a log that content a failed login from SSH

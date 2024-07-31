@@ -12,6 +12,8 @@ ifeq ($(wildcard elasticsearch_data),)
 	PROTO_DIRS = proto_dirs
 endif
 
+PROTO_DIRS_TEST := proto_dirs-test
+
 .PHONY: check_bin
 check_bin:
 ifeq (,$(shell which podman))
@@ -26,8 +28,13 @@ endif
 
 .PHONY: proto_dirs
 proto_dirs:
-	sudo mkdir -pv elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data nginx_data
-	sudo chown -R 1000:0 elasticsearch_data elasticsearch_logs postgres_data setup_data nginx_data
+	sudo mkdir -pv elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data
+	sudo chown -R 1000:0 elasticsearch_data elasticsearch_logs postgres_data setup_data
+
+.PHONY: proto_dirs-test
+proto_dirs-test:
+	sudo mkdir -pv nginx_data
+	sudo chown -R 1000:0 nginx_data
 
 .PHONY: ps
 ps: check_bin
@@ -42,13 +49,29 @@ down: check_bin
 	sudo podman-compose -p proto -f docker-compose.yml down
 
 .PHONY: clean_podman
-clean: check_bin down
-	sudo podman rmi localhost/proto_es01 localhost/proto_logstash localhost/proto_kafka1 localhost/proto_zoo1 localhost/proto_kafdrop localhost/proto_gui localhost/proto_postgres localhost/proto_nginx
+clean_podman: check_bin down
+	sudo podman rmi localhost/proto_es01 localhost/proto_logstash localhost/proto_kafka1 localhost/proto_zoo1 localhost/proto_kafdrop localhost/proto_gui localhost/proto_postgres
 
 .PHONY: clean
 clean: clean_podman check_bin down
 	sudo rm -rvf logs
-	sudo rm -rvf elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data nginx_data
+	sudo rm -rvf elasticsearch_data elasticsearch_logs kafka_logs postgres_data setup_data
+
+.PHONY: up-test
+up-test: check_bin $(ELASTIC_MMC) $(PROTO_DIRS_TEST)
+	(sudo podman-compose -p proto -f docker-compose-test.yml up 2>&1 1>>logs &)
+
+.PHONY: down-test
+down-test: check_bin
+	sudo podman-compose -p proto -f docker-compose-test.yml down
+
+.PHONY: clean_podman-test
+clean_podman-test: check_bin down-test
+	sudo podman rmi localhost/proto_nginx
+
+.PHONY: clean-test
+clean-test: clean_podman-test check_bin down-test
+	sudo rm -rvf nginx_data
 
 .PHONY: tests_logs
 tests_logs: check_bin
