@@ -86,6 +86,7 @@ services:
           LOGSTASH_VERSION: ${LOGSTASH_VERSION}
       volumes:
         - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+        - ./logstash/config/jvm.options:/usr/share/logstash/config/jvm.options:ro,Z
         - ./logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro,Z
         - ./logstash/rules.yml:/usr/share/logstash/config/rules.yml:ro,Z
         - ./logstash/IDMEFv2-light.schema:/usr/share/logstash/config/IDMEFv2-light.schema:ro,Z
