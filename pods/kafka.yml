@@ -80,11 +80,3 @@ spec:
           name: kafka-9999
         - containerPort: 19092
           name: kafka-19092
-        volumeMounts:
-          - name: logs
-            mountPath: /var/lib/kafka/logs
-      volumes:
-      - name: logs
-        hostPath:
-          path: /mnt/minikube/kafka/logs
-          type: Directory
