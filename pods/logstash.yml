@@ -8,8 +8,13 @@ spec:
   type: NodePort
   ports:
     - port: 6514
-      name: logstash-6514
+      name: logstash-tcp-6514
       nodePort: 30514
+      protocol: TCP
+    - port: 6514
+      name: logstash-udp-6514
+      nodePort: 30514
+      protocol: UDP
   selector:
     app: logstash-tmpl
 ---
