@@ -98,6 +98,7 @@ services:
         - ./logstash/rulesets:/usr/share/logstash/config/rulesets:ro,Z
       ports:
         - 127.0.0.1:6514:6514
+        - 127.0.0.1:12345:12345
       environment:
         LS_JAVA_OPTS: ${LOGSTASH_JVM}
         LOGSTASH_INTERNAL_PASSWORD: ""
@@ -114,6 +115,7 @@ services:
         ANALYZER_IP: "${DOCKER_IP}"
         ANALYZER_HOSTNAME: "${DOCKER_HOSTNAME}"
         LISTEN_SYSLOG: 6514
+        LISTEN_HTTP: 12345
         TOPIC_COLLECTED: my_collected
         TOPIC_PROCESSED: my_processed
         INDEX_ALERTS: alerts

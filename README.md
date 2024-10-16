@@ -74,6 +74,7 @@ Following services are exposed:
   - Web interface: http://localhost
   - Alert's database: http://elastic:elastic@localhost:9200
   - Syslog input: tcp://localhost:6514
+  - IDMEFv2 input: http://localhost:12345
   - Kafka status: http://localhost:9201
   - Kafka broker: http://localhost:9092
   - NGINX test Webserver: http://localhost:8080

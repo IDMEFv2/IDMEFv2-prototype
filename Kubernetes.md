@@ -37,6 +37,7 @@ The Yaml we provides create these services:
     * 9300: Elasticsearch internal port
   * Logstash
     * 6514 (TCP, UDP): Logstash syslog collect interface
+    * 12345: Logstash IDMEFv2 collect interface
   * GUI
     * 8000: S4S Prototype web interface
 

@@ -6,6 +6,9 @@
 - pipeline.id: my_collected
   path.config: /usr/share/logstash/config/pipeline/00-my_collected.conf
 
+- pipeline.id: my_collected_idmefv2
+  path.config: /usr/share/logstash/config/pipeline/00-my_collected_idmefv2.conf
+
 - pipeline.id: my_collected_cleaned
   path.config: /usr/share/logstash/config/pipeline/00-my_collected_cleaned.conf
 
