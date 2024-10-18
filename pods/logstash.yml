@@ -7,8 +7,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 12345
-      name: logstash-tcp-12345
+    - port: 4690
+      name: logstash-tcp-4690
       nodePort: 30345
       protocol: TCP
     - port: 6514
@@ -78,7 +78,7 @@ spec:
         - name: LISTEN_SYSLOG
           value: "6514"
         - name: LISTEN_HTTP
-          value: "12345"
+          value: "4690"
         - name: TOPIC_COLLECTED
           value: "my_collected"
         - name: TOPIC_PROCESSED
@@ -90,8 +90,8 @@ spec:
         ports:
         - containerPort: 6514
           name: logstash-6514
-        - containerPort: 12345
-          name: logstash-12345
+        - containerPort: 4690
+          name: logstash-4690
         volumeMounts:
           - name: config
             mountPath: /usr/share/logstash/config/logstash.yml
