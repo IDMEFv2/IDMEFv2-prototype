@@ -117,6 +117,65 @@ make down-test
 make clean-test
 ```
 
+## Push IDMEFv2 to your prototype
+
+Your prototype is listening on 4690 for IDMEFv2 alerts.
+
+For example, if you have this file `/tmp/test.json` with the following content:
+
+```
+{
+     "Description": "Potential bruteforce attack on root user account",
+     "Priority": "Medium",
+     "CreateTime": "2024-10-18T20:55:29.196408+00:00",
+     "StartTime": "2021-05-10T16:55:29+00:00",
+     "Category": [
+       "Attempt.Login"
+     ],
+     "Analyzer": {
+       "Name": "SIEM",
+       "Hostname": "siem.acme.com",
+       "Type": "Cyber",
+       "Model": "Concerto SIEM 5.2",
+       "Category": [
+         "SIEM",
+         "LOG"
+       ],
+       "Data": [
+         "Log"
+       ],
+       "Method": [
+         "Monitor",
+         "Signature"
+       ],
+       "IP": "192.0.2.1"
+     },
+     "Sensor": [
+       {
+         "IP": "192.0.2.5",
+         "Name": "syslog",
+         "Hostname": "www.acme.com",
+         "Model": "rsyslog 8.2110",
+         "Location": "Server room A1, rack 10"
+       }
+     ],
+     "Target": [
+       {
+         "IP": "192.0.2.2",
+         "Hostname": "www.acme.com",
+         "Location": "Server room A1, rack 10",
+         "User": "root"
+       }
+     ]
+ }
+```
+
+You can send this alert to the prototype using the following command:
+
+```
+curl -X POST -sSv http://127.0.0.1:4690 -H "Content-Type: application/json" --data @/tmp/test.json
+```
+
 ## Manually send logs to your prototype
 
 For exeample, you can send a log that content a failed login from SSH
