@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
 
     setup:
@@ -33,7 +31,9 @@ services:
       restart: on-failure
       depends_on:
         setup:
+          condition: service_started
         es01:
+          condition: service_started
         postgres:
           condition: service_healthy
 
