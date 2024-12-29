@@ -1,0 +1,29 @@
+name: Check docker compose file
+
+on: [push, workflow_dispatch]
+
+jobs:
+  check_docker_compose:
+    name: Check docker compose file
+    runs-on: ubuntu-latest
+    environment: PROTO
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Instlal docker compose
+        run: |
+          sudo apt-get install -y docker-compose
+
+      - name: Check docker compose file
+        run: |
+          docker-compose -f docker-compose.yml config --quiet
+
+      - name: Check docker compose test file
+        run: |
+          docker-compose -f docker-compose-test.yml config --quiet
