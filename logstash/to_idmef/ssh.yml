@@ -1,0 +1,39 @@
+ruleset:
+  name: ssh
+  rules:
+    - id: 1902
+      translate:
+        - source: "[Attachment][RawLog][Content][destination][user][name]"
+          target: "[Priority]"
+          dictionary:
+            root: "Medium"
+          fallback: "Low"
+      fields:
+        "[@metadata][IDMEFv2][source]": "source"
+        "[@metadata][IDMEFv2][target]": "host"
+        "[Category][0]": "Attempt.Login"
+        "[Analyzer][Data]": 
+          - "Log"
+          - "Auth"
+        "[Analyzer][Type]": "Cyber"
+        "[Source][0][Protocol]":
+          - "tcp"
+          - "ssh"
+        "[Target][0][Service]": "%{[Attachment][RawLog][Content][process][name]}"
+        "[Target][0][User]": "%{[Attachment][RawLog][Content][destination][user][name]}"
+        "[Description]": "Someone tried to log in as '%{[Attachment][RawLog][Content][destination][user][name]}' from %{[Attachment][RawLog][Content][source][address]} port %{[Attachment][RawLog][Content][source][port]} and failed"
+    - id: 1904
+      fields:
+        "[@metadata][IDMEFv2][source]": "source"
+        "[@metadata][IDMEFv2][target]": "host"
+        "[Category][0]": "Attempt.Login"
+        "[Analyzer][Data]":
+          - "Log"
+          - "Auth"
+        "[Source][0][Protocol]":
+          - "tcp"
+          - "ssh"
+        "[Target][0][Service]": "%{[Attachment][RawLog][Content][process][name]}"
+        "[Target][0][User]": "%{[Attachment][RawLog][Content][destination][user][name]}"
+        "[Priority]": "Medium"
+        "[Description]": "Someone tried to log in with an invalid username '%{[Attachment][RawLog][Content][destination][user][name]}' from %{[Attachment][RawLog][Content][source][address]}"
