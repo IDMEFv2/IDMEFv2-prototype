@@ -197,3 +197,135 @@ You can also try to send an IDMEFv2 alert with embeded test container:
 make tests_idmefv2
 ```
 Note: IDMEFv2 alerts are in `tests/example_idmefv2` file.
+
+## Write your own parsing rule
+
+For example, you want to parse the following log:
+```
+Mar  1 12:13:22 rhel7 sshd[70149]: Failed password for invalid user goro from 192.168.133.128 port 55662 ssh2
+```
+
+First of all, you need to create the associated pattern in Grok format. It is nearly like REGEX but with high level
+framework to help parsing logs.
+
+Here is an explication of Grok: https://docs.mezmo.com/telemetry-pipelines/using-grok-to-parse
+
+Logstash add a lot of pre-built patterns: https://github.com/logstash-plugins/logstash-patterns-core/tree/main/patterns
+
+Here is a Grok validator to help you build Grok patterns: https://grokconstructor.appspot.com/do/match
+
+In our case, the Grok pattern we want is:
+```
+Failed %{NOTSPACE:[Attachment][RawLog][Content][SSH][auth_method]} for (invalid|illegal) user (?=%{USERNAME:[Attachment][RawLog][Content][related][user]})%{USERNAME:[Attachment][RawLog][Content][destination][user][name]} from %{IPORHOST:[Attachment][RawLog][Content][source][address]} port %{POSINT:[Attachment][RawLog][Content][source][port]:int} ssh2
+```
+
+The expected output is:
+  - [Attachment][RawLog][Content][SSH][auth_method] => password
+  - [Attachment][RawLog][Content][destination][user][name] => goro
+  - [Attachment][RawLog][Content][source][address] => 192.168.133.128
+  - [Attachment][RawLog][Content][source][port] => 55662
+
+Then, you need to create the "Match" rule for your parsing rule. Create a new file in `logstash/rulesets/<my_file>.yml`.
+<my_file> is an arbitrary name for your ruleset file.
+Inside your file, you must follow the following format:
+```
+ruleset:
+  name: <ruleset_name>
+  description: <A description of your ruleset. Generally, what does the software that generate logs you want to parse>
+  field: "[Attachment][RawLog][Content][message]"
+  <predicate_if_needed>
+  rules:
+    - id: <rule_id, must be unique in your whole SIEM installation>
+      pattern: <grok_pattern>
+      samples:
+        - <Example of log>
+```
+
+The predicate part is here to increase performance. It allow you to execute the rule only on specific logs. For example, if you want to execute the rule only if field "[Attachment][RawLog][Content][process][name]" is equal to "sshd", the predicate is as this:
+```
+predicate:
+  operator: equal
+  operands:
+    - operator: variable
+      operands: "[Attachment][RawLog][Content][process][name]"
+    - operator: constant
+      operands: "sshd"
+```
+
+In the end, for our example, the ruleset is as follow:
+```
+ruleset:
+  name: ssh
+  description: "SSH, is a cryptographic (encrypted) network protocol to allow remote login and other network services to operate securely over an unsecured network."
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: equal
+    operands:
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+      - operator: constant
+        operands: "sshd"
+  rules:
+    - id: 1912
+      pattern: "Failed %{NOTSPACE:[Attachment][RawLog][Content][SSH][auth_method]} for (invalid|illegal) user (?=%{USERNAME:[Attachment][RawLog][Content][related][user]})%{USERNAME:[Attachment][RawLog][Content][destination][user][name]} from %{IPORHOST:[Attachment][RawLog][Content][source][address]} port %{POSINT:[Attachment][RawLog][Content][source][port]:int} ssh2"
+      outcome: "failure"
+      samples:
+        - "Mar  1 12:13:22 rhel7 sshd[70149]: Failed password for invalid user goro from 192.168.133.128 port 55662 ssh2"
+        - "Jan 14 11:29:17 ras sshd[18163]: Failed publickey for invalid user fred from fec0:0:201::3 port 62788 ssh2"
+```
+
+At this stage, all cut-out fields are available inside the log so you can found them in "ARCHIVE" in the web interface.
+
+To create an alert based on this, you need to create a second file here: `logstash/to_idmef/<my_file>.yml`.
+
+Here, the file format is similar:
+```
+ruleset:
+  name: <ruleset_name>
+  rules:
+    - id: <rule_id>
+      <translate if needed>
+      fields:
+        <list_of fields to fill based on IDMEFv2 format>
+```
+
+Remember that IDMEFv2 RFC is available here: https://datatracker.ietf.org/doc/draft-lehmann-idmefv2
+
+<translate> allow you to fill a field conditionally, based on other available fields. For example, if you want to fill the field "Priority" to "Low" all the time but with "Medium" if the user ([Attachment][RawLog][Content][destination][user][name]) is root, you need to use the following synthax:
+
+```
+translate:
+  - source: "[Attachment][RawLog][Content][destination][user][name]"
+    target: "[Priority]"
+    dictionary:
+      "root": "Medium"
+    fallback: "Low"
+```
+
+In the end, for our example, the rule is as follow:
+```
+ruleset:
+  name: ssh
+  rules:
+    - id: 1912
+      translate:
+        - source: "[Attachment][RawLog][Content][destination][user][name]"
+          target: "[Priority]"
+          dictionary:
+            "root": "Medium"
+          fallback: "Low"
+      fields:
+        "[@metadata][IDMEFv2][source]": "source"
+        "[@metadata][IDMEFv2][target]": "host"
+        "[Category][0]": "Attempt.Login"
+        "[Analyzer][Data]":
+          - "Log"
+          - "Auth"
+        "[Analyzer][Type]": "Cyber"
+        "[Source][0][Protocol]":
+          - "tcp"
+          - "ssh"
+        "[Target][0][Service]": "%{[Attachment][RawLog][Content][process][name]}"
+        "[Target][0][User]": "%{[Attachment][RawLog][Content][destination][user][name]}"
+        "[Description]": "Someone tried to log in as '%{[Attachment][RawLog][Content][destination][user][name]}' from %{[Attachment][RawLog][Content][source][address]} port %{[Attachment][RawLog][Content][source][port]} using the %{[Attachment][RawLog][Content][SSH][auth_method]} method"
+```
