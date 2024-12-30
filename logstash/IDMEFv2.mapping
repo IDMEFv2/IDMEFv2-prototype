@@ -150,7 +150,13 @@
         "dynamic": false,
         "properties": {
           "IP": {
-            "type": "ip"
+            "type": "ip",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "Name": {
             "type": "text",
@@ -230,7 +236,13 @@
         "dynamic": false,
         "properties": {
           "IP": {
-            "type": "ip"
+            "type": "ip",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "Name": {
             "type": "text",
@@ -286,7 +298,13 @@
         "dynamic": false,
         "properties": {
           "IP": {
-            "type": "ip"
+            "type": "ip",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "Hostname": {
             "type": "keyword",
@@ -294,7 +312,13 @@
           },
           "Note": {
             "type": "text",
-            "norms": false
+            "norms": false,
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "TI": {
             "type": "keyword",
@@ -351,7 +375,13 @@
         "dynamic": false,
         "properties": {
           "IP": {
-            "type": "ip"
+            "type": "ip",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "Hostname": {
             "type": "keyword",
@@ -359,7 +389,13 @@
           },
           "Note": {
             "type": "text",
-            "norms": false
+            "norms": false,
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "Service": {
             "type": "keyword",
@@ -431,7 +467,13 @@
           },
           "Note": {
             "type": "text",
-            "norms": false
+            "norms": false,
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "TI": {
             "type": "keyword",
@@ -527,7 +569,13 @@
           },
           "Note": {
             "type": "text",
-            "norms": false
+            "norms": false,
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "norms": false
+              }
+            }
           },
           "ContentType": {
             "type": "keyword",
