@@ -1,0 +1,17 @@
+ruleset:
+  name: virus_found_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "FOUND"
+      - operator: constant
+        operands: "virus"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 3200
+      pattern: "%{NOTSPACE:filePath}: %{NOTSPACE:type} FOUND"
+    - id: 3201
+      pattern: "Database correctly reloaded \\(\\d+ viruses\\)"

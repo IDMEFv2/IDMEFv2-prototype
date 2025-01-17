@@ -1,0 +1,21 @@
+ruleset:
+  name: snmptrapd_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "snmptrapd"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 43201
+      pattern: "snmptrapd\\[(\\d+)]:+.+011enterprises.393.273.1.1 \"(?<desc>[\\S ]+|\\S+)\"#011enterprises.393.273.1.2 \"(?<rule1>[\\S ]+|\\S+)\"+.+011enterprises.393.273.1.3 \"(?<rule2>[\\S ]+|\\S+)\"#011enterprises.393.273.1.4 +.+011enterprises.393.273.1.5 \"(?<agentName>[\\S ]+|\\S+)\"#011enterprises.393.273.1.6 \"%{IP:[Attachment][RawLog][Content][destination][address]}\"#011enterprises.393.273.1.7 \"(?<user>[\\S ]+|\\S+)\"#011enterprises.393.273.1.8 +.+011enterprises.393.273.1.9 \"(Information|Notice)\"#011enterprises.393.273.1.10 \"(?<class>[\\S ]+|\\S+)\"#011enterprises.393.273.1.11 +.+011enterprises.393.273.1.12 \"(Success|Allow|R)\"+.+011enterprises.393.273.1.16 \"(?<classification>[\\S ]+|\\S+)\"#011enterprises.393.273.1.17 +.+011enterprises.393.273.1.22 \"([\\S ]+|\\S+)"
+    - id: 43202
+      pattern: "snmptrapd\\[(\\d+)]:+.+011enterprises.393.273.1.1 \"(?<desc>[\\S ]+|\\S+)\"#011enterprises.393.273.1.2 \"(?<rule1>[\\S ]+|\\S+)\"+.+011enterprises.393.273.1.3 \"(?<rule2>[\\S ]+|\\S+)\"#011enterprises.393.273.1.4 +.+011enterprises.393.273.1.5 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.6 \"%{IP:[Attachment][RawLog][Content][destination][address]}\"#011enterprises.393.273.1.7 \"(?<user>[\\S ]+|\\S+)\"#011enterprises.393.273.1.8 +.+011enterprises.393.273.1.9 \"(Warning)\"#011enterprises.393.273.1.10 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.11 +.+011enterprises.393.273.1.12 \"(Success|Allow|R)\"+.+011enterprises.393.273.1.16 \"(?<classification>[\\S ]+|\\S+)\"#011enterprises.393.273.1.17 +.+011enterprises.393.273.1.22 \"([\\S ]+|\\S+)"
+    - id: 43203
+      pattern: "snmptrapd\\[(\\d+)]:+.+011enterprises.393.273.1.1 \"(?<desc>[\\S ]+|\\S+)\"#011enterprises.393.273.1.2 \"(?<rule1>[\\S ]+|\\S+)\"+.+011enterprises.393.273.1.3 \"(?<rule2>[\\S ]+|\\S+)\"#011enterprises.393.273.1.4 +.+011enterprises.393.273.1.5 \"(?<agentName>[\\S ]+|\\S+)\"#011enterprises.393.273.1.6 \"%{IP:[Attachment][RawLog][Content][destination][address]}\"#011enterprises.393.273.1.7 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.8 +.+011enterprises.393.273.1.9 \"(Major|Critical)\"#011enterprises.393.273.1.10 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.11 +.+011enterprises.393.273.1.12 \"(Success|Allow|R)\"+.+011enterprises.393.273.1.16 \"(?<classification>[\\S ]+|\\S+)\"#011enterprises.393.273.1.17 +.+011enterprises.393.273.1.22 \"(?<event>[\\S ]+|\\S+)"
+    - id: 43204
+      pattern: "snmptrapd\\[(\\d+)]:+.+011enterprises.393.273.1.1 \"(?<desc>[\\S ]+|\\S+)\"#011enterprises.393.273.1.2 \"(?<rule1>[\\S ]+|\\S+)\"+.+011enterprises.393.273.1.3 \"(?<rule2>[\\S ]+|\\S+)\"#011enterprises.393.273.1.4 +.+011enterprises.393.273.1.5 \"(?<agentName>[\\S ]+|\\S+)\"#011enterprises.393.273.1.6 \"(?<add>[\\d\\.]+)\"#011enterprises.393.273.1.7 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.8 +.+011enterprises.393.273.1.9 \"(Information|Notice)\"#011enterprises.393.273.1.10 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.11 +.+011enterprises.393.273.1.12 \"(Denied|NULL|R|Failure)\"+.+011enterprises.393.273.1.16 \"(?<classification>[\\S ]+|\\S+)\"#011enterprises.393.273.1.17 +.+011enterprises.393.273.1.22 \"(?<event>[\\S ]+|\\S+)"
+    - id: 43205
+      pattern: "snmptrapd\\[(\\d+)]:+.+011enterprises.393.273.1.1 \"(?<desc>[\\S ]+|\\S+)\"#011enterprises.393.273.1.2 \"(?<rule1>[\\S ]+|\\S+)\"+.+011enterprises.393.273.1.3 \"(?<rule2>[\\S ]+|\\S+)\"#011enterprises.393.273.1.4 +.+011enterprises.393.273.1.5 \"(?<agentName>[\\S ]+|\\S+)\"#011enterprises.393.273.1.6 \"%{IP:[Attachment][RawLog][Content][destination][address]}\"#011enterprises.393.273.1.7 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.8 +.+011enterprises.393.273.1.9 \"(Warning)\"#011enterprises.393.273.1.10 \"([\\S ]+|\\S+)\"#011enterprises.393.273.1.11 +.+011enterprises.393.273.1.12 \"(Denied|NULL|R|Failure)\"+.+011enterprises.393.273.1.16 \"(?<classification>[\\S ]+|\\S+)\"#011enterprises.393.273.1.17 +.+011enterprises.393.273.1.22 \"(?<event>[\\S ]+|\\S+)"

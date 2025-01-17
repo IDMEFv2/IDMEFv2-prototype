@@ -1,0 +1,21 @@
+ruleset:
+  name: radiusd_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "radiusd"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 35000
+      pattern: "(?<data>Ready to process requests)"
+    - id: 35001
+      pattern: "(?<data>Login incorrect: \[%{NOTSPACE:[Attachment][RawLog][Content][user][name]}\] \(from client %{NOTSPACE:client} port %{POSINT:[Attachment][RawLog][Content][source][port]:int} cli %{IP:[Attachment][RawLog][Content][source][address]}\))"
+    - id: 35002
+      pattern: "(?<data>Login incorrect: \[%{NOTSPACE:[Attachment][RawLog][Content][user][name]}\] \(from client %{NOTSPACE:client} port %{POSINT:[Attachment][RawLog][Content][source][port]:int} cli ip:source-ip=%{IP:[Attachment][RawLog][Content][source][address]}\))"
+    - id: 35003
+      pattern: "(?<data>Login OK: \[%{NOTSPACE:[Attachment][RawLog][Content][user][name]}\] \(from client %{NOTSPACE:client} port %{POSINT:[Attachment][RawLog][Content][source][port]:int} cli %{IP:[Attachment][RawLog][Content][source][address]}\))"
+    - id: 35004
+      pattern: "(?<data>Login OK: \[%{NOTSPACE:[Attachment][RawLog][Content][user][name]}\] \(from client %{NOTSPACE:client} port %{POSINT:[Attachment][RawLog][Content][source][port]:int}\))"

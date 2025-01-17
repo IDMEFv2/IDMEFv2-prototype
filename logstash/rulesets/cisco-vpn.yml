@@ -1,0 +1,21 @@
+ruleset:
+  name: sev_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "SEV="
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 300
+      pattern: "(?<data>.*)%{IP:[Attachment][RawLog][Content][source][address]}  User \[%{NOTSPACE:[Attachment][RawLog][Content][user][name]}\], Group \[%{NOTSPACE}\] disconnected:  Duration: %{NOTSPACE}  Bytes xmt: %{NOTSPACE}  Bytes rcv: %{INT}  Reason: %{GREEDYDATA:reason}"
+    - id: 301
+      pattern: "(?<data>.*)%{IP:[Attachment][RawLog][Content][source][address]}  Authentication rejected: Reason = %{GREEDYDATA:reason} handle = %{INT}, server = %{NOTSPACE}, user = %{USER:[Attachment][RawLog][Content][user][target][name]}, domain = %{DATA:domain}"
+    - id: 302
+      pattern: "(?<data>.*)%{IP:[Attachment][RawLog][Content][source][address]}  Group \[%{NOTSPACE:group}\] User \[%{USER:[Attachment][RawLog][Content][user][target][name]}\] User %{NOTSPACE} authenticated"
+    - id: 303
+      pattern: "(?<data>.*) User \[ %{USER:[Attachment][RawLog][Content][user][target][name]} \] Protocol \[ %{NOTSPACE:[Attachment][RawLog][Content][network][protocol]} \] attempted ADMIN logon.. Status: <REFUSED>"
+    - id: 304
+      pattern: "(?<data>.*) User \[ %{USER:[Attachment][RawLog][Content][user][target][name]} \] Protocol \[ %{NOTSPACE:[Attachment][RawLog][Content][network][protocol]} \] attempted ADMIN logon.. Status: <ACCESS GRANTED>"

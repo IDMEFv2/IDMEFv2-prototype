@@ -1,0 +1,24 @@
+ruleset:
+  name: snmptrapd_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "snmptrapd"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 5006
+      pattern: "snmptrapd\[(\d+)]:+.+9.9.383.1.1.4.0 \"(\S+)\"+.+9.9.383.1.3.1.0 \"(\S+)\"+.+.9.9.383.1.3.2.0 \"(\d+)"
+    - id: 5001
+      pattern: "snmptrapd\[(\d+)]:+.+9.9.383.1.1.4.0 \"(\S+)\"+.+.9.9.383.1.2.4.0 \"([\S ]+)\"+.+.9.9.383.1.2.5.0 (\d+)+.+9.9.383.1.2.6.0 (\d+)+.+9.9.383.1.2.16.0 \"%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\"+.+9.9.383.1.2.17.0 \"osIdSource=\\"([\S ]+)\\" osRelevance=\\"([\S ]+)\\" osType=\\"([\S ]+)\\" %{IP:[Attachment][RawLog][Content][destination][address]}\"+.+9.9.383.1.3.1.0 \"informational\""
+    - id: 5002
+      pattern: "snmptrapd\[(\d+)]:+.+9.9.383.1.1.4.0 \"(\S+)\"+.+.9.9.383.1.2.4.0 \"([\S ]+)\"+.+.9.9.383.1.2.5.0 (\d+)+.+9.9.383.1.2.6.0 (\d+)+.+9.9.383.1.2.16.0 \"%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\"+.+9.9.383.1.2.17.0 \"osIdSource=\\"([\S ]+)\\" osRelevance=\\"([\S ]+)\\" osType=\\"([\S ]+)\\" %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]}\"+.+9.9.383.1.3.1.0 \"informational\""
+    - id: 5003
+      pattern: "snmptrapd\[(\d+)]:+.+9.9.383.1.1.4.0 \"(\S+)\"+.+.9.9.383.1.2.4.0 \"([\S ]+)\"+.+.9.9.383.1.2.5.0 (\d+)+.+9.9.383.1.2.6.0 (\d+)+.+9.9.383.1.2.16.0 \"%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\"+.+9.9.383.1.2.17.0 \"+.+%{IP:[Attachment][RawLog][Content][destination][address]}\"+.+9.9.383.1.3.1.0 \"informational\""
+    - id: 5004
+      pattern: "snmptrapd\[(\d+)]:+.+9.9.383.1.1.4.0 \"(\S+)\"+.+.9.9.383.1.2.4.0 \"([\S ]+)\"+.+.9.9.383.1.2.5.0 (\d+)+.+9.9.383.1.2.6.0 (\d+)+.+9.9.383.1.2.16.0 \"%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\"+.+9.9.383.1.2.17.0 \"+.+%{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]}\"+.+9.9.383.1.3.1.0 \"informational\""
+    - id: 5005
+      pattern: "snmptrapd\[(\d+)]:+.+9.9.383.1.1.4.0 \"(\S+)\"+.+9.9.383.1.2.4.0 \"([\S ]+)\"+.+9.9.383.1.2.5.0 (\d+)+.+9.9.383.1.2.6.0 (\d+)+.+9.9.383.1.2.16.0 \"%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\"+.+9.9.383.1.2.17.0 \"+.+%{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]}\"+.+9.9.383.1.3.1.0 \"(\S+)\""
+
