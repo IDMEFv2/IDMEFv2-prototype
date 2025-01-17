@@ -1,0 +1,23 @@
+ruleset:
+  name: arpwatch_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: and
+    operands:
+      - operator: eq
+        operands:
+          - operator: variable
+            operands: "[Attachment][RawLog][Content][process][name]"
+          - operator: constant
+            operands: "arpwatch"
+  rules:
+    - id: 4200
+      pattern: "new (station|activity) %{IP:[Attachment][RawLog][Content][source][address]} ([\\da-f:]+)"
+    - id: 4201
+      pattern: "(flip flop|changed ethernet address|reused old ethernet address) %{IP:[Attachment][RawLog][Content][source][address]} ([\\da-f:]+) \\(([\\da-f:]+)\\)"
+    - id: 4202
+      pattern: "(ethernet|ip) broadcast %{IP:[Attachment][RawLog][Content][source][address]} ([\\da-f:]+)"
+    - id: 4203
+      pattern: "bogon %{IP:[Attachment][RawLog][Content][source][address]} ([\\da-f:]+)"
+    - id: 4204
+      pattern: "ethernet mismatch %{IP:[Attachment][RawLog][Content][source][address]} ([\\da-f:]+) \\(([\\da-f:]+)\\)"

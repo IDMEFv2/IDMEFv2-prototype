@@ -1,0 +1,15 @@
+ruleset:
+  name: chan_sip_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "chan_sip.c"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 6000
+      pattern: "Registration from '<sip:%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}>' failed for '%{NOTSPACE:[Attachment][RawLog][Content][source][address]}' - (?<data>.*)"
+    - id: 6001
+      pattern: "(?<desc>.*): '%{DATA:[Attachment][RawLog][Content][user][target][name]}' from %{IP:[Attachment][RawLog][Content][source][address]} \\((?<data>.*)\\) trying to use anyway..."
