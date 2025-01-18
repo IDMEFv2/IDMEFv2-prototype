@@ -1,0 +1,27 @@
+ruleset:
+  name: ipfw_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "ipfw"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 800
+      pattern: "\\d+ Deny (?=TCP|UDP)%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} %{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]} in via %{WORD:[Attachment][RawLog][Content][interface]}"
+    - id: 801
+      pattern: "\\d+ Deny (?=TCP|UDP)%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} %{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]} out via %{WORD:[Attachment][RawLog][Content][interface]}"
+    - id: 802
+      pattern: "\\d+ Deny ICMP:%{INT:[Attachment][RawLog][Content][icmp][type1]}.%{INT:[Attachment][RawLog][Content][icmp][type2]} %{IP:[Attachment][RawLog][Content][source][address]} %{IP:[Attachment][RawLog][Content][destination][address]} in via %{WORD:[Attachment][RawLog][Content][interface]}"
+    - id: 803
+      pattern: "\\d+ Deny ICMP:%{INT:[Attachment][RawLog][Content][icmp][type1]}.%{INT:[Attachment][RawLog][Content][icmp][type2]} %{IP:[Attachment][RawLog][Content][source][address]} %{IP:[Attachment][RawLog][Content][destination][address]} out via %{WORD:[Attachment][RawLog][Content][interface]}"
+    - id: 804
+      pattern: "\\d+ Accept (?=TCP|UDP)%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} %{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]} in via %{WORD:[Attachment][RawLog][Content][interface]}"
+    - id: 805
+      pattern: "\\d+ Accept (?=TCP|UDP)%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} %{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]} out via %{WORD:[Attachment][RawLog][Content][interface]}"
+    - id: 806
+      pattern: "\\d+ Accept ICMP:%{INT:[Attachment][RawLog][Content][icmp][id1]}.%{INT:[Attachment][RawLog][Content][icmp][id2]} %{IP:[Attachment][RawLog][Content][source][address]} %{IP:[Attachment][RawLog][Content][destination][address]} in via %{WORD:[Attachment][RawLog][Content][interface]}"
+    - id: 807
+      pattern: "\\d+ Accept ICMP:%{INT:[Attachment][RawLog][Content][icmp][id1]}.%{INT:[Attachment][RawLog][Content][icmp][id2]} %{IP:[Attachment][RawLog][Content][source][address]} %{IP:[Attachment][RawLog][Content][destination][address]} out via %{WORD:[Attachment][RawLog][Content][interface]}"

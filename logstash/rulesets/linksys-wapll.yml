@@ -1,0 +1,15 @@
+ruleset:
+  name: wireless_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: or
+    operands:
+      - operator: contains
+        operands: "wireless"
+      - operator: contains
+        operands: "Wireless"
+  rules:
+    - id: 2200
+      pattern: "PC connected[\\s]+%{MAC:[Attachment][RawLog][Content][mac][address]}"
+    - id: 2201
+      pattern: "PC try to connected[\\s]+%{MAC:[Attachment][RawLog][Content][mac][address]}"

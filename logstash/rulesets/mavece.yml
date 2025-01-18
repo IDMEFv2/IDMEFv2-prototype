@@ -1,0 +1,17 @@
+ruleset:
+  name: norton_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: contains
+    operands: "norton"
+  rules:
+    - id: 1200
+      pattern: "Virus Found!Virus name: %{NOTSPACE:[Attachment][RawLog][Content][malware][name]} in File: (?<filePath>.+) by: (?<processName>.+). Action: (?<action>.+)"
+    - id: 1201
+      pattern: "Download of virus definition file from LiveUpdate server succeeded"
+    - id: 1202
+      pattern: "New virus definition file loaded. Version: %{NOTSPACE:[Attachment][RawLog][Content][version]}"
+    - id: 1203
+      pattern: "Update to computer %{NOTSPACE:[Attachment][RawLog][Content][destination][name]} of virus definition file %{NOTSPACE:[Attachment][RawLog][Content][version]} failed. Status %{NOTSPACE:[Attachment][RawLog][Content][status]}"
+    - id: 1204
+      pattern: "Removed Client %{NOTSPACE:[Attachment][RawLog][Content][destination][name]}_::%{NOTSPACE:data} Last Checkin Time: (.+)"

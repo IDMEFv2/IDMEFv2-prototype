@@ -1,0 +1,15 @@
+ruleset:
+  name: server_administrator_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: constant
+    operands: "server administrator"
+  rules:
+    - id: 3800
+      pattern: "1306  Redundancy lost Redundancy unit: (?<description>.+?) Chassis location: (?<chassisLocation>.+?) Previous redundancy state was: (?<device>.+?) Number of devices required for full redundancy: %{INT:id}"
+    - id: 3801
+      pattern: "1352  Power supply returned to normal Sensor location: (?<description>.+?) Chassis location: (?<chassisLocation>.*) Previous state was: (?<status>.+)"
+    - id: 3802
+      pattern: "1353  Power supply detected a warning Sensor location: (?<description>.+?) Chassis location: (?<chassisLocation>.*) Previous state was: (%{WORD:status} \\(%{WORD:level}\\)|Unknown) (?<data>.+)"
+    - id: 3803
+      pattern: "1354  Power supply detected a failure Sensor location: (?<description>.+?) Chassis location: (?<chassisLocation>.*) Previous state was: (%{WORD:status} \\(%{WORD:level}\\)|Unknown) (?<data>.+)"

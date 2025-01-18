@@ -1,0 +1,33 @@
+ruleset:
+  name: honeyd_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "honeyd"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 2600
+      pattern: "Killing attempted connection: (?=tcp|udp)%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} \\(%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} - %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]}\\)"
+    - id: 2601
+      pattern: "Connection to closed port: (?=tcp|udp)%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} \\(%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} - %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]}\\)"
+    - id: 2602
+      pattern: "Killing unknown connection: (?=tcp|udp)%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} \\(%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} - %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]}\\)"
+    - id: 2603
+      pattern: "Sending ICMP Echo Reply: %{IP:[Attachment][RawLog][Content][source][address]} -> %{IP:[Attachment][RawLog][Content][destination][address]}"
+    - id: 2604
+      pattern: "Connection established: %{IP:[Attachment][RawLog][Content][source][address]} -> proxy to %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}"
+    - id: 2605
+      pattern: "Connection established: %{IP:[Attachment][RawLog][Content][source][address]} -> subsystem \\\"(?<dst>.*)\\\""
+    - id: 2606
+      pattern: "Connection established: subsystem \\\"(?<Src>.*)\\\" -> %{IP:[Attachment][RawLog][Content][destination][address]}"
+    - id: 2607
+      pattern: "Switching to polling mode"
+    - id: 2608
+      pattern: "Subsystem \\\"(.*)\\\" died"
+    - id: 2609
+      pattern: "Subsystem (?<System>.*) on (?<interface>.*) attempts illegal bind %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}"
+    - id: 2610
+      pattern: "listening on %{NOTSPACE:interface}:"

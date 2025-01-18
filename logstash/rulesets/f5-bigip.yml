@@ -1,0 +1,19 @@
+ruleset:
+  name: process_name_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "bigconf.cgi"
+      - operator: constant
+        operands: "kernel"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 3600
+      pattern: "AUDIT -- %{WORD:action} (?!VIPPORT)(%{WORD:data}) %{IP:[Attachment][RawLog][Content][destination][address]}.+User: %{USER:[Attachment][RawLog][Content][user][name]}"
+    - id: 3601
+      pattern: "AUDIT -- %{WORD:action} %{WORD:type} %{WORD:descr}.+User: %{USER:[Attachment][RawLog][Content][user][name]}"
+    - id: 3602
+      pattern: "security: %{NOTSPACE:proto} .*port denial %{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} -> %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]}"
