@@ -1,13 +1,13 @@
 # IDMEFv2-prototype
 
-The IDMEFv2 prototype is an alert manager compatible with the IDMEFv2 format.
+The IDMEFv2 prototype is an SIEM (Security Information & Event Manager) compatible with the IDMEFv2 format.
 
 The aim of this prototype is to demonstrate the capacity to build a (cyber and
 physical) cyphy-siem on top of IDMEFv2 (Incident Detection Message Exchange
 Format v2)
 
 The prototype is partially based on Prelude OSS (IDMEFv1) and still under heavy
-development.
+development but the actual version (2024) is already running.
 
 The prototype will offer:
 * A communication bus based on kakfa
@@ -17,10 +17,7 @@ The prototype will offer:
 * Log management analysis with Logstash
 * A test environment with local Linux logs and local webserver
 
-IDMEFv2-prototype is an effort provided by the SECEF (SECurity Exchange Format)
-consortium toward IDMEFv2 standardisation.
-
-A pre-release is expected for T2 2023.
+IDMEFv2-prototype is an effort provided by the Safe4Soc (http://safe4soc.eu)  Consortium toward IDMEFv2 standardisation.
 
 More information about IDMEFv2 at :
 [https://www.idmefv2.org](https://www.idmefv2.org)
