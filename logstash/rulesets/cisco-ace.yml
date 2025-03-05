@@ -11,8 +11,12 @@ ruleset:
   rules:
     - id: 5101
       pattern: "-442002: Health probe %{DATA:classification} detected %{DATA:target} \\(interface %{DATA:interface}\\) in serverfarm %{DATA:server} changed state to DOWN"
+      samples:
+        - "Sep 25 11:53:19 x.x.x.x ACE_NAME %ACE-4-442002: Health probe CHECK_NAME detected SERVER_NAME (interface vlanXX) in serverfarm SF_NAME changed state to DOWN"
     - id: 5102
       pattern: "-442001: Health probe %{DATA:classification} detected %{DATA:target} \\(interface %{DATA:interface}\\) in serverfarm %{DATA:server} changed state to UP"
+      samples:
+        - "Sep 25 11:53:19 x.x.x.x ACE_NAME %ACE-4-442001: Health probe CHECK_NAME detected SERVER_NAME (interface vlanXX) in serverfarm SF_NAME changed state to UP"
     - id: 5103
       pattern: "-442007: VIP in class: '%{DATA:vipname}' changed state from %{NOTSPACE:src} to %{NOTSPACE:dst}"
     - id: 5104
