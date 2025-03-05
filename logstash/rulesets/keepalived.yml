@@ -25,4 +25,3 @@ ruleset:
       pattern: "VRRP_Instance\\((?<data>.+)\\) Entering FAULT STATE"
     - id: 23205
       pattern: "Kernel is reporting: interface %{NOTSPACE:interface} DOWN"
-

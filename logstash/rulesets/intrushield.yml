@@ -21,4 +21,3 @@ ruleset:
       pattern: "Fault : (.*):created:(?<desc>.*):\\d+:.*:Sensor just PowerUp OR Reboot:"
     - id: 24904
       pattern: "Fault : (.*):created:(?<desc>.*):\\d+:.*:Sensor reports alert channel as down:"
-

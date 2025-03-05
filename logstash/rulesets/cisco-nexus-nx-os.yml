@@ -25,4 +25,3 @@ ruleset:
       pattern: "-IF_ATTACHED: (Interface %{NOTSPACE:interface}.*)"
       samples:
         - "2011 Aug 03 10:21:02 BRA %VIM-5-IF_ATTACHED: Interface Vethernet44 is attached to Network Adapter 1 of BR-CIS-MOAG-06 on #port 20 of module 5 with dvport id 438"
-

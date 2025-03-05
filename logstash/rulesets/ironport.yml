@@ -21,4 +21,3 @@ ruleset:
       pattern: "Info: MID %{INT:Num} .*using engine: CASE spam positive"
     - id: 24504
       pattern: "Info:\\s+ICID %{INT:Num} ACCEPT SG (SUSPECTLIST|WHITELIST|UNKNOWNLIST)"
-

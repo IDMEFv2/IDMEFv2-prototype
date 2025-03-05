@@ -19,4 +19,3 @@ ruleset:
         - "Mar 29 12:56:06 duke slapd[8788]: slapd stopped"
     - id: 23103
       pattern: "conn=%{INT:connection_id} fd=%{INT:fd_number} ACCEPT from IP=%{IP:[Attachment][RawLog][Content][source][address]}:(%{POSINT:[Attachment][RawLog][Content][source][port]:int}) \\(IP=%{IP:[Attachment][RawLog][Content][destination][address]}:(%{POSINT:[Attachment][RawLog][Content][destination][port]})\\)"
-

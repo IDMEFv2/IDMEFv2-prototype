@@ -19,4 +19,3 @@ ruleset:
         - "1130294192 LDAP: [2009/09/23 13:57:55.270] Illegal ndsname \"toto\" in ldap2uNDSDN, err = 34 (0x22)"
     - id: 25702
       pattern: "AUTH: \\[%{YEAR}/%{MONTHNUM}/%{MONTHDAY} %{HOUR}:?%{MINUTE}(?::?%{SECOND})\\]\\s\\[%{USER:[Attachment][RawLog][Content][user][target][name]}\\]\\s+<\\.(?<Name1>.+)\\.(?<Name2>[^\\.]+)\\.(?<Name3>[^\\.]+)\\.(?<Name4>[^\\.]+)\\.>\\s+LocalLoginRequest\\. Error\\s+failed\\sauthentication\\s\\(-%{INT:Size}\\),\\sconn:\\s\\d+"
-

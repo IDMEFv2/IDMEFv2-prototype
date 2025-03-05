@@ -25,4 +25,3 @@ ruleset:
       pattern: "\\d+ \\S+ \\S+ - (?<id>[1-9]\\d*) devices polled"
       samples:
         - "/opt/librenms/poller.php 2 2015-12-17 02:05:03 - 1 devices polled in 1.647 secs"
-

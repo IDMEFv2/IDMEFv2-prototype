@@ -27,4 +27,3 @@ ruleset:
       pattern: "cannot contact real service %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}"
     - id: 168000204
       pattern: "cannot contact real server %{IP:[Attachment][RawLog][Content][destination][address]}"
-

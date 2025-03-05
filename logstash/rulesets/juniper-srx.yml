@@ -29,4 +29,3 @@ ruleset:
       pattern: "UI_CMDLINE_READ_LINE: User \\'%{USER:[Attachment][RawLog][Content][user][name]}\\', command \\'%{DATA}\\'"
     - id: 22008
       pattern: "\\[%{USER:[Attachment][RawLog][Content][user][target][name]}@%{NOTSPACE:domain} interface-name=\"(.*)\" source-address=\"%{IP:[Attachment][RawLog][Content][source][address]}\" destination-address=\"%{IP:[Attachment][RawLog][Content][destination][address]}\""
-

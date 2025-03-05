@@ -23,4 +23,3 @@ ruleset:
       pattern: "Login user=%{USER:[Attachment][RawLog][Content][user][name]} host=(?:%{HOSTNAME:[Attachment][RawLog][Content][source][hostname]} )?\\[%{IP:[Attachment][RawLog][Content][source][address]}\\]"
     - id: 25609
       pattern: "Logout user=%{USER:[Attachment][RawLog][Content][user][name]} host=(?:%{HOSTNAME:[Attachment][RawLog][Content][source][hostname]} )?\\[%{IP:[Attachment][RawLog][Content][source][address]}\\]"
-

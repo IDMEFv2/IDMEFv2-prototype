@@ -21,4 +21,3 @@ ruleset:
       pattern: "(?=PASSCODE REUSE ATTACK)%{DATA:[Attachment][RawLog][Content][event][reason]} detected \(Login:'%{DATA:[Attachment][RawLog][Content][user][target][name]}'; User Name:'(?<usrName>[^']*)'; Token:'(?<token>[^']*)'; Group:'(?<group>[^']*)'; Site:'(?<Site>[^']*)'; Agent Host:'%{IPORHOST:[Attachment][RawLog][Content][source][address]}'; Server:'%{IPORHOST:[Attachment][RawLog][Content][destination][address]}'\)"
     - id: 24804
       pattern: "(?=Token disabled, suspect stolen)%{DATA:[Attachment][RawLog][Content][event][reason]} \(Login:'%{DATA:[Attachment][RawLog][Content][user][target][name]}'; User Name:'(?<usrName>[^']*)'; Token:'(?<token>[^']*)'; Group:'(?<group>[^']*)'; Site:'(?<Site>[^']*)'; Agent Host:'%{IPORHOST:[Attachment][RawLog][Content][source][address]}'; Server:'%{IPORHOST:[Attachment][RawLog][Content][destination][address]}'\)"
-

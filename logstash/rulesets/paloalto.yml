@@ -29,4 +29,3 @@ ruleset:
       pattern: "%{DATA},SYSTEM,%{DATA},Connected to %{DATA:server_name}: %{IP:[Attachment][RawLog][Content][target][address]}"
     - id: 24606
       pattern: "%{DATA},SYSTEM,%{DATA} package upgraded from version %{DATA:previous_version} to %{DATA:new_version} by %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}"
-

@@ -25,4 +25,3 @@ ruleset:
       pattern: "Error connecting to remote host \\w+\\(%{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}\\), (.+)"
     - id: 23006
       pattern: "Connection broken to \\w+\\(%{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}\\), reopening in \\d+ seconds"
-

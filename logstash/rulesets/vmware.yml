@@ -27,4 +27,3 @@ ruleset:
       pattern: "%{NOTSPACE:process_name} on\\s*%{NOTSPACE:nodename} in %{NOTSPACE:classification} is powered (on|off)"
     - id: 175000300
       pattern: "Firewall configuration has changed. Operation '\\w+' for rule set %{WORD:service} succeeded"
-

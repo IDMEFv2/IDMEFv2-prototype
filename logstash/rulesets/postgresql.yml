@@ -19,4 +19,3 @@ ruleset:
         - "[2007-08-31 19:22:21.469 ADT] :[unknown] LOG:  connection received: host=192.168.2.99 port=52136"
     - id: 23703
       pattern: "\\[%{DATA}\\] %{IP:[Attachment][RawLog][Content][source][address]}:\\S+ LOG:\\s*connection authorized: user=%{USERNAME:[Attachment][RawLog][Content][user][target][name]} database=%{NOTSPACE:db_name}"
-

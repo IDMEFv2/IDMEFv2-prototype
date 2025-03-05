@@ -23,4 +23,3 @@ ruleset:
       pattern: "Connect\\s*Access denied for user '%{WORD:[Attachment][RawLog][Content][user][target][name]}'@'%{NOTSPACE:hostname}'"
     - id: 23605
       pattern: "Connect\\s*%{WORD:[Attachment][RawLog][Content][user][target][name]}@%{NOTSPACE:domain} on %{NOTSPACE:inerface}"
-

@@ -19,4 +19,3 @@ ruleset:
         - "Jul 27 15:03:15 exanaconda rsyncd[28023]: auth failed on module rpm_repository from eas-update (192.168.11.103)"
     - id: 23403
       pattern: "rsync on (?<module>.+) from %{USER:user}@%{NOTSPACE:domain} \\(%{IP:[Attachment][RawLog][Content][source][address]}\\)"
-
