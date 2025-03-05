@@ -1,0 +1,14 @@
+ruleset:
+  name: mcafee_gateway_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "mwg"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 23500
+      pattern: "\"[^=\"]*=([^,]*)[^\"]*\" %{IP:[Attachment][RawLog][Content][source][address]} %{INT:statusCode} \"(?<method>GET|POST|CONNECT|OPTIONS) (?<url>[^\s]*) [^\"]*\" \"(?<desc>[^\"]*)\" \"High Risk\" \"[^\"]*\" \d+ \d+ \"(?<usrAgent>[^\"]*)\""
+

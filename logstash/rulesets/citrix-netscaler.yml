@@ -1,0 +1,21 @@
+ruleset:
+  name: citric_netscaler_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: regex
+    operands:
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+      - operator: constant
+        operands: "\\<[^>]+\\> .* (UI CMD_EXECUTED|TRAP_SENT|STATECHANGE|DEVICEUP)"
+  rules:
+    - id: 25100
+      pattern: "\\<[^>]+\\> %{IP:[Attachment][RawLog][Content][destination][address]} [^ ]+ [^:]+: UI CMD_EXECUTED \\d+ :  User %{NOTSPACE:[Attachment][RawLog][Content][user][name]} - Remote_ip %{IP:[Attachment][RawLog][Content][source][address]} - Command \"(?<command>[^\"]+)\" - Status \"Success\""
+    - id: 25101
+      pattern: "\\<[^>]+\\> %{IP:[Attachment][RawLog][Content][destination][address]} [^ ]+ [^:]+: UI CMD_EXECUTED \\d+ [^:]+:  User %{NOTSPACE:[Attachment][RawLog][Content][user][name]} - Remote_ip %{IP:[Attachment][RawLog][Content][source][address]} - Command \"(?<command>[^\"]+)\" - Status \"ERROR"
+    - id: 25102
+      pattern: "\\<[^>]+\\> %{IP:[Attachment][RawLog][Content][source][address]} \\S+ \\S+ \\S+ \\S+ : SNMP TRAP_SENT \\d+ : %{NOTSPACE:type} (?<descr>[^)]+\\))"
+    - id: 25103
+      pattern: "\\<[^>]+\\> %{IP:[Attachment][RawLog][Content][source][address]} \\S+ \\S+ \\S+ \\S+ : EVENT STATECHANGE \\d+ : (?<data>.*)"
+    - id: 25104
+      pattern: "\\<[^>]+\\> %{IP:[Attachment][RawLog][Content][source][address]} \\S+ \\S+ \\S+ \\S+ : EVENT DEVICEUP \\d+ : (?<data>.*)"

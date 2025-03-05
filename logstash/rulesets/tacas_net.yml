@@ -1,0 +1,42 @@
+ruleset:
+  name: tacacs_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "tacacs_system"
+      - operator: constant
+        operands: "tacacs_accounting"
+      - operator: constant
+        operands: "tacacs_debug"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 120001
+      pattern: "\\[%{IP:src}:%{INT:srcPort}\\] No authorization entry found for %{IP:[Attachment][RawLog][Content][source][address]} %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}"
+      
+    - id: 120002
+      pattern: "\\[%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\\] AD:The credentials are incorrect\\-%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}: %{NOTSPACE:Ident} LdapErr: %{NOTSPACE:status}, comment: AcceptSecurityContext error"
+      
+    - id: 120003
+      pattern: "\\[%{IP:src}:%{INT:srcPort}\\] %{NOTSPACE:srcAddr} %{NOTSPACE:dstAddr} NAS_IP=%{NOTSPACE:[Attachment][RawLog][Content][source][address]} Port=%{NOTSPACE:port} rem_addr=%{IP:[Attachment][RawLog][Content][destination][address]} User=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} Flags=Start start_time=%{NOTSPACE:time} service=%{NOTSPACE:service}"
+      
+    - id: 120004
+      pattern: "\\[%{IP:src}:%{INT:srcPort}\\] %{NOTSPACE:srcAddr} %{NOTSPACE:dstAddr} NAS_IP=%{IP:[Attachment][RawLog][Content][source][address]} Port=%{NOTSPACE:port} rem_addr=%{IP:ipAddr} User=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} Flags=Stop service=%{NOTSPACE:service} cmd=(?<command>.+)"
+      
+    - id: 120005
+      pattern: "User=The command '(?<data>.+)' is not authorized for user %{NOTSPACE:user} and client %{IP:[Attachment][RawLog][Content][source][address]}"
+      
+    - id: 120006
+      pattern: "\\[%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\\] Local file Authentication result: user\\-%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} specified in  group DEFAULT=InvalidUserOrPassword"
+      
+    - id: 120007
+      pattern: "\\[%{IP:src}:%{INT:srcPort}\\] %{NOTSPACE:srcAddr} %{NOTSPACE:dstAddr} NAS_IP=%{IP:[Attachment][RawLog][Content][source][address]} Port=%{NOTSPACE:port} rem_addr=%{IP:[Attachment][RawLog][Content][destination][address]} User=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} Flags=%{NOTSPACE:flag} protocol=%{NOTSPACE:[Attachment][RawLog][Content][network][transport]} start_time=%{NOTSPACE:time}"
+      
+    - id: 120008
+      pattern: "\\[%{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int}\\] Command (?<data>.+) passed  expression .+, Allow=True"
+      
+    - id: 120009
+      pattern: "\\[%{IP:src}:%{INT:srcPort}\\] %{NOTSPACE:srcAddr} %{NOTSPACE:dstAddr} NAS_IP=%{IP:[Attachment][RawLog][Content][source][address]} Port=%{NOTSPACE:port} rem_addr=%{IP:[Attachment][RawLog][Content][destination][address]} User=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} Flags=%{NOTSPACE:flag} task_id=%{NOTSPACE:task_id} timezone=%{NOTSPACE:time} service=%{NOTSPACE:[Attachment][RawLog][Content][network][protocol]}"
+

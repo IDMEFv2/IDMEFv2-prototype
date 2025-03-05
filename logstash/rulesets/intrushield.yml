@@ -1,0 +1,20 @@
+ruleset:
+  name: intrushield_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: equals
+    operands:
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+      - operator: constant
+        operands: "SyslogFaultForwarder"
+  rules:
+    - id: 24901
+      pattern: "Fault : (.*):created:(?<desc>.*):\\d+:.*:.*:.*:Port: (.*):Critical.*Down"
+    - id: 24902
+      pattern: "Fault : (.*):created:(?<desc>.*):\\d+:.*:Sensor unreachable:"
+    - id: 24903
+      pattern: "Fault : (.*):created:(?<desc>.*):\\d+:.*:Sensor just PowerUp OR Reboot:"
+    - id: 24904
+      pattern: "Fault : (.*):created:(?<desc>.*):\\d+:.*:Sensor reports alert channel as down:"
+

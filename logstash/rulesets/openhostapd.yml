@@ -1,0 +1,25 @@
+ruleset:
+  name: openhostapd_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: or
+    operands:
+      - operator: constant
+        operands: "removed node"
+      - operator: constant
+        operands: "sent ADD notification"
+      - operator: constant
+        operands: "attached Host AP interface"
+      - operator: regex
+        operands: "\\(rate:\\s(\\d+)\\/(\\d+)\\ssec\\)"
+  rules:
+    - id: 2500
+      pattern: "(?<interface>[a-z0-9]+):\\s\\(rate:\\s%{INT:rate}\\/\\%{INT:rate1}\\ssec\\)\\s%{MAC:srcAddr}\\s\\>\\s%{MAC:dstAddr},\\sbssid\\s%{MAC:macAddr}:\\s(?<desc>[^,]+)"
+    - id: 2501
+      pattern: "(?<interface>[a-z0-9]+):\\s\\(rate:\\s%{INT:rate}\\/\\%{INT:rate1}"
+    - id: 2502
+      pattern: "(?<interface>[a-z0-9]+):\\sremoved\\snode\\s%{MAC:macAddr}"
+    - id: 2503
+      pattern: "(?<interface>[a-z0-9]+)/(?<interface1>[a-z0-9]+):\\ssent\\sADD\\snotification\\sfor\\s%{MAC:macAddr}"
+    - id: 2504
+      pattern: "(?<interface>[a-z0-9]+)/(?<interface1>[a-z0-9]+):\\sattached\\sHost\\sAP\\sinterface\\swith\\sBSSID\\s%{MAC:macAddr}"

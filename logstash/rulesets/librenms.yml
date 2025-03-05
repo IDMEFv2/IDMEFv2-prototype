@@ -1,0 +1,24 @@
+ruleset:
+  name: librenms_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: or
+    operands:
+      - operator: in
+        operands:
+          - operator: constant
+            operands: "discovery.php"
+          - operator: variable
+            operands: "[Attachment][RawLog][Content][message]"
+      - operator: in
+        operands:
+          - operator: constant
+            operands: "poller.php"
+          - operator: variable
+            operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 25500
+      pattern: "new \\S+ \\S+ - (?<id>[1-9]\\d*) devices discovered"
+    - id: 25501
+      pattern: "\\d+ \\S+ \\S+ - (?<id>[1-9]\\d*) devices polled"
+
