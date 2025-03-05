@@ -1,0 +1,19 @@
+ruleset:
+  name: extreme_switch_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "MSM-A"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 20101
+      pattern: "Login passed for user %{NOTSPACE:[Attachment][RawLog][Content][user][name]} through %{NOTSPACE:[Attachment][RawLog][Content][network][protocol]} \\(%{IPORHOST:[Attachment][RawLog][Content][destination][address]}\\)"
+    - id: 20102
+      pattern: "User %{NOTSPACE:[Attachment][RawLog][Content][user][name]} logout from %{NOTSPACE:[Attachment][RawLog][Content][network][protocol]} \\(%{IPORHOST:[Attachment][RawLog][Content][source][address]}\\)"
+    - id: 20103
+      pattern: "Port %{NOTSPACE:interfaceport} link down"
+    - id: 20104
+      pattern: "%{IPORHOST:[Attachment][RawLog][Content][source][address]} \\(%{DATA:[Attachment][RawLog][Content][network][protocol]}\\) %{WORD:[Attachment][RawLog][Content][user][name]}: upload configuration %{NOTSPACE} %{NOTSPACE:file}"

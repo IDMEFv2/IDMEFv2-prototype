@@ -1,0 +1,13 @@
+ruleset:
+  name: spamassassin_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "spamd"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 5202
+      pattern: "result: Y %{INT:id} - %{NOTSPACE:data} scantime=(?<time>[\\d+.]+),size=%{INT:size},user=%{NOTSPACE:[Attachment][RawLog][Content][user][name]},uid=%{NOTSPACE:uid},required_score=(?<score>[\\d+.]+)(?<descr>\\S+)mid=<%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}@%{NOTSPACE:domain}>"

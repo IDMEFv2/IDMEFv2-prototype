@@ -1,0 +1,16 @@
+ruleset:
+  name: vmware_vcenter_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: regex
+    operands:
+      - operator: constant
+        operands: "\S+Net\S*:|START:"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 21001
+      pattern: "START: %{NOTSPACE:[Attachment][RawLog][Content][service][name]} pid=%{NOTSPACE:pidNum} from=%{NOTSPACE:[Attachment][RawLog][Content][source][address]}"
+    - id: 21002
+      pattern: "Net\S*: %{NOTSPACE}: (?<status>disconnected|dissociate|disabled) .*port %{NOTSPACE}"
+

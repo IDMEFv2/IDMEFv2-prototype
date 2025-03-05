@@ -1,0 +1,26 @@
+ruleset:
+  name: radware_alteon_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "WebOS"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 168000100
+      pattern: "Failed login attempt via %{NOTSPACE:[Attachment][RawLog][Content][network][protocol]} from host %{NOTSPACE:[Attachment][RawLog][Content][source][address]}"
+    - id: 168000101
+      pattern: "%{NOTSPACE:[Attachment][RawLog][Content][user][name]} login from host %{NOTSPACE:[Attachment][RawLog][Content][source][address]}"
+    - id: 168000200
+      pattern: "virtual router\\s+%{NOTSPACE:[Attachment][RawLog][Content][destination][address]} is now MASTER"
+    - id: 168000201
+      pattern: "real service %{IP:[Attachment][RawLog][Content][source][address]}:%{POSINT:[Attachment][RawLog][Content][source][port]:int} operational"
+    - id: 168000202
+      pattern: "real server %{IP:[Attachment][RawLog][Content][destination][address]} operational"
+    - id: 168000203
+      pattern: "cannot contact real service %{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}"
+    - id: 168000204
+      pattern: "cannot contact real server %{IP:[Attachment][RawLog][Content][destination][address]}"
+

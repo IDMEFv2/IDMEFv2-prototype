@@ -1,0 +1,37 @@
+ruleset:
+  name: selinux_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "avc:"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 4000
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{DATA:[Attachment][RawLog][Content][process][command]} name=(shadow|passwd|group) dev=%{NOTSPACE:[Attachment][RawLog][Content][device]} ino=%{NOTSPACE:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+    
+    - id: 4001
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{DATA:[Attachment][RawLog][Content][process][command]} path=(?<path>\\S*)bin(?<shell>\\S*)sh dev=%{NOTSPACE:[Attachment][RawLog][Content][device]} ino=%{NOTSPACE:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+
+    - id: 4002
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{DATA:[Attachment][RawLog][Content][process][command]} name=(?<shell>\\S*)sh dev=%{NOTSPACE:[Attachment][RawLog][Content][device]} ino=%{NOTSPACE:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+
+    - id: 4003
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{DATA:[Attachment][RawLog][Content][process][command]} path=/var/log/(?<file>\\S*) dev=%{NOTSPACE:[Attachment][RawLog][Content][device]} ino=%{NOTSPACE:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+
+    - id: 4005
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{DATA:[Attachment][RawLog][Content][process][command]} path=(?<path>\\S*) dev=%{NOTSPACE:[Attachment][RawLog][Content][device]} ino=%{NOTSPACE:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+
+    - id: 4006
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} path=%{NOTSPACE:[Attachment][RawLog][Content][file][path]} dev=%{NOTSPACE:[Attachment][RawLog][Content][device]} ino=%{NOTSPACE:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+
+    - id: 4007
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{DATA:[Attachment][RawLog][Content][process][command]} capability=%{NOTSPACE:[Attachment][RawLog][Content][capability][id]}(\\s+)scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser}\\s+tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+
+    - id: 4008
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{NOTSPACE:[Attachment][RawLog][Content][process][command]} name=%{NOTSPACE:[Attachment][RawLog][Content][file][name]} dev=%{NOTSPACE:[Attachment][RawLog][Content][device]} ino=%{NOTSPACE:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"
+
+    - id: 4009
+      pattern: "denied  \\{ (?<desc>[\\w ]+) \\} for  pid=%{INT:[Attachment][RawLog][Content][process][pid]} exe=%{GREEDYDATA:[Attachment][RawLog][Content][process][command]} name=%{GREEDYDATA:[Attachment][RawLog][Content][file][name]} dev=%{GREEDYDATA:[Attachment][RawLog][Content][device]} ino=%{GREEDYDATA:[Attachment][RawLog][Content][id_user]} scontext=%{NOTSPACE:[Attachment][RawLog][Content][user][name]}:%{NOTSPACE:ruser}:%{NOTSPACE:tuser} tcontext=%{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}:%{NOTSPACE:obj}:"

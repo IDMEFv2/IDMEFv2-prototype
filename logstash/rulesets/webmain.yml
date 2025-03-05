@@ -1,0 +1,15 @@
+ruleset:
+  name: webmin_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "webmin"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 2900
+      pattern: "Successful login as %{NOTSPACE:[Attachment][RawLog][Content][user][name]} from %{IP:[Attachment][RawLog][Content][source][address]}"
+    - id: 2901
+      pattern: "Invalid login as %{NOTSPACE:[Attachment][RawLog][Content][user][name]} from %{IP:[Attachment][RawLog][Content][source][address]}"

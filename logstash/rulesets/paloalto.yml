@@ -1,0 +1,28 @@
+ruleset:
+  name: paloalto_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "THREAT"
+      - operator: constant
+        operands: "SYSTEM"
+      - operator: constant
+        operands: "CONFIG"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 24601
+      pattern: "%{DATA},THREAT,%{DATA}"
+    - id: 24602
+      pattern: "%{DATA},SYSTEM,%{DATA},Authentication failed for user %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} via ([^\\s]+) from %{IP:[Attachment][RawLog][Content][source][address]}"
+    - id: 24603
+      pattern: "%{DATA},SYSTEM,%{DATA},User %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} logged in via %{DATA:auth} from %{IP:[Attachment][RawLog][Content][source][address]}"
+    - id: 24604
+      pattern: "%{DATA},SYSTEM,%{DATA}, Accepted password for %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} from %{IP:[Attachment][RawLog][Content][source][address]} port %{POSINT:[Attachment][RawLog][Content][source][port]:int} ssh"
+    - id: 24605
+      pattern: "%{DATA},SYSTEM,%{DATA},Connected to %{DATA:server_name}: %{IP:[Attachment][RawLog][Content][target][address]}"
+    - id: 24606
+      pattern: "%{DATA},SYSTEM,%{DATA} package upgraded from version %{DATA:previous_version} to %{DATA:new_version} by %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]}"
+

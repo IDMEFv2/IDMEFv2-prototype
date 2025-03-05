@@ -1,0 +1,24 @@
+ruleset:
+  name: syslog_ng_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: equal
+    operands:
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+      - operator: constant
+        operands: "syslog-ng"
+  rules:
+    - id: 23001
+      pattern: "syslog-ng version ([\\d.]+) going down"
+    - id: 23002
+      pattern: "syslog-ng version ([\\d.]+) starting"
+    - id: 23003
+      pattern: "[nN]ew configuration initialized"
+    - id: 23004
+      pattern: "STATS: dropped ([0-9]\\d*)"
+    - id: 23005
+      pattern: "Error connecting to remote host \\w+\\(%{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}\\), (.+)"
+    - id: 23006
+      pattern: "Connection broken to \\w+\\(%{IP:[Attachment][RawLog][Content][destination][address]}:%{POSINT:[Attachment][RawLog][Content][destination][port]:int}\\), reopening in \\d+ seconds"
+

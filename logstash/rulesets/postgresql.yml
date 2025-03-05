@@ -1,0 +1,18 @@
+ruleset:
+  name: postgresql_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "(LOG|FATAL): {2}"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 23701
+      pattern: "\\[%{DATA}\\] (?:%{IP:[Attachment][RawLog][Content][source][address]}: )?FATAL:\\s*%{NOTSPACE} authentication failed for user \"%{USERNAME:[Attachment][RawLog][Content][user][target][name]}\""
+    - id: 23702
+      pattern: "\\[%{DATA}\\] (.*) LOG:\\s*connection received: host=%{IP:[Attachment][RawLog][Content][source][address]} port=%{POSINT:[Attachment][RawLog][Content][source][port]:int}"
+    - id: 23703
+      pattern: "\\[%{DATA}\\] %{IP:[Attachment][RawLog][Content][source][address]}:\\S+ LOG:\\s*connection authorized: user=%{USERNAME:[Attachment][RawLog][Content][user][target][name]} database=%{NOTSPACE:db_name}"
+

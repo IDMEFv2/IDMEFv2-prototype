@@ -1,0 +1,55 @@
+ruleset:
+  name: bluecoat_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: equal
+    operands:
+      - operator: constant
+        operands: "ProxySG"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+  rules:
+    - id: 11001
+      pattern: "\w+\s*Access (?:L|l)og.+Connecting to primary server (?<serverName>.+) on port %{INT:port}.+NORMAL_EVENT"
+    - id: 11002
+      pattern: "\w+\s*DNS lookup to (?<server>.+) for %{NOTSPACE:[Attachment][RawLog][Content][network][transport]} rejected by server\.\(.+NORMAL_EVENT"
+    - id: 11003
+      pattern: "\w+\s*Read/write mode entered from serial for user '?(?<userName>.+)'?\("
+    - id: 11007
+      pattern: "\w+\s*Read/write mode entered from %{IP:[Attachment][RawLog][Content][source][address]} for user '(?<UserName>.+)'\(.+NORMAL_EVENT"
+    - id: 11008
+      pattern: "\w+\s*Enable password authentication from %{IP:[Attachment][RawLog][Content][source][address]} failed for user '(?<userName>.+)'\(.+NORMAL_EVENT"
+    - id: 11009
+      pattern: "\w+\s*Console user password authentication from %{IP:[Attachment][RawLog][Content][source][address]} failed for user '(?<userName>.+)'.+NORMAL_EVENT"
+    - id: 11010
+      pattern: "\w+\s*NULL character found in the request line from %{IP:[Attachment][RawLog][Content][source][address]}"
+    - id: 11011
+      pattern: "\w+\s*Failed (?:password|none) for (?<src>.+)\s+ssh2.+NORMAL_EVENT"
+    - id: 11012
+      pattern: "\w+\s*Administrator login from %{IP:[Attachment][RawLog][Content][source][address]} denied.+NORMAL_EVENT"
+    - id: 11013
+      pattern: "\w+\s*Access (?:L|l)og .+:.+SEVERE_ERROR"
+    - id: 11014
+      pattern: "\w+\s*CFSSL.+SEVERE_ERROR"
+    - id: 11016
+      pattern: "\w+\s*Administrator login from %{IP:[Attachment][RawLog][Content][source][address]}, user '(?<usrName>.+)'.+NORMAL_EVENT"
+    - id: 11017
+      pattern: "\w+\s*Local: Authentication failed from %{IP:[Attachment][RawLog][Content][source][address]}: no such user in realm '(?<usrName>.+)'?.+NORMAL_EVENT"
+    - id: 11018
+      pattern: "\w+\s*NTP: Tried all configured servers. Unable to obtain NTP update due to NTP server errors"
+    - id: 11019
+      pattern: "\w+\s*SSH admin at %{IP:[Attachment][RawLog][Content][source][address]}, (?<srcUser>[^,]+), changed password for user '(?<usrName>.+)' in local user list '(?<list>.+)'"
+    - id: 11020
+      pattern: "\w+\s*SSH admin at %{IP:[Attachment][RawLog][Content][source][address]}, (?<srcUser>[^,]+), added user '(?<usrName>.+)' to local user list '(?<list>.+)'"
+    - id: 11021
+      pattern: "\w+\s*(?:Management Console|SSH) admin at %{IP:[Attachment][RawLog][Content][destination][address]}, (?<desc>[^\(]+)"
+    - id: 11022
+      pattern: "\w+\s*Accepted password for (?<user>[^\s]+).+NORMAL_EVENT"
+    - id: 11023
+      pattern: "\w+\s*Failed publickey for (?<user>[^\(]+).+NORMAL_EVENT"
+    - id: 11024
+      pattern: "\w+\s*DNS service restored.+NORMAL_EVENT"
+    - id: 11025
+      pattern: "\w+\s*Serial admin initiated reboot.+CONFIGURATION_EVENT"
+    - id: 11026
+      pattern: "\w+\s*Unable to send the keep alive message, make sure keep alive interval is less than the server timeout.+NORMAL_EVENT"

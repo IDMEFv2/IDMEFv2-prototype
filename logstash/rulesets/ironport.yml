@@ -1,0 +1,20 @@
+ruleset:
+  name: ironport_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "Info:"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 24501
+      pattern: "Info: New SMTP ICID \\d+ interface [^\\)]+\\(%{NOTSPACE:nodeAddr}\\) address %{IP:[Attachment][RawLog][Content][destination][address]} reverse dns host unknown"
+    - id: 24502
+      pattern: "Info:\\s+ICID %{INT:Num} REJECT SG (BLACKLIST|None)"
+    - id: 24503
+      pattern: "Info: MID %{INT:Num} .*using engine: CASE spam positive"
+    - id: 24504
+      pattern: "Info:\\s+ICID %{INT:Num} ACCEPT SG (SUSPECTLIST|WHITELIST|UNKNOWNLIST)"
+

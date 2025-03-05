@@ -1,0 +1,16 @@
+ruleset:
+  name: trendmicro_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "GMT"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][event][original]"
+  rules:
+    - id: 24301
+      pattern: "%{NOTSPACE:id} %{NOTSPACE:name} VIRUS FOUND in attached file"
+    - id: 24302
+      pattern: "License:\\s+(\\S+)\\s+([^.]+)\\.\\s+([^.]+)"
+

@@ -1,0 +1,19 @@
+ruleset:
+  name: suhosin_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: equal
+    operands:
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+      - operator: constant
+        operands: "suhosin"
+  rules:
+    - id: 8001
+      pattern: "ALERT - configured request variable name length limit exceeded - dropped variable '\\S+' \\(attacker '%{NOTSPACE:[Attachment][RawLog][Content][source][address]}', file '\\S+'\\)"
+    - id: 8002
+      pattern: "ALERT - tried to register forbidden variable '\\S+' through (.*) variables \\(attacker '%{NOTSPACE:[Attachment][RawLog][Content][source][address]}', file '\\S+'\\)"
+    - id: 8003
+      pattern: "ALERT - configured \\S+ variable value length limit exceeded - dropped variable '\\S+' \\(attacker '%{NOTSPACE:[Attachment][RawLog][Content][source][address]}', file '\\S+'\\)"
+    - id: 8004
+      pattern: "ALERT - ASCII-NUL chars not allowed within request variables - dropped variable '\\S+' \\(attacker '%{NOTSPACE:[Attachment][RawLog][Content][source][address]}', file '\\S+'\\)"

@@ -1,0 +1,18 @@
+ruleset:
+  name: rsyncd_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: equal
+    operands:
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][process][name]"
+      - operator: constant
+        operands: "rsyncd"
+  rules:
+    - id: 23401
+      pattern: "rsyncd version (?<version>.+) starting, listening on port %{POSINT:[Attachment][RawLog][Content][source][port]:int}"
+    - id: 23402
+      pattern: "auth failed on module (?<module>[\\w-]+) from (?<source>[\\w.-]+) \\(%{IP:[Attachment][RawLog][Content][source][address]}\\)"
+    - id: 23403
+      pattern: "rsync on (?<module>.+) from %{USER:user}@%{NOTSPACE:domain} \\(%{IP:[Attachment][RawLog][Content][source][address]}\\)"
+

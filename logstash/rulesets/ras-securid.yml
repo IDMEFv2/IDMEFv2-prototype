@@ -1,0 +1,20 @@
+ruleset:
+  name: rsa_securid_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "aceserver"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 24801
+      pattern: "(?=User)%{DATA:[Attachment][RawLog][Content][event][reason]} \(Login:'%{DATA:[Attachment][RawLog][Content][user][target][name]}'; User Name:'(?<usrName>[^']*)'; Token:'(?<token>[^']*)'; Group:'(?<group>[^']*)'; Site:'(?<Site>[^']*)'; Agent Host:'%{IPORHOST:[Attachment][RawLog][Content][source][address]}'; Server:'%{IPORHOST:[Attachment][RawLog][Content][destination][address]}'\)"
+    - id: 24802
+      pattern: "(?=ACCESS DENIED)%{DATA:[Attachment][RawLog][Content][event][reason]} \(Login:'%{DATA:[Attachment][RawLog][Content][user][target][name]}'; User Name:'(?<usrName>[^']*)'; Token:'(?<token>[^']*)'; Group:'(?<group>[^']*)'; Site:'(?<Site>[^']*)'; Agent Host:'%{IPORHOST:[Attachment][RawLog][Content][source][address]}'; Server:'%{IPORHOST:[Attachment][RawLog][Content][destination][address]}'\)"
+    - id: 24803
+      pattern: "(?=PASSCODE REUSE ATTACK)%{DATA:[Attachment][RawLog][Content][event][reason]} detected \(Login:'%{DATA:[Attachment][RawLog][Content][user][target][name]}'; User Name:'(?<usrName>[^']*)'; Token:'(?<token>[^']*)'; Group:'(?<group>[^']*)'; Site:'(?<Site>[^']*)'; Agent Host:'%{IPORHOST:[Attachment][RawLog][Content][source][address]}'; Server:'%{IPORHOST:[Attachment][RawLog][Content][destination][address]}'\)"
+    - id: 24804
+      pattern: "(?=Token disabled, suspect stolen)%{DATA:[Attachment][RawLog][Content][event][reason]} \(Login:'%{DATA:[Attachment][RawLog][Content][user][target][name]}'; User Name:'(?<usrName>[^']*)'; Token:'(?<token>[^']*)'; Group:'(?<group>[^']*)'; Site:'(?<Site>[^']*)'; Agent Host:'%{IPORHOST:[Attachment][RawLog][Content][source][address]}'; Server:'%{IPORHOST:[Attachment][RawLog][Content][destination][address]}'\)"
+

@@ -1,0 +1,18 @@
+ruleset:
+  name: tripwire_parsing
+  field: "[Attachment][RawLog][Content][message]"
+  predicate:
+    operator: in
+    operands:
+      - operator: constant
+        operands: "Tripwire"
+      - operator: variable
+        operands: "[Attachment][RawLog][Content][message]"
+  rules:
+    - id: 24001
+      pattern: "Added (?<Path>.*) on (?<dstAddr>.*) by (?<data>.*)"
+    - id: 24002
+      pattern: "Removed\\s(?<Path>.*)\\son\\s(?<dstAddr>.*)\\sby\\s(?<data>.*)"
+    - id: 24003
+      pattern: "Modified\\s(?<Path>.*)\\son\\s(?<dstAddr>.*)\\sby\\s(?<data>.*)"
+
