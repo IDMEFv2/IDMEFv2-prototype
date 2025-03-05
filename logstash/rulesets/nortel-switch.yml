@@ -43,8 +43,12 @@ ruleset:
   rules:
     - id: 16001
       pattern: "smltRemote\\sis\\sFalse\\sfor\\sthis\\smac\\s=%{MAC:macAddr}<000>"
+      samples:
+        - "MLT INFO smltRemote is False for this mac =00:e0:00:c5:1f:26<000>"
     - id: 16002
       pattern: "request\\s+received\\sfrom\\s(?<srcAddr>[\\w\\.-]+)\\s+with\\sinvalid\\sauthorization\\s(.*)\\s<000>"
+      samples:
+        - "SNMP INFO request  received from 10.10.31.254  with invalid authorization <NULL> <000>"
     - id: 16003
       pattern: "request\\s+received\\sfrom\\s(?<srcAddr>[\\w\\.-]+)\\s+with\\sunknown\\scommunity\\sstring\\spublic\\s<000>"
     - id: 16004

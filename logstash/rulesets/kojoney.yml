@@ -13,8 +13,12 @@ ruleset:
   rules:
     - id: 20000
       pattern: "\\[SSHService ssh-userauth on SSHServerTransport,%{INT},%{IP:[Attachment][RawLog][Content][source][address]}\\] %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} trying auth password"
+      samples:
+        - "2007/04/12 21:57 CEST [SSHService ssh-userauth on SSHServerTransport,3,88.64.180.35] root trying auth password"
     - id: 20001
       pattern: "\\[SSHService ssh-userauth on SSHServerTransport,%{INT},%{IP:[Attachment][RawLog][Content][source][address]}\\] %{NOTSPACE:[Attachment][RawLog][Content][user][target][name]} authenticated with password"
+      samples:
+        - "2007/04/12 21:57 CEST [SSHService ssh-userauth on SSHServerTransport,3,88.64.180.35] root authenticated with password"
     - id: 20002
       pattern: "\\[SSHChannel session \\(%{INT}\\) on SSHService ssh-connection on SSHServerTransport,%{INT:Id},%{IP:[Attachment][RawLog][Content][source][address]}\\] (executing .*|COMMAND .*)"
     - id: 20003

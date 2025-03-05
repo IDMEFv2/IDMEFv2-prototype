@@ -15,8 +15,12 @@ ruleset:
   rules:
     - id: 1801
       pattern: "Starting Squid Cache version %{DATA:version} for %{DATA:distribution}..."
+      samples:
+        - "2005/11/28 06:00:42| Starting Squid Cache version 2.5.STABLE1 for i386-redhat-linux-gnu..."
     - id: 1802
       pattern: "Accepting HTTP connections at %{IP:[Attachment][RawLog][Content][destination][address]}, port %{POSINT:[Attachment][RawLog][Content][destination][port]:int}, FD \\d+"
+      samples:
+        - "2005/11/28 06:00:44| Accepting HTTP connections at 0.0.0.0, port 3128, FD 12."
     - id: 1803
       pattern: "Accepting ICP messages at %{IP:[Attachment][RawLog][Content][destination][address]}, port %{POSINT:[Attachment][RawLog][Content][destination][port]:int}, FD \\d+"
     - id: 1804

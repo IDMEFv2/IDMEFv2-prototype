@@ -11,8 +11,12 @@ ruleset:
   rules:
     - id: 172000100
       pattern: "Site: %{DATA:[Attachment][RawLog][Content][observer][geo][location]},Server: (?:%{HOSTNAME:[Attachment][RawLog][Content][observer][hostname]}|%{IP:[Attachment][RawLog][Content][observer][ip]}),Successfully downloaded the Virus and Spyware definitions"
+      samples:
+        - "Dec  1 12:23:14 SymantecServer antivirus.example.com: Site: PLESSIS,Server: antivirus.example.com,Successfully downloaded the Virus and Spyware definitions"
     - id: 172000101
       pattern: "Site: %{DATA:[Attachment][RawLog][Content][observer][geo][location]},Server: (?:%{HOSTNAME:[Attachment][RawLog][Content][observer][hostname]}|%{IP:[Attachment][RawLog][Content][observer][ip]}),Successfully downloaded the SONAR"
+      samples:
+        - "Dec  1 12:23:14 SymantecServer antivirus.example.com: Site: PLESSIS,Server: antivirus.example.com,Successfully downloaded the SONAR"
     - id: 172000102
       pattern: "Site: %{DATA:[Attachment][RawLog][Content][observer][geo][location]},Server: (?:%{HOSTNAME:[Attachment][RawLog][Content][observer][hostname]}|%{IP:[Attachment][RawLog][Content][observer][ip]}),Successfully downloaded the Intrusion Prevention signatures"
     - id: 172000103

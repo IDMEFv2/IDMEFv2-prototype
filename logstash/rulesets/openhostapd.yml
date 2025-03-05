@@ -15,8 +15,12 @@ ruleset:
   rules:
     - id: 2500
       pattern: "(?<interface>[a-z0-9]+):\\s\\(rate:\\s%{INT:rate}\\/\\%{INT:rate1}\\ssec\\)\\s%{MAC:srcAddr}\\s\\>\\s%{MAC:dstAddr},\\sbssid\\s%{MAC:macAddr}:\\s(?<desc>[^,]+)"
+      samples:
+        - "ath0: (rate: 100/3 sec) 00:02:dc:ed:3d:3f > 00:05:4e:45:d3:b8, bssid 00:05:4e:45:d3:b8: authentication request, <radiotap v0, chan 1, 11g, txpower 30dBm>"
     - id: 2501
       pattern: "(?<interface>[a-z0-9]+):\\s\\(rate:\\s%{INT:rate}\\/\\%{INT:rate1}"
+      samples:
+        - "Nov 23 19:05:49 ath0: (rate: 100/3 sec)"
     - id: 2502
       pattern: "(?<interface>[a-z0-9]+):\\sremoved\\snode\\s%{MAC:macAddr}"
     - id: 2503
